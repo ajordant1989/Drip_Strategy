@@ -1,351 +1,177 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DRIP Strategy Calculator & Tracker</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        /* --- Modern STRIKE-inspired style update --- */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            background: #000;
-            color: #fff;
-            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
-            min-height: 100vh;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .container {
-            background: transparent;
-            box-shadow: none;
-            border-radius: 0;
-            max-width: 480px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        h1 {
-            color: #fff;
-            font-size: 2.2rem;
-            font-weight: 700;
-            margin-top: 48px;
-            margin-bottom: 32px;
-            text-align: center;
-            letter-spacing: 0.01em;
-        }
-
-        .desc {
-            color: #b3b3b3;
-            font-size: 1.1rem;
-            text-align: center;
-            margin-bottom: 32px;
-        }
-
-        .card, .full-width {
-            background: #111;
-            border-radius: 18px;
-            box-shadow: 0 2px 16px rgba(0,0,0,0.15);
-            padding: 32px 24px 24px 24px;
-            margin-bottom: 32px;
-            width: 100%;
-            max-width: 420px;
-        }
-        
-        .card h2 {
-            color: #fff;
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 18px;
-        }
-        
-        .main-content-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 24px;
-        }
-
-        .full-width {
-            grid-column: 1 / -1;
-        }
-        
-        .input-group, .input-full {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-        
-        label {
-            color: #b3b3b3;
-            font-size: 1rem;
-            margin-bottom: 4px;
-        }
-        
-        input, select {
-            background: #222;
-            color: #fff;
-            border: 1px solid #333;
-            border-radius: 10px;
-            padding: 12px;
-            font-size: 1rem;
-            margin-bottom: 0;
-            transition: border-color 0.2s;
-        }
-        input:focus, select:focus {
-            border-color: #fff;
-            outline: none;
-        }
-        
-        .btn {
-            background: #fff;
-            color: #000;
-            border: none;
-            border-radius: 10px;
-            padding: 14px 0;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 12px;
-            margin-bottom: 0;
-            width: 100%;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            transition: background 0.2s, color 0.2s;
-        }
-        .btn:hover {
-            background: #f2f2f2;
-            color: #222;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 16px;
-            margin-top: 24px;
-            justify-content: center;
-        }
-        
-        .portfolio-table, .projection-table {
-            background: #111;
-            color: #fff;
-            border-radius: 12px;
-            width: 100%;
-            margin: 16px 0;
-            font-size: 0.95rem;
-            border-collapse: separate;
-            border-spacing: 0;
-        }
-        .portfolio-table th, .projection-table th {
-            background: #222;
-            color: #fff;
-            font-weight: 600;
-            padding: 12px;
-            border-bottom: 1px solid #222;
-        }
-        .portfolio-table td, .projection-table td {
-            padding: 12px;
-            border-bottom: 1px solid #222;
-        }
-
-        .results {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 20px;
-            margin: 32px 0;
-        }
-        
-        .result-card {
-            background: #111;
-            color: #fff;
-            border-radius: 12px;
-            padding: 24px;
-            text-align: center;
-            margin-bottom: 16px;
-        }
-        .result-card h3 {
-            font-size: 1rem;
-            margin-bottom: 8px;
-            color: #b3b3b3;
-        }
-        .result-card .value {
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-        
-        .projection-chart {
-            background: #252F31;
-            border-radius: 8px;
-            padding: 20px;
-            margin-top: 24px;
-        }
-        
-        .highlight {
-            background: #F5A623;
-            color: #1C2526;
-            font-weight: 600;
-        }
-        
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        
-        .modal-content {
-            background: #252F31;
-            padding: 20px;
-            border-radius: 8px;
-            width: 360px;
-            max-width: 90%;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        }
-        
-        .modal-content h3 {
-            margin-bottom: 12px;
-            color: #F5A623;
-        }
-        
-        .close-btn {
-            background: #EF4444;
-            color: #FFFFFF;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            margin-top: 8px;
-        }
-        
-        .close-btn:hover {
-            background: #DC2626;
-        }
-        
-        .error-message {
-            color: #EF4444;
-            font-size: 0.85rem;
-            margin-top: 8px;
-            text-align: center;
-        }
-        
-        .remove-btn {
-            background: #EF4444;
-            color: #FFFFFF;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-        
-        .remove-btn:hover {
-            background: #DC2626;
-        }
-        
-        /* Floating Bitcoin icons */
-        .btc-float {
-            position: absolute;
-            width: 60px;
-            height: 60px;
-            z-index: 10;
-            animation: btcFloat 4s infinite ease-in-out alternate;
-        }
-        .btc-float.btc1 { left: 10%; top: 20%; animation-delay: 0s; }
-        .btc-float.btc2 { right: 10%; top: 30%; animation-delay: 1s; }
-        @keyframes btcFloat {
-            0% { transform: translateY(0) rotate(-10deg); }
-            100% { transform: translateY(30px) rotate(10deg); }
-        }
-
-        @media (max-width: 600px) {
-            .container, .card, .full-width {
-                max-width: 98vw;
-                padding: 16px;
-            }
-            h1 {
-                font-size: 1.3rem;
-                margin-top: 24px;
-                margin-bottom: 24px;
-            }
-            .card, .full-width {
-                padding: 20px 8px 16px 8px;
-                margin-bottom: 20px;
-            }
-            .results {
-                gap: 12px;
-                margin: 20px 0;
-            }
-        }
-        /* --- End STRIKE-inspired style update --- */
-    </style>
+    <link rel="stylesheet" href="global.css">
 </head>
+
 <body>
     <div class="container">
         <h1>DRIP Strategy Calculator & Tracker</h1>
-        
+
         <div class="main-content-grid">
             <div class="card">
                 <h2>📊 Portfolio Setup</h2>
                 <div class="input-group">
-                    <div>
-                        <label for="totalInvestment">Total Investment Amount ($)</label>
-                        <input type="number" id="totalInvestment" value="0" step="100" min="0">
+                    <div style="display: flex; flex-direction: column; position: relative;">
+                        <label for="totalInvestment" style="display: flex; align-items: center;">
+                            Starting Invesment
+                            <span class="tooltip-icon" tabindex="0" style="margin-left: 8px;">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                                    <circle cx="12" cy="12" r="10" fill="#FFFFFF" />
+                                    <text x="12" y="16" text-anchor="middle" font-size="16" fill="#000"
+                                        font-family="Inter, Arial" font-weight="bold">?</text>
+                                </svg>
+                                <span class="tooltip-text">
+                                    Amount you plan to add to your IUL policy in addition to your monthly premium
+                                </span>
+                            </span>
+                        </label>
+                        <div class="input-row">
+                            <span class="input-unit input-unit-left" aria-hidden="true">$</span>
+                            <input type="number" id="totalInvestment" step="100" min="0" placeholder="0"
+                                class="with-unit input-no-border" data-unit="$">
+                            <div class="input-arrows">
+                                <svg class="input-arrow" onclick="stepInput('totalInvestment', 100)"
+                                    viewBox="0 0 24 24">
+                                    <path d="M12 8l-6 6h12z" />
+                                </svg>
+                                <svg class="input-arrow" onclick="stepInput('totalInvestment', -100)"
+                                    viewBox="0 0 24 24">
+                                    <path d="M12 16l6-6H6z" />
+                                </svg>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <label for="targetAmount">Target Amount ($)</label>
-                        <input type="number" id="targetAmount" value="0" step="100" min="0">
+                    <div style="display: flex; flex-direction: column; position: relative;">
+                        <label for="targetAmount" style="display: flex; align-items: center;">
+                            Target Amount
+                            <span class="tooltip-icon" tabindex="0" style="margin-left: 8px;">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                                    <circle cx="12" cy="12" r="10" fill="#FFFFFF" />
+                                    <text x="12" y="16" text-anchor="middle" font-size="16" fill="#000"
+                                        font-family="Inter, Arial" font-weight="bold">?</text>
+                                </svg>
+                                <span class="tooltip-text">
+                                    This is your goal amount you wish to make from this strategy
+                                </span>
+                            </span>
+                        </label>
+                        <div class="input-row">
+                            <span class="input-unit input-unit-left" aria-hidden="true">$</span>
+                            <input type="number" id="targetAmount" step="100" min="0" placeholder="0"
+                                class="with-unit input-no-border">
+                            <div class="input-arrows">
+                                <svg class="input-arrow" onclick="stepInput('targetAmount', 100)" viewBox="0 0 24 24">
+                                    <path d="M12 8l-6 6h12z" />
+                                </svg>
+                                <svg class="input-arrow" onclick="stepInput('targetAmount', -100)" viewBox="0 0 24 24">
+                                    <path d="M12 16l6-6H6z" />
+                                </svg>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="input-full">
-                    <label for="distributionFreq">Distribution Frequency</label>
-                    <select id="distributionFreq">
-                        <option value="52">Weekly (52x/year)</option>
-                        <option value="26">Bi-weekly (26x/year)</option>
-                        <option value="12" selected>Monthly (12x/year)</option>
-                        <option value="4">Quarterly (4x/year)</option>
-                    </select>
+                <div class="input-full" style="display: flex; flex-direction: column;">
+                    <label for="distributionFreq" style="display: flex; align-items: center;">
+                        Distribution Frequency
+                        <span class="tooltip-icon" tabindex="0" style="margin-left: 8px;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                                <circle cx="12" cy="12" r="10" fill="#FFFFFF" />
+                                <text x="12" y="16" text-anchor="middle" font-size="16" fill="#000"
+                                    font-family="Inter, Arial" font-weight="bold">?</text>
+                            </svg>
+                            <span class="tooltip-text">
+                                This is the frequency of how often your adding additional money into your IUL
+                            </span>
+                        </span>
+                    </label>
+                    <div class="input-row" style="padding-right:0;">
+                        <select id="distributionFreq"
+                            style="flex:1; background: transparent; border: none; color: #fff; font-size: 1.15rem; font-weight: 500; height: 56px; outline: none;"
+                            class="input-no-border">
+                            <option value="52">Weekly (52x/year)</option>
+                            <option value="26">Bi-weekly (26x/year)</option>
+                            <option value="12" selected>Monthly (12x/year)</option>
+                            <option value="4">Quarterly (4x/year)</option>
+                        </select>
+                    </div>
                 </div>
             </div>
-            
+
             <div class="card">
                 <h2>💰 IUL Integration</h2>
                 <div class="input-group">
-                    <div>
+                    <div style="display: flex; flex-direction: column; position: relative;">
                         <label for="iulPremium">Monthly IUL Premium ($)</label>
-                        <input type="number" id="iulPremium" value="0" step="50" min="0">
+                        <div class="input-row">
+                            <span class="input-unit input-unit-left" aria-hidden="true">$</span>
+                            <input type="number" id="iulPremium" step="50" min="0" placeholder="0"
+                                class="with-unit input-no-border">
+                            <div class="input-arrows">
+                                <svg class="input-arrow" onclick="stepInput('iulPremium', 50)" viewBox="0 0 24 24">
+                                    <path d="M12 8l-6 6h12z" />
+                                </svg>
+                                <svg class="input-arrow" onclick="stepInput('iulPremium', -50)" viewBox="0 0 24 24">
+                                    <path d="M12 16l6-6H6z" />
+                                </svg>
+                            </div>
+                        </div>
                     </div>
-                    <div>
+                    <div style="display: flex; flex-direction: column; position: relative;">
                         <label for="iulCashValue">Current Cash Value ($)</label>
-                        <input type="number" id="iulCashValue" value="0" step="100" min="0">
+                        <div class="input-row">
+                            <span class="input-unit input-unit-left" aria-hidden="true">$</span>
+                            <input type="number" id="iulCashValue" step="100" min="0" placeholder="0"
+                                class="with-unit input-no-border">
+                            <div class="input-arrows">
+                                <svg class="input-arrow" onclick="stepInput('iulCashValue', 100)" viewBox="0 0 24 24">
+                                    <path d="M12 8l-6 6h12z" />
+                                </svg>
+                                <svg class="input-arrow" onclick="stepInput('iulCashValue', -100)" viewBox="0 0 24 24">
+                                    <path d="M12 16l6-6H6z" />
+                                </svg>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="input-group">
-                    <div>
+                    <div style="display: flex; flex-direction: column; position: relative;">
                         <label for="iulGrowthRate">Expected Growth Rate (%)</label>
-                        <input type="number" id="iulGrowthRate" value="0" step="0.5" min="0">
+                        <div class="input-row">
+                            <input type="number" id="iulGrowthRate" step="0.5" min="0" placeholder="0"
+                                class="with-unit">
+                            <span class="input-unit input-unit-right">%</span>
+                            <div class="input-arrows">
+                                <svg class="input-arrow" onclick="stepInput('iulGrowthRate', 0.5)" viewBox="0 0 24 24">
+                                    <path d="M12 8l-6 6h12z" />
+                                </svg>
+                                <svg class="input-arrow" onclick="stepInput('iulGrowthRate', -0.5)" viewBox="0 0 24 24">
+                                    <path d="M12 16l6-6H6z" />
+                                </svg>
+                            </div>
+                        </div>
                     </div>
-                    <div>
+                    <div style="display: flex; flex-direction: column; position: relative;">
                         <label for="reinvestToIUL">Reinvest % to IUL</label>
-                        <input type="number" id="reinvestToIUL" value="0" step="5" min="0" max="100">
+                        <div class="input-row">
+                            <input type="number" id="reinvestToIUL" step="5" min="0" max="100" placeholder="0"
+                                class="with-unit">
+                            <span class="input-unit input-unit-right">%</span>
+                            <div class="input-arrows">
+                                <svg class="input-arrow" onclick="stepInput('reinvestToIUL', 5)" viewBox="0 0 24 24">
+                                    <path d="M12 8l-6 6h12z" />
+                                </svg>
+                                <svg class="input-arrow" onclick="stepInput('reinvestToIUL', -5)" viewBox="0 0 24 24">
+                                    <path d="M12 16l6-6H6z" />
+                                </svg>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -353,29 +179,95 @@
             <div class="card full-width">
                 <h2>₿ Bitcoin Integration</h2>
                 <div class="input-group">
-                    <div>
+                    <div style="display: flex; flex-direction: column; position: relative;">
                         <label for="bitcoinAmountBTC">Current Bitcoin Amount (BTC)</label>
-                        <input type="number" id="bitcoinAmountBTC" value="0" step="0.001" min="0">
+                        <div class="input-row">
+                            <input type="number" id="bitcoinAmountBTC" step="0.001" min="0" placeholder="0"
+                                class="with-unit" data-unit="BTC">
+                            <div class="input-arrows">
+                                <svg class="input-arrow" onclick="stepInput('bitcoinAmountBTC', 0.001)"
+                                    viewBox="0 0 24 24">
+                                    <path d="M12 8l-6 6h12z" />
+                                </svg>
+                                <svg class="input-arrow" onclick="stepInput('bitcoinAmountBTC', -0.001)"
+                                    viewBox="0 0 24 24">
+                                    <path d="M12 16l6-6H6z" />
+                                </svg>
+                            </div>
+                        </div>
                     </div>
-                    <div>
+                    <div style="display: flex; flex-direction: column; position: relative;">
                         <label for="bitcoinPriceUSD">Bitcoin Price (USD/BTC)</label>
-                        <input type="number" id="bitcoinPriceUSD" value="0" step="100" min="0">
+                        <div class="input-row">
+                            <span class="input-unit input-unit-left" aria-hidden="true">$</span>
+                            <input type="number" id="bitcoinPriceUSD" step="100" min="0" placeholder="0"
+                                class="with-unit" data-unit="$">
+                            <div class="input-arrows">
+                                <svg class="input-arrow" onclick="stepInput('bitcoinPriceUSD', 100)"
+                                    viewBox="0 0 24 24">
+                                    <path d="M12 8l-6 6h12z" />
+                                </svg>
+                                <svg class="input-arrow" onclick="stepInput('bitcoinPriceUSD', -100)"
+                                    viewBox="0 0 24 24">
+                                    <path d="M12 16l6-6H6z" />
+                                </svg>
+                            </div>
+                        </div>
                     </div>
-                    <div>
+                    <div style="display: flex; flex-direction: column; position: relative;">
                         <label for="bitcoinCAGR">Bitcoin CAGR (%)</label>
-                        <input type="number" id="bitcoinCAGR" value="0" step="0.5" min="0">
+                        <div class="input-row">
+                            <input type="number" id="bitcoinCAGR" step="0.5" min="0" placeholder="0" class="with-unit">
+                            <span class="input-unit input-unit-right">%</span>
+                            <div class="input-arrows">
+                                <svg class="input-arrow" onclick="stepInput('bitcoinCAGR', 0.5)" viewBox="0 0 24 24">
+                                    <path d="M12 8l-6 6h12z" />
+                                </svg>
+                                <svg class="input-arrow" onclick="stepInput('bitcoinCAGR', -0.5)" viewBox="0 0 24 24">
+                                    <path d="M12 16l6-6H6z" />
+                                </svg>
+                            </div>
+                        </div>
                     </div>
-                    <div>
+                    <div style="display: flex; flex-direction: column; position: relative;">
                         <label for="bitcoinMonthlySavingsUSD">Monthly Bitcoin Savings ($)</label>
-                        <input type="number" id="bitcoinMonthlySavingsUSD" value="0" step="1" min="0">
+                        <div class="input-row">
+                            <span class="input-unit input-unit-left" aria-hidden="true">$</span>
+                            <input type="number" id="bitcoinMonthlySavingsUSD" step="1" min="0" placeholder="0"
+                                class="with-unit">
+                            <div class="input-arrows">
+                                <svg class="input-arrow" onclick="stepInput('bitcoinMonthlySavingsUSD', 1)"
+                                    viewBox="0 0 24 24">
+                                    <path d="M12 8l-6 6h12z" />
+                                </svg>
+                                <svg class="input-arrow" onclick="stepInput('bitcoinMonthlySavingsUSD', -1)"
+                                    viewBox="0 0 24 24">
+                                    <path d="M12 16l6-6H6z" />
+                                </svg>
+                            </div>
+                        </div>
                     </div>
-                    <div>
+                    <div style="display: flex; flex-direction: column; position: relative;">
                         <label for="reinvestToBitcoin">Reinvest % to Bitcoin</label>
-                        <input type="number" id="reinvestToBitcoin" value="0" step="5" min="0" max="100">
+                        <div class="input-row">
+                            <input type="number" id="reinvestToBitcoin" step="5" min="0" max="100" placeholder="0"
+                                class="with-unit">
+                            <span class="input-unit input-unit-right">%</span>
+                            <div class="input-arrows">
+                                <svg class="input-arrow" onclick="stepInput('reinvestToBitcoin', 5)"
+                                    viewBox="0 0 24 24">
+                                    <path d="M12 8l-6 6h12z" />
+                                </svg>
+                                <svg class="input-arrow" onclick="stepInput('reinvestToBitcoin', -5)"
+                                    viewBox="0 0 24 24">
+                                    <path d="M12 16l6-6H6z" />
+                                </svg>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        
+
             <div class="card full-width">
                 <h2>📈 Portfolio Positions</h2>
                 <div id="allocationError" class="error-message" style="display: none;"></div>
@@ -392,7 +284,7 @@
                         </tr>
                     </thead>
                     <tbody id="portfolioBody">
-                        </tbody>
+                    </tbody>
                 </table>
                 <div class="button-group">
                     <button class="btn" onclick="openAddPositionModal()">+ Add New Position</button>
@@ -400,8 +292,8 @@
                 </div>
             </div>
         </div>
-        
-        <div class="results" id="results" style="display: none;">
+
+        <div class="results full-widt" id="results" style="display: flex;">
             <div class="result-card">
                 <h3>Blended Yield</h3>
                 <div class="value" id="blendedYield">0%</div>
@@ -419,7 +311,7 @@
                 <div class="value" id="timeToTarget">0 months</div>
             </div>
         </div>
-        
+
         <div class="projection-chart" id="projectionChartContainer" style="display: none; height: 500px;">
             <h2>📊 Monthly Growth Projection</h2>
             <canvas id="wealthChart" style="margin-bottom: 16px; height: 400px;"></canvas>
@@ -435,7 +327,7 @@
                     </tr>
                 </thead>
                 <tbody id="projectionBody">
-                    </tbody>
+                </tbody>
             </table>
         </div>
     </div>
@@ -444,15 +336,15 @@
         <div class="modal-content">
             <h3>Add New Position</h3>
             <div class="input-group">
-                <div>
+                <div style="display: flex; flex-direction: column;">
                     <label for="modalTicker">Ticker Symbol</label>
                     <input type="text" id="modalTicker" placeholder="e.g., AAPL">
                 </div>
-                <div>
+                <div style="display: flex; flex-direction: column;">
                     <label for="modalAllocation">Allocation (%)</label>
                     <input type="number" id="modalAllocation" step="0.1" min="0" placeholder="e.g., 25">
                 </div>
-                <div>
+                <div style="display: flex; flex-direction: column;">
                     <label for="modalYield">Yield (%)</label>
                     <input type="number" id="modalYield" step="0.1" min="0" placeholder="e.g., 5">
                 </div>
@@ -468,6 +360,49 @@
         let positionCounter = 0;
         let wealthChart = null;
 
+        // Save all inputs and positions to localStorage
+        function saveState() {
+            const inputs = [
+                'totalInvestment', 'targetAmount', 'distributionFreq',
+                'iulPremium', 'iulCashValue', 'iulGrowthRate', 'reinvestToIUL',
+                'bitcoinAmountBTC', 'bitcoinPriceUSD', 'bitcoinCAGR', 'bitcoinMonthlySavingsUSD', 'reinvestToBitcoin'
+            ];
+            const state = {};
+            inputs.forEach(id => {
+                const el = document.getElementById(id);
+                // Save raw value without commas
+                state[id] = el ? el.value.replace(/,/g, '') : '';
+            });
+            state.positions = positions;
+            localStorage.setItem('dripStrategyState', JSON.stringify(state));
+        }
+
+        // Restore all inputs and positions from localStorage
+        function restoreState() {
+            const state = JSON.parse(localStorage.getItem('dripStrategyState') || '{}');
+            const inputs = [
+                'totalInvestment', 'targetAmount', 'distributionFreq',
+                'iulPremium', 'iulCashValue', 'iulGrowthRate', 'reinvestToIUL',
+                'bitcoinAmountBTC', 'bitcoinPriceUSD', 'bitcoinCAGR', 'bitcoinMonthlySavingsUSD', 'reinvestToBitcoin'
+            ];
+            inputs.forEach(id => {
+                const el = document.getElementById(id);
+                if (el && state[id] !== undefined) {
+                    // Format with commas for display
+                    if (el.type === 'number' && state[id] !== '') {
+                        el.value = Number(state[id]).toLocaleString('en-US');
+                    } else {
+                        el.value = state[id];
+                    }
+                }
+            });
+            if (Array.isArray(state.positions)) {
+                positions = state.positions;
+                positionCounter = positions.length > 0 ? Math.max(...positions.map(p => p.id)) + 1 : 0;
+            }
+            updatePortfolioDisplay();
+        }
+
         // Initialize with no default positions
         function initializeDefaultPositions() {
             positions = [];
@@ -482,6 +417,7 @@
                 allocation: allocation,
                 yield: yieldRate
             });
+            saveState();
         }
 
         function openAddPositionModal() {
@@ -500,7 +436,7 @@
             const ticker = document.getElementById('modalTicker').value.trim().toUpperCase();
             const allocation = parseFloat(document.getElementById('modalAllocation').value);
             const yieldRate = parseFloat(document.getElementById('modalYield').value);
-            
+
             if (!ticker || isNaN(allocation) || isNaN(yieldRate) || allocation <= 0 || yieldRate < 0) {
                 document.getElementById('modalError').textContent = 'Please enter valid values for all fields.';
                 document.getElementById('modalError').style.display = 'block';
@@ -521,6 +457,7 @@
 
         function removePosition(id) {
             positions = positions.filter(pos => pos.id !== id);
+            saveState();
             updatePortfolioDisplay();
         }
 
@@ -532,15 +469,16 @@
                 } else {
                     position[field] = parseFloat(value) || 0;
                 }
+                saveState();
                 updatePortfolioDisplay();
             }
         }
 
         function updatePortfolioDisplay() {
             const tbody = document.getElementById('portfolioBody');
-            const totalInvestment = parseFloat(document.getElementById('totalInvestment').value) || 0;
+            const totalInvestment = parseFloat(document.getElementById('totalInvestment').value.replace(/,/g, '')) || 0;
             const totalAllocation = positions.reduce((sum, pos) => sum + pos.allocation, 0);
-            
+
             const allocationError = document.getElementById('allocationError');
             if (totalAllocation > 100) {
                 allocationError.textContent = `Total allocation (${totalAllocation.toFixed(1)}%) exceeds 100%. Please adjust.`;
@@ -550,34 +488,46 @@
             }
 
             tbody.innerHTML = '';
-            
+
             positions.forEach(position => {
                 const amount = (totalInvestment * position.allocation / 100);
                 const annualIncome = (amount * position.yield / 100);
                 const weeklyIncome = (annualIncome / 52);
-                
+
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>
-                        <input type="text" value="${position.ticker}" 
-                               onchange="updatePosition(${position.id}, 'ticker', this.value)"
-                               style="border: none; background: transparent; color: #E5E7EB; font-weight: 600; width: 80px;">
-                    </td>
-                    <td>
-                        <input type="number" value="${position.allocation}" 
-                               onchange="updatePosition(${position.id}, 'allocation', this.value)"
-                               style="border: none; background: transparent; color: #E5E7EB; width: 60px;" min="0">%
-                    </td>
-                    <td>$${amount.toLocaleString('en-US', {maximumFractionDigits: 0})}</td>
-                    <td>
-                        <input type="number" value="${position.yield}" 
-                               onchange="updatePosition(${position.id}, 'yield', this.value)"
-                               style="border: none; background: transparent; color: #E5E7EB; width: 60px;" min="0">%
-                    </td>
-                    <td>$${annualIncome.toLocaleString('en-US', {maximumFractionDigits: 0})}</td>
-                    <td>$${weeklyIncome.toLocaleString('en-US', {maximumFractionDigits: 2})}</td>
-                    <td>
-                        <button class="remove-btn" onclick="removePosition(${position.id})">Remove</button>
+                    <td colspan="7" style="padding:0;">
+                        <div style="display: flex; width: 100%; align-items: center;">
+                            <div style="flex: 1; min-width: 80px;">
+                                <input type="text" value="${position.ticker}" 
+                                    onchange="updatePosition(${position.id}, 'ticker', this.value)"
+                                    style="border: none; background: transparent; color: #E5E7EB; font-weight: 600; width: 100%; min-width: 60px;">
+                            </div>
+                            <div style="flex: 1; min-width: 100px; display: flex; align-items: center;">
+                                <input type="number" value="${position.allocation}" 
+                                    onchange="updatePosition(${position.id}, 'allocation', this.value)"
+                                    style="border: none; background: transparent; color: #E5E7EB; width: 60px; min-width: 40px; text-align: right;" min="0">
+                                <span style="margin-left: 4px;">%</span>
+                            </div>
+                            <div style="flex: 1; min-width: 100px; text-align: right;">
+                                $${amount.toLocaleString('en-US', { maximumFractionDigits: 0 })}
+                            </div>
+                            <div style="flex: 1; min-width: 100px; display: flex; align-items: center;">
+                                <input type="number" value="${position.yield}" 
+                                    onchange="updatePosition(${position.id}, 'yield', this.value)"
+                                    style="border: none; background: transparent; color: #E5E7EB; width: 60px; min-width: 40px; text-align: right;" min="0">
+                                <span style="margin-left: 4px;">%</span>
+                            </div>
+                            <div style="flex: 1; min-width: 100px; text-align: right;">
+                                $${annualIncome.toLocaleString('en-US', { maximumFractionDigits: 0 })}
+                            </div>
+                            <div style="flex: 1; min-width: 100px; text-align: right;">
+                                $${weeklyIncome.toLocaleString('en-US', { maximumFractionDigits: 2 })}
+                            </div>
+                            <div style="flex: 1; min-width: 80px; text-align: right;">
+                                <button class="remove-btn" onclick="removePosition(${position.id})">Remove</button>
+                            </div>
+                        </div>
                     </td>
                 `;
                 tbody.appendChild(row);
@@ -585,8 +535,8 @@
         }
 
         function calculateResults() {
-            const totalInvestment = parseFloat(document.getElementById('totalInvestment').value) || 0;
-            const targetAmount = parseFloat(document.getElementById('targetAmount').value) || 0;
+            const totalInvestment = parseFloat(document.getElementById('totalInvestment').value.replace(/,/g, '')) || 0;
+            const targetAmount = parseFloat(document.getElementById('targetAmount').value.replace(/,/g, '')) || 0;
             const reinvestToIUL = parseFloat(document.getElementById('reinvestToIUL').value) || 0;
             const reinvestToBitcoin = parseFloat(document.getElementById('reinvestToBitcoin').value) || 0;
 
@@ -603,7 +553,7 @@
                 alert('Total allocation exceeds 100%. Please adjust.');
                 return;
             }
-             if (reinvestToIUL + reinvestToBitcoin > 100) {
+            if (reinvestToIUL + reinvestToBitcoin > 100) {
                 alert('The sum of reinvestment percentages for IUL and Bitcoin cannot exceed 100%.');
                 return;
             }
@@ -612,18 +562,18 @@
             positions.forEach(position => {
                 totalWeightedYield += position.allocation * position.yield;
             });
-            
+
             const blendedYield = totalAllocation > 0 ? totalWeightedYield / totalAllocation : 0;
             const annualIncome = totalInvestment * blendedYield / 100;
             const weeklyIncome = annualIncome / 52;
-            
+
             const projectionResults = generateAndRenderProjections();
-            
+
             document.getElementById('blendedYield').textContent = blendedYield.toFixed(2) + '%';
-            document.getElementById('weeklyIncome').textContent = '$' + weeklyIncome.toLocaleString('en-US', {maximumFractionDigits: 2});
-            document.getElementById('annualIncome').textContent = '$' + annualIncome.toLocaleString('en-US', {maximumFractionDigits: 0});
+            document.getElementById('weeklyIncome').textContent = '$' + weeklyIncome.toLocaleString('en-US', { maximumFractionDigits: 2 });
+            document.getElementById('annualIncome').textContent = '$' + annualIncome.toLocaleString('en-US', { maximumFractionDigits: 0 });
             document.getElementById('timeToTarget').textContent = projectionResults.timeToTarget !== 'N/A' ? `${projectionResults.timeToTarget} months` : 'N/A';
-            
+
             document.getElementById('results').style.display = 'grid';
             document.getElementById('projectionChartContainer').style.display = 'block';
 
@@ -631,16 +581,16 @@
         }
 
         function generateAndRenderProjections() {
-            const totalInvestment = parseFloat(document.getElementById('totalInvestment').value) || 0;
-            const targetAmount = parseFloat(document.getElementById('targetAmount').value) || 0;
-            const iulPremium = parseFloat(document.getElementById('iulPremium').value) || 0;
-            const iulCashValue = parseFloat(document.getElementById('iulCashValue').value) || 0;
+            const totalInvestment = parseFloat(document.getElementById('totalInvestment').value.replace(/,/g, '')) || 0;
+            const targetAmount = parseFloat(document.getElementById('targetAmount').value.replace(/,/g, '')) || 0;
+            const iulPremium = parseFloat(document.getElementById('iulPremium').value.replace(/,/g, '')) || 0;
+            const iulCashValue = parseFloat(document.getElementById('iulCashValue').value.replace(/,/g, '')) || 0;
             const iulGrowthRate = parseFloat(document.getElementById('iulGrowthRate').value) || 0;
             const reinvestToIUL = parseFloat(document.getElementById('reinvestToIUL').value) || 0;
             const bitcoinAmountBTC = parseFloat(document.getElementById('bitcoinAmountBTC').value) || 0;
-            const initialBitcoinPriceUSD = parseFloat(document.getElementById('bitcoinPriceUSD').value) || 60000;
+            const initialBitcoinPriceUSD = parseFloat(document.getElementById('bitcoinPriceUSD').value.replace(/,/g, '')) || 60000;
             const bitcoinCAGR = parseFloat(document.getElementById('bitcoinCAGR').value) || 0;
-            const bitcoinMonthlySavingsUSD = parseFloat(document.getElementById('bitcoinMonthlySavingsUSD').value) || 0;
+            const bitcoinMonthlySavingsUSD = parseFloat(document.getElementById('bitcoinMonthlySavingsUSD').value.replace(/,/g, '')) || 0;
             const reinvestToBitcoin = parseFloat(document.getElementById('reinvestToBitcoin').value) || 0;
 
             let totalWeightedYield = 0;
@@ -653,15 +603,15 @@
             const monthlyYield = blendedYield / 100 / 12;
             const monthlyIULGrowth = iulGrowthRate / 100 / 12;
             const monthlyBitcoinGrowth = Math.pow(1 + bitcoinCAGR / 100, 1 / 12) - 1;
-            
+
             let portfolioValue = totalInvestment;
             let currentIULValue = iulCashValue;
             let currentBitcoinAmountBTC = bitcoinAmountBTC;
             let currentBitcoinPriceUSD = initialBitcoinPriceUSD;
-            
+
             const tbody = document.getElementById('projectionBody');
             tbody.innerHTML = '';
-            
+
             const chartData = { labels: [], portfolio: [], iul: [], bitcoin: [], total: [] };
             let timeToTarget = 'N/A';
             let targetReached = false;
@@ -671,28 +621,28 @@
                 const toIUL = monthlyIncome * (reinvestToIUL / 100);
                 const toBitcoin = monthlyIncome * (reinvestToBitcoin / 100);
                 const toDRIP = monthlyIncome - toIUL - toBitcoin;
-                
+
                 if (month > 0) {
                     portfolioValue += toDRIP;
-                    
+
                     currentIULValue += toIUL + iulPremium;
                     currentIULValue *= (1 + monthlyIULGrowth);
-                    
+
                     const btcFromSavings = bitcoinMonthlySavingsUSD / currentBitcoinPriceUSD;
                     const btcFromReinvest = toBitcoin / currentBitcoinPriceUSD;
                     currentBitcoinAmountBTC += btcFromSavings + btcFromReinvest;
-                    
+
                     currentBitcoinPriceUSD *= (1 + monthlyBitcoinGrowth);
                 }
-                
+
                 const currentBitcoinValueUSD = currentBitcoinAmountBTC * currentBitcoinPriceUSD;
                 const totalWealth = portfolioValue + currentIULValue + currentBitcoinValueUSD;
-                
+
                 if (totalWealth >= targetAmount && timeToTarget === 'N/A') {
                     timeToTarget = month;
                     targetReached = true;
                 }
-                
+
                 // Only render up to 48 months in the monthly table
                 if (month <= 48) {
                     const row = document.createElement('tr');
@@ -701,11 +651,11 @@
                     }
                     row.innerHTML = `
                         <td>${month}</td>
-                        <td>$${portfolioValue.toLocaleString('en-US', {maximumFractionDigits: 0})}</td>
-                        <td>$${monthlyIncome.toLocaleString('en-US', {maximumFractionDigits: 0})}</td>
-                        <td>$${currentIULValue.toLocaleString('en-US', {maximumFractionDigits: 0})}</td>
-                        <td>$${currentBitcoinValueUSD.toLocaleString('en-US', {maximumFractionDigits: 0})}</td>
-                        <td>$${totalWealth.toLocaleString('en-US', {maximumFractionDigits: 0})}</td>
+                        <td>$${portfolioValue.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
+                        <td>$${monthlyIncome.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
+                        <td>$${currentIULValue.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
+                        <td>$${currentBitcoinValueUSD.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
+                        <td>$${totalWealth.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
                     `;
                     tbody.appendChild(row);
                 }
@@ -721,7 +671,7 @@
                     break;
                 }
             }
-            
+
             // After the monthly table, render a 5-year annual projection table
             const annualTable = document.createElement('table');
             annualTable.className = 'projection-table';
@@ -747,16 +697,16 @@
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>${year}</td>
-                        <td>$${chartData.portfolio[monthIdx].toLocaleString('en-US', {maximumFractionDigits: 0})}</td>
-                        <td>$${(chartData.portfolio[monthIdx] * blendedYield / 100).toLocaleString('en-US', {maximumFractionDigits: 0})}</td>
-                        <td>$${chartData.iul[monthIdx].toLocaleString('en-US', {maximumFractionDigits: 0})}</td>
-                        <td>$${chartData.bitcoin[monthIdx].toLocaleString('en-US', {maximumFractionDigits: 0})}</td>
-                        <td>$${chartData.total[monthIdx].toLocaleString('en-US', {maximumFractionDigits: 0})}</td>
+                        <td>$${chartData.portfolio[monthIdx].toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
+                        <td>$${(chartData.portfolio[monthIdx] * blendedYield / 100).toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
+                        <td>$${chartData.iul[monthIdx].toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
+                        <td>$${chartData.bitcoin[monthIdx].toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
+                        <td>$${chartData.total[monthIdx].toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
                     `;
                     annualTbody.appendChild(row);
                 }
             }
-            
+
             return { timeToTarget, chartData };
         }
 
@@ -764,7 +714,7 @@
             if (wealthChart) {
                 wealthChart.destroy();
             }
-            
+
             const ctx = document.getElementById('wealthChart').getContext('2d');
             wealthChart = new Chart(ctx, {
                 type: 'line',
@@ -812,9 +762,9 @@
                         y: {
                             beginAtZero: true,
                             title: { display: true, text: 'Value ($)', color: '#E5E7EB' },
-                            ticks: { 
+                            ticks: {
                                 color: '#E5E7EB',
-                                callback: function(value) {
+                                callback: function (value) {
                                     return '$' + Number(value).toLocaleString();
                                 }
                             },
@@ -833,21 +783,68 @@
             });
         }
 
+        // Show/hide unit inside input field
+        function updateInputUnits() {
+            document.querySelectorAll('.with-unit').forEach(input => {
+                const wrapper = input.parentElement;
+                const unitSpan = wrapper.querySelector('.input-unit');
+                if (unitSpan) {
+                    unitSpan.textContent = input.getAttribute('data-unit') || unitSpan.textContent;
+                    unitSpan.style.display = 'block';
+                }
+            });
+        }
+
+        function stepInput(id, step) {
+            const input = document.getElementById(id);
+            if (!input) return;
+            let value = parseFloat(input.value) || 0;
+            value += step;
+            if (input.min !== undefined && value < parseFloat(input.min)) value = parseFloat(input.min);
+            if (input.max !== undefined && value > parseFloat(input.max)) value = parseFloat(input.max);
+            input.value = value;
+            input.dispatchEvent(new Event('input'));
+            input.dispatchEvent(new Event('change'));
+        }
+
+        // Format input value with commas for thousands
+        function formatNumberInput(input) {
+            let val = input.value.replace(/,/g, '');
+            if (val === '') return;
+            if (!isNaN(val)) {
+                input.value = Number(val).toLocaleString('en-US');
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
-            initializeDefaultPositions();
-            document.getElementById('totalInvestment').addEventListener('input', updatePortfolioDisplay);
-            document.getElementById('targetAmount').addEventListener('input', updatePortfolioDisplay);
-            document.getElementById('distributionFreq').addEventListener('change', updatePortfolioDisplay);
-            document.getElementById('iulPremium').addEventListener('input', updatePortfolioDisplay);
-            document.getElementById('iulCashValue').addEventListener('input', updatePortfolioDisplay);
-            document.getElementById('iulGrowthRate').addEventListener('input', updatePortfolioDisplay);
-            document.getElementById('reinvestToIUL').addEventListener('input', updatePortfolioDisplay);
-            document.getElementById('bitcoinAmountBTC').addEventListener('input', updatePortfolioDisplay);
-            document.getElementById('bitcoinPriceUSD').addEventListener('input', updatePortfolioDisplay);
-            document.getElementById('bitcoinCAGR').addEventListener('input', updatePortfolioDisplay);
-            document.getElementById('bitcoinMonthlySavingsUSD').addEventListener('input', updatePortfolioDisplay);
-            document.getElementById('reinvestToBitcoin').addEventListener('input', updatePortfolioDisplay);
+            restoreState();
+            const inputIds = [
+                'totalInvestment', 'targetAmount', 'distributionFreq', 'iulPremium', 'iulCashValue', 'iulGrowthRate', 'reinvestToIUL', 'bitcoinAmountBTC', 'bitcoinPriceUSD', 'bitcoinCAGR', 'bitcoinMonthlySavingsUSD', 'reinvestToBitcoin'
+            ];
+            inputIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('input', saveState);
+                    el.addEventListener('change', saveState);
+                }
+            });
+            document.querySelectorAll('.with-unit').forEach(input => {
+                input.addEventListener('input', function () {
+                    // Only format on blur, not while typing
+                    updateInputUnits();
+                });
+                input.addEventListener('change', function () {
+                    formatNumberInput(input);
+                    updateInputUnits();
+                });
+                input.addEventListener('blur', function () {
+                    formatNumberInput(input);
+                    updateInputUnits();
+                });
+            });
+            updateInputUnits();
         });
     </script>
 </body>
+
 </html>

@@ -1,0 +1,592 @@
+/* --- Modern STRIKE-inspired style update --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #000;
+    color: #fff;
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.container {
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
+    max-width: 1280px;
+    width: 100%;
+    margin: 0 auto;
+    padding-left: 64px;
+    padding-right: 64px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+h1 {
+    color: #fff;
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-top: 48px;
+    margin-bottom: 32px;
+    text-align: center;
+    letter-spacing: 0.01em;
+}
+
+.desc {
+    color: #b3b3b3;
+    font-size: 1.1rem;
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.card,
+.full-width {
+    background: #111;
+    border-radius: 18px;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.15);
+    padding: 32px 24px 24px 24px;
+    margin-bottom: 32px;
+    width: 100%;
+    max-width: 420px;
+}
+
+.card h2 {
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 18px;
+}
+
+.main-content-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 20px;
+    margin-bottom: 24px;
+    width: 100%;
+    max-width: 1280px;
+}
+
+.card {
+    max-width: none;
+}
+
+.main-content-grid .card:nth-child(1) {
+    grid-column: 1 / 2;
+}
+
+.main-content-grid .card:nth-child(2) {
+    grid-column: 2 / 3;
+}
+
+.full-width {
+    grid-column: 1 / -1;
+    max-width: none;
+    width: 100%;
+}
+
+.input-group,
+.input-full {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+label {
+    color: #8F90A6;
+    font-size: 0.95rem;
+    margin-bottom: 6px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    transition: color 0.2s;
+}
+
+input,
+select {
+    background: #181A20;
+    color: #fff;
+    border: 1.5px solid #23262F;
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 1rem;
+    margin-bottom: 0;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-shadow: none;
+}
+
+input:focus,
+select:focus {
+    border-color: #5F6AFF;
+    box-shadow: 0 0 0 2px rgba(95, 106, 255, 0.15);
+    outline: none;
+}
+
+/* Error state */
+.input-error input,
+.input-error select {
+    border-color: #FF4747 !important;
+    color: #FF4747;
+}
+
+.input-error label {
+    color: #FF4747 !important;
+}
+
+.error-message {
+    color: #FF4747;
+    font-size: 0.85rem;
+    margin-top: 6px;
+    text-align: left;
+    font-weight: 500;
+}
+
+/* Helper text */
+.helper-text {
+    color: #8F90A6;
+    font-size: 0.85rem;
+    margin-top: 6px;
+    text-align: left;
+    font-weight: 400;
+}
+
+/* Input field text default */
+input::placeholder,
+select::placeholder {
+    color: #8F90A6;
+    opacity: 1;
+}
+
+.btn {
+    background: #fff;
+    color: #000;
+    border: none;
+    border-radius: 10px;
+    padding: 14px 0;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 12px;
+    margin-bottom: 0;
+    width: 100%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: background 0.2s, color 0.2s;
+}
+
+.btn:hover {
+    background: #f2f2f2;
+    color: #222;
+}
+
+.button-group {
+    display: flex;
+    gap: 16px;
+    margin-top: 24px;
+    justify-content: center;
+}
+
+.portfolio-table,
+.projection-table {
+    background: #111;
+    color: #fff;
+    border-radius: 12px;
+    width: 100%;
+    margin: 16px 0;
+    font-size: 0.95rem;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.portfolio-table th,
+.projection-table th {
+    background: #222;
+    color: #fff;
+    font-weight: 600;
+    padding: 12px;
+    border-bottom: 1px solid #222;
+}
+
+.portfolio-table td,
+.projection-table td {
+    padding: 12px;
+    border-bottom: 1px solid #222;
+}
+
+.portfolio-table td {
+    padding: 0;
+    border-bottom: 1px solid #222;
+}
+
+.portfolio-table .flex-row {
+    display: flex;
+    width: 100%;
+    align-items: center;
+}
+
+.portfolio-table input[type="number"], 
+.portfolio-table input[type="text"] {
+    width: 100%;
+    min-width: 40px;
+    max-width: 80px;
+    box-sizing: border-box;
+    text-align: right;
+}
+
+.portfolio-table td > div {
+    flex: 1;
+    min-width: 80px;
+    padding: 12px;
+    box-sizing: border-box;
+}
+
+.portfolio-table td > div:last-child {
+    text-align: right;
+}
+
+.results {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+    margin: 32px 0;
+}
+
+.result-card {
+    background: #111;
+    color: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.result-card h3 {
+    font-size: 1rem;
+    margin-bottom: 8px;
+    color: #b3b3b3;
+}
+
+.result-card .value {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.projection-chart {
+    background: #252F31;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 24px;
+}
+
+.highlight {
+    background: #F5A623;
+    color: #1C2526;
+    font-weight: 600;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: #252F31;
+    padding: 20px;
+    border-radius: 8px;
+    width: 360px;
+    max-width: 90%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.modal-content h3 {
+    margin-bottom: 12px;
+    color: #F5A623;
+}
+
+.close-btn {
+    background: #EF4444;
+    color: #FFFFFF;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 8px;
+}
+
+.close-btn:hover {
+    background: #DC2626;
+}
+
+/* Floating Bitcoin icons */
+.btc-float {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    z-index: 10;
+    animation: btcFloat 4s infinite ease-in-out alternate;
+}
+
+.btc-float.btc1 {
+    left: 10%;
+    top: 20%;
+    animation-delay: 0s;
+}
+
+.btc-float.btc2 {
+    right: 10%;
+    top: 30%;
+    animation-delay: 1s;
+}
+
+@keyframes btcFloat {
+    0% {
+        transform: translateY(0) rotate(-10deg);
+    }
+
+    100% {
+        transform: translateY(30px) rotate(10deg);
+    }
+}
+
+/* Responsive styles */
+@media (max-width: 1400px) {
+    .container {
+        max-width: 98vw;
+        padding-left: 32px;
+        padding-right: 32px;
+    }
+}
+
+@media (max-width: 900px) {
+    .main-content-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .card,
+    .full-width {
+        max-width: 100vw;
+        padding: 20px 8px 16px 8px;
+        margin-bottom: 20px;
+    }
+}
+
+@media (max-width: 600px) {
+    body {
+        align-items: flex-start;
+        justify-content: flex-start;
+    }
+
+    .container,
+    .card,
+    .full-width {
+        max-width: 100vw;
+        padding-left: 4px;
+        padding-right: 4px;
+    }
+
+    h1 {
+        font-size: 1.1rem;
+        margin-top: 16px;
+        margin-bottom: 16px;
+    }
+
+    .card,
+    .full-width {
+        padding: 12px 4px 10px 4px;
+        margin-bottom: 12px;
+    }
+
+    .main-content-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .results {
+        gap: 8px;
+        margin: 10px 0;
+    }
+
+    .result-card {
+        padding: 12px;
+        font-size: 0.9rem;
+    }
+
+    .projection-chart {
+        padding: 8px;
+        margin-top: 12px;
+    }
+
+    .portfolio-table,
+    .projection-table {
+        font-size: 0.85rem;
+    }
+}
+
+/* Make tables horizontally scrollable on small screens */
+.portfolio-table,
+.projection-table {
+    overflow-x: auto;
+    display: block;
+}
+
+/* Custom input field container for dark mode */
+.input-row {
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    background: #181A20;
+    border: 1.5px solid #23262F;
+    border-radius: 16px;
+    padding: 0 16px;
+    height: 56px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    margin-bottom: 12px;
+}
+
+
+.input-unit-left {
+    margin-right: 10px;
+    align-items: center !important;
+    text-align: center;
+    justify-content: left;
+    color: #fff;
+    font-size: 1.25rem;
+    font-weight: 400;
+    z-index: 2;
+    background: transparent;
+}
+
+/* Right unit styling */
+.input-unit-right {
+    color: #fff;
+    font-size: 1.15rem;
+    font-weight: 500;
+    margin-left: 12px;
+    min-width: 36px;
+    text-align: right;
+}
+
+/* Input field styling */
+.with-unit {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 1.25rem;
+    font-weight: 500;
+    flex: 1;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 0;
+    outline: none;
+    text-align: left;
+    height: 56px;
+}
+
+/* Remove border from input when typing */
+.input-no-border {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent;
+}
+
+/* Remove focus border for this input */
+.input-no-border:focus {
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+/* Hide default number input arrows */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+    display: none;
+}
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+/* Custom arrow container */
+.input-arrows {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-left: 8px;
+    height: 100%;
+    cursor: pointer;
+}
+
+.input-arrow {
+    width: 18px;
+    height: 18px;
+    fill: #fff;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+.input-arrow:hover {
+    opacity: 1;
+}
+
+/* Focus state for input-row */
+.input-row:focus-within {
+    border-color: none;
+    box-shadow: none;
+}
+
+/* Tooltip styles */
+.tooltip-icon {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.tooltip-icon svg {
+    vertical-align: middle;
+}
+
+.tooltip-text {
+    display: none;
+    position: absolute;
+    left: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #181A20;
+    color: #fff;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    white-space: pre-line;
+    z-index: 10;
+    min-width: 220px;
+    max-width: 320px;
+}
+
+.tooltip-icon:hover .tooltip-text,
+.tooltip-icon:focus .tooltip-text {
+    display: block;
+}
+
+/* --- End STRIKE-inspired style update --- */
