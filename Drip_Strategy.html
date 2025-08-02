@@ -14,8 +14,8 @@
     <div class="container">
         <h1>DRIP Strategy Calculator & Tracker</h1>
 
-        <div class="main-content-grid">
-            <div class="card">
+        <div class="main-content-grid portfolio-grid">
+            <div class="card portfolio-setup">
                 <h2>📊 Portfolio Setup</h2>
                 <div class="input-group">
                     <div style="display: flex; flex-direction: column; position: relative;">
@@ -28,13 +28,13 @@
                                         font-family="Inter, Arial" font-weight="bold">?</text>
                                 </svg>
                                 <span class="tooltip-text">
-                                    Amount you plan to add to your IUL policy in addition to your monthly premium
+                                    Amount you plan to add to your ETFs
                                 </span>
                             </span>
                         </label>
                         <div class="input-row">
                             <span class="input-unit input-unit-left" aria-hidden="true">$</span>
-                            <input type="number" id="totalInvestment" step="100" min="0" placeholder="0"
+                            <input type="text" id="totalInvestment" step="100" min="0" placeholder="0"
                                 class="with-unit input-no-border" data-unit="$">
                             <div class="input-arrows">
                                 <svg class="input-arrow" onclick="stepInput('totalInvestment', 100)"
@@ -64,7 +64,7 @@
                         </label>
                         <div class="input-row">
                             <span class="input-unit input-unit-left" aria-hidden="true">$</span>
-                            <input type="number" id="targetAmount" step="100" min="0" placeholder="0"
+                            <input type="text" id="targetAmount" step="100" min="0" placeholder="0"
                                 class="with-unit input-no-border">
                             <div class="input-arrows">
                                 <svg class="input-arrow" onclick="stepInput('targetAmount', 100)" viewBox="0 0 24 24">
@@ -77,7 +77,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="input-full" style="display: flex; flex-direction: column;">
+                <div class="" style="display: flex; flex-direction: column;">
                     <label for="distributionFreq" style="display: flex; align-items: center;">
                         Distribution Frequency
                         <span class="tooltip-icon" tabindex="0" style="margin-left: 8px;">
@@ -91,7 +91,7 @@
                             </span>
                         </span>
                     </label>
-                    <div class="input-row" style="padding-right:0;">
+                    <div class="input-row">
                         <select id="distributionFreq"
                             style="flex:1; background: transparent; border: none; color: #fff; font-size: 1.15rem; font-weight: 500; height: 56px; outline: none;"
                             class="input-no-border">
@@ -104,11 +104,37 @@
                 </div>
             </div>
 
-            <div class="card">
+            <div class="card portfolio-positions">
+                <h2>📈 Portfolio Positions</h2>
+                <div id="allocationError" class="error-message" style="display: none;"></div>
+                <table class="portfolio-table" id="portfolioTable">
+                    <thead>
+                        <tr>
+                            <th>Ticker</th>
+                            <th>Allocation %</th>
+                            <th>Amount ($)</th>
+                            <th>Yield %</th>
+                            <th>Annual Income</th>
+                            <th>Weekly Income</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="portfolioBody">
+                    </tbody>
+                </table>
+                <div class="button-group">
+                    <button class="btn" onclick="openAddPositionModal()">+ Add New Position</button>
+                    <button class="btn" onclick="calculateResults()">🚀 Calculate Strategy</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="integration-grid">
+            <div class="card iul-integration">
                 <h2>💰 IUL Integration</h2>
                 <div class="input-group">
                     <div style="display: flex; flex-direction: column; position: relative;">
-                        <label for="iulPremium">Monthly IUL Premium ($)</label>
+                        <label for="iulPremium">Monthly IUL Premium</label>
                         <div class="input-row">
                             <span class="input-unit input-unit-left" aria-hidden="true">$</span>
                             <input type="number" id="iulPremium" step="50" min="0" placeholder="0"
@@ -124,10 +150,10 @@
                         </div>
                     </div>
                     <div style="display: flex; flex-direction: column; position: relative;">
-                        <label for="iulCashValue">Current Cash Value ($)</label>
+                        <label for="iulCashValue">Current Cash Value</label>
                         <div class="input-row">
                             <span class="input-unit input-unit-left" aria-hidden="true">$</span>
-                            <input type="number" id="iulCashValue" step="100" min="0" placeholder="0"
+                            <input type="text" id="iulCashValue" step="100" min="0" placeholder="0"
                                 class="with-unit input-no-border">
                             <div class="input-arrows">
                                 <svg class="input-arrow" onclick="stepInput('iulCashValue', 100)" viewBox="0 0 24 24">
@@ -142,7 +168,7 @@
                 </div>
                 <div class="input-group">
                     <div style="display: flex; flex-direction: column; position: relative;">
-                        <label for="iulGrowthRate">Expected Growth Rate (%)</label>
+                        <label for="iulGrowthRate">Expected Growth Rate</label>
                         <div class="input-row">
                             <input type="number" id="iulGrowthRate" step="0.5" min="0" placeholder="0"
                                 class="with-unit">
@@ -176,14 +202,14 @@
                 </div>
             </div>
 
-            <div class="card full-width">
+            <div class="card bitcoin-integration">
                 <h2>₿ Bitcoin Integration</h2>
                 <div class="input-group">
                     <div style="display: flex; flex-direction: column; position: relative;">
                         <label for="bitcoinAmountBTC">Current Bitcoin Amount (BTC)</label>
                         <div class="input-row">
                             <input type="number" id="bitcoinAmountBTC" step="0.001" min="0" placeholder="0"
-                                class="with-unit" data-unit="BTC">
+                                class="with-unit input-no-border" data-unit="BTC">
                             <div class="input-arrows">
                                 <svg class="input-arrow" onclick="stepInput('bitcoinAmountBTC', 0.001)"
                                     viewBox="0 0 24 24">
@@ -197,11 +223,11 @@
                         </div>
                     </div>
                     <div style="display: flex; flex-direction: column; position: relative;">
-                        <label for="bitcoinPriceUSD">Bitcoin Price (USD/BTC)</label>
+                        <label for="bitcoinPriceUSD">Current Bitcoin Price</label>
                         <div class="input-row">
                             <span class="input-unit input-unit-left" aria-hidden="true">$</span>
-                            <input type="number" id="bitcoinPriceUSD" step="100" min="0" placeholder="0"
-                                class="with-unit" data-unit="$">
+                            <input type="text" id="bitcoinPriceUSD" step="100" min="0" placeholder="0"
+                                class="with-unit input-no-border" data-unit="$">
                             <div class="input-arrows">
                                 <svg class="input-arrow" onclick="stepInput('bitcoinPriceUSD', 100)"
                                     viewBox="0 0 24 24">
@@ -217,7 +243,8 @@
                     <div style="display: flex; flex-direction: column; position: relative;">
                         <label for="bitcoinCAGR">Bitcoin CAGR (%)</label>
                         <div class="input-row">
-                            <input type="number" id="bitcoinCAGR" step="0.5" min="0" placeholder="0" class="with-unit">
+                            <input type="number" id="bitcoinCAGR" step="0.5" min="0" placeholder="0"
+                                class="with-unit input-no-border">
                             <span class="input-unit input-unit-right">%</span>
                             <div class="input-arrows">
                                 <svg class="input-arrow" onclick="stepInput('bitcoinCAGR', 0.5)" viewBox="0 0 24 24">
@@ -230,11 +257,11 @@
                         </div>
                     </div>
                     <div style="display: flex; flex-direction: column; position: relative;">
-                        <label for="bitcoinMonthlySavingsUSD">Monthly Bitcoin Savings ($)</label>
+                        <label for="bitcoinMonthlySavingsUSD">Monthly Bitcoin Savings</label>
                         <div class="input-row">
                             <span class="input-unit input-unit-left" aria-hidden="true">$</span>
                             <input type="number" id="bitcoinMonthlySavingsUSD" step="1" min="0" placeholder="0"
-                                class="with-unit">
+                                class="with-unit input-no-border">
                             <div class="input-arrows">
                                 <svg class="input-arrow" onclick="stepInput('bitcoinMonthlySavingsUSD', 1)"
                                     viewBox="0 0 24 24">
@@ -251,7 +278,7 @@
                         <label for="reinvestToBitcoin">Reinvest % to Bitcoin</label>
                         <div class="input-row">
                             <input type="number" id="reinvestToBitcoin" step="5" min="0" max="100" placeholder="0"
-                                class="with-unit">
+                                class="with-unit input-no-border">
                             <span class="input-unit input-unit-right">%</span>
                             <div class="input-arrows">
                                 <svg class="input-arrow" onclick="stepInput('reinvestToBitcoin', 5)"
@@ -265,30 +292,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <div class="card full-width">
-                <h2>📈 Portfolio Positions</h2>
-                <div id="allocationError" class="error-message" style="display: none;"></div>
-                <table class="portfolio-table" id="portfolioTable">
-                    <thead>
-                        <tr>
-                            <th>Ticker</th>
-                            <th>Allocation %</th>
-                            <th>Amount ($)</th>
-                            <th>Yield %</th>
-                            <th>Annual Income</th>
-                            <th>Weekly Income</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="portfolioBody">
-                    </tbody>
-                </table>
-                <div class="button-group">
-                    <button class="btn" onclick="openAddPositionModal()">+ Add New Position</button>
-                    <button class="btn" onclick="calculateResults()">🚀 Calculate Strategy</button>
                 </div>
             </div>
         </div>
@@ -359,6 +362,7 @@
         let positions = [];
         let positionCounter = 0;
         let wealthChart = null;
+        let editingPositionId = null; // Track which position is being edited
 
         // Save all inputs and positions to localStorage
         function saveState() {
@@ -388,11 +392,16 @@
             inputs.forEach(id => {
                 const el = document.getElementById(id);
                 if (el && state[id] !== undefined) {
-                    // Format with commas for display
-                    if (el.type === 'number' && state[id] !== '') {
-                        el.value = Number(state[id]).toLocaleString('en-US');
-                    } else {
+                    // Format with commas for display if it's a number or can be parsed as a number
+                    if (el.type === 'number') {
                         el.value = state[id];
+                    } else {
+                        // Try to format as number if possible
+                        if (state[id] !== '' && !isNaN(state[id])) {
+                            el.value = Number(state[id]).toLocaleString('en-US');
+                        } else {
+                            el.value = state[id];
+                        }
                     }
                 }
             });
@@ -410,22 +419,25 @@
             updatePortfolioDisplay();
         }
 
-        function addPositionToArray(ticker, allocation, yieldRate) {
-            positions.push({
-                id: positionCounter++,
-                ticker: ticker,
-                allocation: allocation,
-                yield: yieldRate
-            });
-            saveState();
-        }
-
-        function openAddPositionModal() {
+        function openAddPositionModal(editId = null) {
             document.getElementById('addPositionModal').style.display = 'flex';
-            document.getElementById('modalTicker').value = '';
-            document.getElementById('modalAllocation').value = '';
-            document.getElementById('modalYield').value = '';
             document.getElementById('modalError').style.display = 'none';
+            editingPositionId = editId;
+
+            if (editId !== null) {
+                // Editing existing position
+                const pos = positions.find(p => p.id === editId);
+                if (pos) {
+                    document.getElementById('modalTicker').value = pos.ticker;
+                    document.getElementById('modalAllocation').value = pos.allocation;
+                    document.getElementById('modalYield').value = pos.yield;
+                }
+            } else {
+                // Adding new position
+                document.getElementById('modalTicker').value = '';
+                document.getElementById('modalAllocation').value = '';
+                document.getElementById('modalYield').value = '';
+            }
         }
 
         function closeAddPositionModal() {
@@ -443,14 +455,31 @@
                 return;
             }
 
-            const totalAllocation = positions.reduce((sum, pos) => sum + pos.allocation, 0) + allocation;
-            if (totalAllocation > 100) {
-                document.getElementById('modalError').textContent = 'Total allocation exceeds 100%.';
-                document.getElementById('modalError').style.display = 'block';
-                return;
+            // If editing, update the position
+            if (editingPositionId !== null) {
+                const pos = positions.find(p => p.id === editingPositionId);
+                if (pos) {
+                    pos.ticker = ticker;
+                    pos.allocation = allocation;
+                    pos.yield = yieldRate;
+                }
+                editingPositionId = null;
+            } else {
+                // Adding new position
+                const totalAllocation = positions.reduce((sum, pos) => sum + pos.allocation, 0) + allocation;
+                if (totalAllocation > 100) {
+                    document.getElementById('modalError').textContent = 'Total allocation exceeds 100%.';
+                    document.getElementById('modalError').style.display = 'block';
+                    return;
+                }
+                positions.push({
+                    id: positionCounter++,
+                    ticker: ticker,
+                    allocation: allocation,
+                    yield: yieldRate
+                });
             }
-
-            addPositionToArray(ticker, allocation, yieldRate);
+            saveState();
             updatePortfolioDisplay();
             closeAddPositionModal();
         }
@@ -459,19 +488,6 @@
             positions = positions.filter(pos => pos.id !== id);
             saveState();
             updatePortfolioDisplay();
-        }
-
-        function updatePosition(id, field, value) {
-            const position = positions.find(pos => pos.id === id);
-            if (position) {
-                if (field === 'ticker') {
-                    position[field] = value.toUpperCase();
-                } else {
-                    position[field] = parseFloat(value) || 0;
-                }
-                saveState();
-                updatePortfolioDisplay();
-            }
         }
 
         function updatePortfolioDisplay() {
@@ -496,38 +512,15 @@
 
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td colspan="7" style="padding:0;">
-                        <div style="display: flex; width: 100%; align-items: center;">
-                            <div style="flex: 1; min-width: 80px;">
-                                <input type="text" value="${position.ticker}" 
-                                    onchange="updatePosition(${position.id}, 'ticker', this.value)"
-                                    style="border: none; background: transparent; color: #E5E7EB; font-weight: 600; width: 100%; min-width: 60px;">
-                            </div>
-                            <div style="flex: 1; min-width: 100px; display: flex; align-items: center;">
-                                <input type="number" value="${position.allocation}" 
-                                    onchange="updatePosition(${position.id}, 'allocation', this.value)"
-                                    style="border: none; background: transparent; color: #E5E7EB; width: 60px; min-width: 40px; text-align: right;" min="0">
-                                <span style="margin-left: 4px;">%</span>
-                            </div>
-                            <div style="flex: 1; min-width: 100px; text-align: right;">
-                                $${amount.toLocaleString('en-US', { maximumFractionDigits: 0 })}
-                            </div>
-                            <div style="flex: 1; min-width: 100px; display: flex; align-items: center;">
-                                <input type="number" value="${position.yield}" 
-                                    onchange="updatePosition(${position.id}, 'yield', this.value)"
-                                    style="border: none; background: transparent; color: #E5E7EB; width: 60px; min-width: 40px; text-align: right;" min="0">
-                                <span style="margin-left: 4px;">%</span>
-                            </div>
-                            <div style="flex: 1; min-width: 100px; text-align: right;">
-                                $${annualIncome.toLocaleString('en-US', { maximumFractionDigits: 0 })}
-                            </div>
-                            <div style="flex: 1; min-width: 100px; text-align: right;">
-                                $${weeklyIncome.toLocaleString('en-US', { maximumFractionDigits: 2 })}
-                            </div>
-                            <div style="flex: 1; min-width: 80px; text-align: right;">
-                                <button class="remove-btn" onclick="removePosition(${position.id})">Remove</button>
-                            </div>
-                        </div>
+                    <td>${position.ticker}</td>
+                    <td>${position.allocation}%</td>
+                    <td>$${amount.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
+                    <td>${position.yield}%</td>
+                    <td>$${annualIncome.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
+                    <td>$${weeklyIncome.toLocaleString('en-US', { maximumFractionDigits: 2 })}</td>
+                    <td>
+                        <button class="edit-btn" onclick="openAddPositionModal(${position.id})">Edit</button>
+                        <button class="remove-btn" onclick="removePosition(${position.id})">Remove</button>
                     </td>
                 `;
                 tbody.appendChild(row);
@@ -810,7 +803,7 @@
         // Format input value with commas for thousands
         function formatNumberInput(input) {
             let val = input.value.replace(/,/g, '');
-            if (val === '') return;
+            if (val === '') return; // Don't overwrite with 0
             if (!isNaN(val)) {
                 input.value = Number(val).toLocaleString('en-US');
             }
@@ -830,11 +823,7 @@
             });
             document.querySelectorAll('.with-unit').forEach(input => {
                 input.addEventListener('input', function () {
-                    // Only format on blur, not while typing
-                    updateInputUnits();
-                });
-                input.addEventListener('change', function () {
-                    formatNumberInput(input);
+                    // Only update units, do not format
                     updateInputUnits();
                 });
                 input.addEventListener('blur', function () {
