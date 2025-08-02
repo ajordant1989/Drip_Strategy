@@ -142,173 +142,193 @@
                 <div class="button-group">
                     <div class="main-action-btns">
                         <button class="btn" onclick="openAddPositionModal()">+ Add New Position</button>
-                        <button class="btn" onclick="calculateResults()">🚀 Calculate Strategy</button>
+                        <button class="btn" onclick="calculateResults()">Calculate Strategy</button>
                     </div>
                     <button class="projection-btn" onclick="scrollToProjection()">Growth Projection</button>
                 </div>
             </div>
         </div>
 
-        <div class="integration-grid">
-            <div class="card iul-integration">
-                <h2>💰 IUL Integration</h2>
-                <div class="input-group">
-                    <div style="display: flex; flex-direction: column; position: relative;">
-                        <label for="iulPremium">Monthly IUL Premium</label>
-                        <div class="input-row">
-                            <span class="input-unit input-unit-left" aria-hidden="true">$</span>
-                            <input type="number" id="iulPremium" step="50" min="0" placeholder="0"
-                                class="with-unit input-no-border">
-                            <div class="input-arrows">
-                                <svg class="input-arrow" onclick="stepInput('iulPremium', 50)" viewBox="0 0 24 24">
-                                    <path d="M12 8l-6 6h12z" />
-                                </svg>
-                                <svg class="input-arrow" onclick="stepInput('iulPremium', -50)" viewBox="0 0 24 24">
-                                    <path d="M12 16l6-6H6z" />
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-                    <div style="display: flex; flex-direction: column; position: relative;">
-                        <label for="iulCashValue">Current Cash Value</label>
-                        <div class="input-row">
-                            <span class="input-unit input-unit-left" aria-hidden="true">$</span>
-                            <input type="text" id="iulCashValue" step="100" min="0" placeholder="0"
-                                class="with-unit input-no-border">
-                            <div class="input-arrows">
-                                <svg class="input-arrow" onclick="stepInput('iulCashValue', 100)" viewBox="0 0 24 24">
-                                    <path d="M12 8l-6 6h12z" />
-                                </svg>
-                                <svg class="input-arrow" onclick="stepInput('iulCashValue', -100)" viewBox="0 0 24 24">
-                                    <path d="M12 16l6-6H6z" />
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="input-group">
-                    <div style="display: flex; flex-direction: column; position: relative;">
-                        <label for="iulGrowthRate">Expected Growth Rate</label>
-                        <div class="input-row">
-                            <input type="number" id="iulGrowthRate" step="0.5" min="0" placeholder="0"
-                                class="with-unit">
-                            <span class="input-unit input-unit-right">%</span>
-                            <div class="input-arrows">
-                                <svg class="input-arrow" onclick="stepInput('iulGrowthRate', 0.5)" viewBox="0 0 24 24">
-                                    <path d="M12 8l-6 6h12z" />
-                                </svg>
-                                <svg class="input-arrow" onclick="stepInput('iulGrowthRate', -0.5)" viewBox="0 0 24 24">
-                                    <path d="M12 16l6-6H6z" />
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-                    <div style="display: flex; flex-direction: column; position: relative;">
-                        <label for="reinvestToIUL">Reinvest % to IUL</label>
-                        <div class="input-row">
-                            <input type="number" id="reinvestToIUL" step="5" min="0" max="100" placeholder="0"
-                                class="with-unit">
-                            <span class="input-unit input-unit-right">%</span>
-                            <div class="input-arrows">
-                                <svg class="input-arrow" onclick="stepInput('reinvestToIUL', 5)" viewBox="0 0 24 24">
-                                    <path d="M12 8l-6 6h12z" />
-                                </svg>
-                                <svg class="input-arrow" onclick="stepInput('reinvestToIUL', -5)" viewBox="0 0 24 24">
-                                    <path d="M12 16l6-6H6z" />
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <!-- Integration Grid Toggle Switch -->
+        <div style="width:100%; display:flex; justify-content:flex-end; margin-bottom:16px;">
+            <label class="toggle-switch" id="integrationToggleLabel">
+                <input type="checkbox" id="toggleIntegrationGridSwitch" checked>
+                <span class="slider"></span>
+            </label>
+            <span id="toggleIntegrationGridText"
+                style="margin-left:12px; color:#fff; font-weight:500; font-size:1rem;">Hide Integrations</span>
+        </div>
 
-            <div class="card bitcoin-integration">
-                <h2>₿ Bitcoin Integration</h2>
-                <div class="input-group">
-                    <div style="display: flex; flex-direction: column; position: relative;">
-                        <label for="bitcoinAmountBTC">Current Bitcoin Amount (BTC)</label>
-                        <div class="input-row">
-                            <input type="number" id="bitcoinAmountBTC" step="0.001" min="0" placeholder="0"
-                                class="with-unit input-no-border" data-unit="BTC">
-                            <div class="input-arrows">
-                                <svg class="input-arrow" onclick="stepInput('bitcoinAmountBTC', 0.001)"
-                                    viewBox="0 0 24 24">
-                                    <path d="M12 8l-6 6h12z" />
-                                </svg>
-                                <svg class="input-arrow" onclick="stepInput('bitcoinAmountBTC', -0.001)"
-                                    viewBox="0 0 24 24">
-                                    <path d="M12 16l6-6H6z" />
-                                </svg>
+        <div id="integrationGridContainer" style="width: 100%;">
+            <div class="integration-grid" style="display: flex; gap: 32px; width: 100;">
+                <div class="card iul-integration">
+                    <h2>💰 IUL Integration</h2>
+                    <div class="input-group">
+                        <div style="display: flex; flex-direction: column; position: relative;">
+                            <label for="iulPremium">Monthly IUL Premium</label>
+                            <div class="input-row">
+                                <span class="input-unit input-unit-left" aria-hidden="true">$</span>
+                                <input type="number" id="iulPremium" step="50" min="0" placeholder="0"
+                                    class="with-unit input-no-border">
+                                <div class="input-arrows">
+                                    <svg class="input-arrow" onclick="stepInput('iulPremium', 50)" viewBox="0 0 24 24">
+                                        <path d="M12 8l-6 6h12z" />
+                                    </svg>
+                                    <svg class="input-arrow" onclick="stepInput('iulPremium', -50)" viewBox="0 0 24 24">
+                                        <path d="M12 16l6-6H6z" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; position: relative;">
+                            <label for="iulCashValue">Current Cash Value</label>
+                            <div class="input-row">
+                                <span class="input-unit input-unit-left" aria-hidden="true">$</span>
+                                <input type="text" id="iulCashValue" step="100" min="0" placeholder="0"
+                                    class="with-unit input-no-border">
+                                <div class="input-arrows">
+                                    <svg class="input-arrow" onclick="stepInput('iulCashValue', 100)"
+                                        viewBox="0 0 24 24">
+                                        <path d="M12 8l-6 6h12z" />
+                                    </svg>
+                                    <svg class="input-arrow" onclick="stepInput('iulCashValue', -100)"
+                                        viewBox="0 0 24 24">
+                                        <path d="M12 16l6-6H6z" />
+                                    </svg>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div style="display: flex; flex-direction: column; position: relative;">
-                        <label for="bitcoinPriceUSD">Current Bitcoin Price</label>
-                        <div class="input-row">
-                            <span class="input-unit input-unit-left" aria-hidden="true">$</span>
-                            <input type="text" id="bitcoinPriceUSD" step="100" min="0" placeholder="0"
-                                class="with-unit input-no-border" data-unit="$">
-                            <div class="input-arrows">
-                                <svg class="input-arrow" onclick="stepInput('bitcoinPriceUSD', 100)"
-                                    viewBox="0 0 24 24">
-                                    <path d="M12 8l-6 6h12z" />
-                                </svg>
-                                <svg class="input-arrow" onclick="stepInput('bitcoinPriceUSD', -100)"
-                                    viewBox="0 0 24 24">
-                                    <path d="M12 16l6-6H6z" />
-                                </svg>
+                    <div class="input-group">
+                        <div style="display: flex; flex-direction: column; position: relative;">
+                            <label for="iulGrowthRate">Expected Growth Rate</label>
+                            <div class="input-row">
+                                <input type="number" id="iulGrowthRate" step="0.5" min="0" placeholder="0"
+                                    class="with-unit">
+                                <span class="input-unit input-unit-right">%</span>
+                                <div class="input-arrows">
+                                    <svg class="input-arrow" onclick="stepInput('iulGrowthRate', 0.5)"
+                                        viewBox="0 0 24 24">
+                                        <path d="M12 8l-6 6h12z" />
+                                    </svg>
+                                    <svg class="input-arrow" onclick="stepInput('iulGrowthRate', -0.5)"
+                                        viewBox="0 0 24 24">
+                                        <path d="M12 16l6-6H6z" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; position: relative;">
+                            <label for="reinvestToIUL">Reinvest % to IUL</label>
+                            <div class="input-row">
+                                <input type="number" id="reinvestToIUL" step="5" min="0" max="100" placeholder="0"
+                                    class="with-unit">
+                                <span class="input-unit input-unit-right">%</span>
+                                <div class="input-arrows">
+                                    <svg class="input-arrow" onclick="stepInput('reinvestToIUL', 5)"
+                                        viewBox="0 0 24 24">
+                                        <path d="M12 8l-6 6h12z" />
+                                    </svg>
+                                    <svg class="input-arrow" onclick="stepInput('reinvestToIUL', -5)"
+                                        viewBox="0 0 24 24">
+                                        <path d="M12 16l6-6H6z" />
+                                    </svg>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div style="display: flex; flex-direction: column; position: relative;">
-                        <label for="bitcoinCAGR">Bitcoin CAGR (%)</label>
-                        <div class="input-row">
-                            <input type="number" id="bitcoinCAGR" step="0.5" min="0" placeholder="0"
-                                class="with-unit input-no-border">
-                            <span class="input-unit input-unit-right">%</span>
-                            <div class="input-arrows">
-                                <svg class="input-arrow" onclick="stepInput('bitcoinCAGR', 0.5)" viewBox="0 0 24 24">
-                                    <path d="M12 8l-6 6h12z" />
-                                </svg>
-                                <svg class="input-arrow" onclick="stepInput('bitcoinCAGR', -0.5)" viewBox="0 0 24 24">
-                                    <path d="M12 16l6-6H6z" />
-                                </svg>
+                </div>
+
+                <div class="card bitcoin-integration">
+                    <h2>₿ Bitcoin Integration</h2>
+                    <div class="input-group">
+                        <div style="display: flex; flex-direction: column; position: relative;">
+                            <label for="bitcoinAmountBTC">Current Bitcoin Amount (BTC)</label>
+                            <div class="input-row">
+                                <input type="number" id="bitcoinAmountBTC" step="0.001" min="0" placeholder="0"
+                                    class="with-unit input-no-border" data-unit="BTC">
+                                <div class="input-arrows">
+                                    <svg class="input-arrow" onclick="stepInput('bitcoinAmountBTC', 0.001)"
+                                        viewBox="0 0 24 24">
+                                        <path d="M12 8l-6 6h12z" />
+                                    </svg>
+                                    <svg class="input-arrow" onclick="stepInput('bitcoinAmountBTC', -0.001)"
+                                        viewBox="0 0 24 24">
+                                        <path d="M12 16l6-6H6z" />
+                                    </svg>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div style="display: flex; flex-direction: column; position: relative;">
-                        <label for="bitcoinMonthlySavingsUSD">Monthly Bitcoin Savings</label>
-                        <div class="input-row">
-                            <span class="input-unit input-unit-left" aria-hidden="true">$</span>
-                            <input type="number" id="bitcoinMonthlySavingsUSD" step="1" min="0" placeholder="0"
-                                class="with-unit input-no-border">
-                            <div class="input-arrows">
-                                <svg class="input-arrow" onclick="stepInput('bitcoinMonthlySavingsUSD', 1)"
-                                    viewBox="0 0 24 24">
-                                    <path d="M12 8l-6 6h12z" />
-                                </svg>
-                                <svg class="input-arrow" onclick="stepInput('bitcoinMonthlySavingsUSD', -1)"
-                                    viewBox="0 0 24 24">
-                                    <path d="M12 16l6-6H6z" />
-                                </svg>
+                        <div style="display: flex; flex-direction: column; position: relative;">
+                            <label for="bitcoinPriceUSD">Current Bitcoin Price</label>
+                            <div class="input-row">
+                                <span class="input-unit input-unit-left" aria-hidden="true">$</span>
+                                <input type="text" id="bitcoinPriceUSD" step="100" min="0" placeholder="0"
+                                    class="with-unit input-no-border" data-unit="$">
+                                <div class="input-arrows">
+                                    <svg class="input-arrow" onclick="stepInput('bitcoinPriceUSD', 100)"
+                                        viewBox="0 0 24 24">
+                                        <path d="M12 8l-6 6h12z" />
+                                    </svg>
+                                    <svg class="input-arrow" onclick="stepInput('bitcoinPriceUSD', -100)"
+                                        viewBox="0 0 24 24">
+                                        <path d="M12 16l6-6H6z" />
+                                    </svg>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div style="display: flex; flex-direction: column; position: relative;">
-                        <label for="reinvestToBitcoin">Reinvest % to Bitcoin</label>
-                        <div class="input-row">
-                            <input type="number" id="reinvestToBitcoin" step="5" min="0" max="100" placeholder="0"
-                                class="with-unit input-no-border">
-                            <span class="input-unit input-unit-right">%</span>
-                            <div class="input-arrows">
-                                <svg class="input-arrow" onclick="stepInput('reinvestToBitcoin', 5)"
-                                    viewBox="0 0 24 24">
-                                    <path d="M12 8l-6 6h12z" />
-                                </svg>
-                                <svg class="input-arrow" onclick="stepInput('reinvestToBitcoin', -5)"
-                                    viewBox="0 0 24 24">
-                                    <path d="M12 16l6-6H6z" />
-                                </svg>
+                        <div style="display: flex; flex-direction: column; position: relative;">
+                            <label for="bitcoinCAGR">Bitcoin CAGR (%)</label>
+                            <div class="input-row">
+                                <input type="number" id="bitcoinCAGR" step="0.5" min="0" placeholder="0"
+                                    class="with-unit input-no-border">
+                                <span class="input-unit input-unit-right">%</span>
+                                <div class="input-arrows">
+                                    <svg class="input-arrow" onclick="stepInput('bitcoinCAGR', 0.5)"
+                                        viewBox="0 0 24 24">
+                                        <path d="M12 8l-6 6h12z" />
+                                    </svg>
+                                    <svg class="input-arrow" onclick="stepInput('bitcoinCAGR', -0.5)"
+                                        viewBox="0 0 24 24">
+                                        <path d="M12 16l6-6H6z" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; position: relative;">
+                            <label for="bitcoinMonthlySavingsUSD">Monthly Bitcoin Savings</label>
+                            <div class="input-row">
+                                <span class="input-unit input-unit-left" aria-hidden="true">$</span>
+                                <input type="number" id="bitcoinMonthlySavingsUSD" step="1" min="0" placeholder="0"
+                                    class="with-unit input-no-border">
+                                <div class="input-arrows">
+                                    <svg class="input-arrow" onclick="stepInput('bitcoinMonthlySavingsUSD', 1)"
+                                        viewBox="0 0 24 24">
+                                        <path d="M12 8l-6 6h12z" />
+                                    </svg>
+                                    <svg class="input-arrow" onclick="stepInput('bitcoinMonthlySavingsUSD', -1)"
+                                        viewBox="0 0 24 24">
+                                        <path d="M12 16l6-6H6z" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; position: relative;">
+                            <label for="reinvestToBitcoin">Reinvest % to Bitcoin</label>
+                            <div class="input-row">
+                                <input type="number" id="reinvestToBitcoin" step="5" min="0" max="100" placeholder="0"
+                                    class="with-unit input-no-border">
+                                <span class="input-unit input-unit-right">%</span>
+                                <div class="input-arrows">
+                                    <svg class="input-arrow" onclick="stepInput('reinvestToBitcoin', 5)"
+                                        viewBox="0 0 24 24">
+                                        <path d="M12 8l-6 6h12z" />
+                                    </svg>
+                                    <svg class="input-arrow" onclick="stepInput('reinvestToBitcoin', -5)"
+                                        viewBox="0 0 24 24">
+                                        <path d="M12 16l6-6H6z" />
+                                    </svg>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -662,7 +682,7 @@
                     targetReached = true;
                 }
 
-                // Only render up to 48 months in the monthly table
+                // Only render up to 48 months in the monthly table and chart
                 if (month <= 48) {
                     const row = document.createElement('tr');
                     if (month === timeToTarget) {
@@ -677,15 +697,16 @@
                         <td>$${totalWealth.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
                     `;
                     tbody.appendChild(row);
+
+                    // Only push chart data for months 0-48
+                    chartData.labels.push(`Month ${month}`);
+                    chartData.portfolio.push(portfolioValue);
+                    chartData.iul.push(currentIULValue);
+                    chartData.bitcoin.push(currentBitcoinValueUSD);
+                    chartData.total.push(totalWealth);
                 }
 
-                chartData.labels.push(`Month ${month}`);
-                chartData.portfolio.push(portfolioValue);
-                chartData.iul.push(currentIULValue);
-                chartData.bitcoin.push(currentBitcoinValueUSD);
-                chartData.total.push(totalWealth);
-
-                // Stop charting data after 5 years unless target hasn't been hit
+                // Stop charting data after 5 years unless target hasn't been
                 if (month > 60 && targetReached) {
                     break;
                 }
@@ -861,6 +882,20 @@
                 });
             });
             updateInputUnits();
+
+            // Collapse/Expand Integration Grid using toggle switch
+            const toggleSwitch = document.getElementById('toggleIntegrationGridSwitch');
+            const integrationGridContainer = document.getElementById('integrationGridContainer');
+            const toggleText = document.getElementById('toggleIntegrationGridText');
+            toggleSwitch.addEventListener('change', function () {
+                if (toggleSwitch.checked) {
+                    integrationGridContainer.style.display = 'block';
+                    toggleText.textContent = 'Hide Integrations';
+                } else {
+                    integrationGridContainer.style.display = 'none';
+                    toggleText.textContent = 'Show Integrations';
+                }
+            });
         });
 
         function scrollToProjection() {

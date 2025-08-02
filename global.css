@@ -542,6 +542,53 @@ select::placeholder {
     animation-delay: 1s;
 }
 
+        /* Toggle Switch Styles */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 54px;
+            height: 28px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #222;
+            border: 2px solid #fff;
+            border-radius: 999px;
+            transition: background 0.2s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 2px;
+            background: #fff;
+            border-radius: 50%;
+            transition: transform 0.2s;
+        }
+
+        .toggle-switch input:checked+.slider {
+            background: #222;
+        }
+
+        .toggle-switch input:checked+.slider:before {
+            transform: translateX(24px);
+        }
+
 @keyframes btcFloat {
     0% {
         transform: translateY(0) rotate(-10deg);
