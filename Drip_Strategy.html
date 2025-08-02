@@ -140,8 +140,11 @@
                     </tbody>
                 </table>
                 <div class="button-group">
-                    <button class="btn" onclick="openAddPositionModal()">+ Add New Position</button>
-                    <button class="btn" onclick="calculateResults()">🚀 Calculate Strategy</button>
+                    <div class="main-action-btns">
+                        <button class="btn" onclick="openAddPositionModal()">+ Add New Position</button>
+                        <button class="btn" onclick="calculateResults()">🚀 Calculate Strategy</button>
+                    </div>
+                    <button class="projection-btn" onclick="scrollToProjection()">Growth Projection</button>
                 </div>
             </div>
         </div>
@@ -313,10 +316,11 @@
             </div>
         </div>
 
-        <div class="projection-chart" id="projectionChartContainer" style="display: none; height: 500px;">
+        <div class="projection-chart" id="projectionChartContainer"
+            style="height: 500px; width: 100%; max-width: 1280px;">
             <h2>📊 Monthly Growth Projection</h2>
-            <canvas id="wealthChart" style="margin-bottom: 16px; height: 400px;"></canvas>
-            <table class="projection-table" id="projectionTable">
+            <canvas id="wealthChart" style="margin-bottom: 16px; height: 400px; width: 100%;"></canvas>
+            <table class="projection-table" id="projectionTable" style="width: 100%; max-width: 1280px;">
                 <thead>
                     <tr>
                         <th>Month</th>
@@ -493,6 +497,21 @@
             const totalInvestment = parseFloat(document.getElementById('totalInvestment').value.replace(/,/g, '')) || 0;
             const totalAllocation = positions.reduce((sum, pos) => sum + pos.allocation, 0);
 
+            // Get distribution frequency and label
+            const freqSelect = document.getElementById('distributionFreq');
+            const freqValue = parseInt(freqSelect.value, 10);
+            let freqLabel = 'Weekly Income';
+            if (freqValue === 52) freqLabel = 'Weekly Income';
+            else if (freqValue === 26) freqLabel = 'Bi-weekly Income';
+            else if (freqValue === 12) freqLabel = 'Monthly Income';
+            else if (freqValue === 4) freqLabel = 'Quarterly Income';
+
+            // Update table header
+            const ths = document.querySelectorAll('#portfolioTable thead th');
+            if (ths.length >= 6) {
+                ths[5].textContent = freqLabel;
+            }
+
             const allocationError = document.getElementById('allocationError');
             if (totalAllocation > 100) {
                 allocationError.textContent = `Total allocation (${totalAllocation.toFixed(1)}%) exceeds 100%. Please adjust.`;
@@ -506,7 +525,13 @@
             positions.forEach(position => {
                 const amount = (totalInvestment * position.allocation / 100);
                 const annualIncome = (amount * position.yield / 100);
-                const weeklyIncome = (annualIncome / 52);
+
+                // Calculate income based on frequency
+                let freqIncome = annualIncome / freqValue;
+                if (freqValue === 4) freqIncome = annualIncome / 4; // Quarterly
+                else if (freqValue === 12) freqIncome = annualIncome / 12; // Monthly
+                else if (freqValue === 26) freqIncome = annualIncome / 26; // Bi-weekly
+                else if (freqValue === 52) freqIncome = annualIncome / 52; // Weekly
 
                 const row = document.createElement('tr');
                 row.innerHTML = `
@@ -515,7 +540,7 @@
                     <td>$${amount.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
                     <td>${position.yield}%</td>
                     <td>$${annualIncome.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
-                    <td>$${weeklyIncome.toLocaleString('en-US', { maximumFractionDigits: 2 })}</td>
+                    <td>$${freqIncome.toLocaleString('en-US', { maximumFractionDigits: 2 })}</td>
                     <td>
                         <button class="edit-btn" onclick="openAddPositionModal(${position.id})">Edit</button>
                         <button class="remove-btn" onclick="removePosition(${position.id})">Remove</button>
@@ -822,6 +847,9 @@
                     el.addEventListener('change', saveState);
                 }
             });
+            // Update table when distribution frequency changes
+            document.getElementById('distributionFreq').addEventListener('change', updatePortfolioDisplay);
+
             document.querySelectorAll('.with-unit').forEach(input => {
                 input.addEventListener('input', function () {
                     // Only update units, do not format
@@ -834,6 +862,13 @@
             });
             updateInputUnits();
         });
+
+        function scrollToProjection() {
+            const chart = document.getElementById('projectionChartContainer');
+            if (chart) {
+                chart.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
     </script>
 </body>
 

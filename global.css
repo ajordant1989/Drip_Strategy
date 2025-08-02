@@ -187,9 +187,12 @@ select::placeholder {
 
 .button-group {
     display: flex;
+    flex-direction: column;
     gap: 16px;
-    margin-top: 24px;
-    justify-content: center;
+    margin-top: auto;
+    justify-content: flex-end;
+    align-items: stretch;
+    height: 100%;
 }
 
 .button-group .btn {
@@ -218,29 +221,60 @@ select::placeholder {
 }
 
 .button-group .btn:last-child {
-    background: #10B981;
+    background: #065f46;
     color: #fff;
 }
 
 .button-group .btn:last-child:hover {
-    background: #059669;
+    background: #064e3b;
     color: #fff;
 }
 
-.portfolio-table,
-.projection-table {
+/* Space below main buttons for projection button */
+.button-group .main-action-btns {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.projection-btn {
+    background: transparent;
+    color: #fff;
+    border: 2px solid #fff;
+    border-radius: 10px;
+    padding: 14px 0;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    margin: 0;
+    display: block;
+    text-align: center;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.projection-btn:hover {
+    background: #181A20;
+    color: #fff;
+    border-color: #2563eb;
+}
+
+/* Portfolio Table Styles */
+.portfolio-table {
     background: #111;
     color: #fff;
     border-radius: 12px;
     width: 100%;
+    max-width: 1280px;
     margin: 16px 0;
     font-size: 0.95rem;
     border-collapse: separate;
     border-spacing: 0;
+    overflow-x: auto;
+    display: block;
 }
 
-.portfolio-table th,
-.projection-table th {
+.portfolio-table th {
     background: #181A20;
     color: #8F90A6;
     font-weight: 600;
@@ -249,16 +283,13 @@ select::placeholder {
     border: 1px solid #23262F;
 }
 
-.portfolio-table td,
-.projection-table td {
+.portfolio-table td {
     padding: 12px;
     border: 1px solid #23262F;
     text-align: left;
 }
 
-/* Add horizontal dividers between table rows */
-.portfolio-table tr:not(:last-child) td,
-.projection-table tr:not(:last-child) td {
+.portfolio-table tr:not(:last-child) td {
     border-bottom: 2px solid #23262F;
 }
 
@@ -286,6 +317,77 @@ select::placeholder {
 
 .portfolio-table td > div:last-child {
     text-align: right;
+}
+
+/* Projection Table Styles */
+.projection-table {
+    background: #111;
+    color: #fff;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 100%;
+    margin: 32px 0;
+    font-size: 0.95rem;
+    border-collapse: separate;
+    border-spacing: 0;
+    box-sizing: border-box;
+    table-layout: fixed;
+    overflow-x: auto;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+}
+
+.projection-table thead {
+    flex: 0 0 auto;
+    width: 100%;
+    display: table;
+    table-layout: fixed;
+    background: #181A20;
+    color: #8F90A6;
+    font-weight: 600;
+    border-bottom: 2px solid #23262F;
+}
+
+.projection-table tbody {
+    flex: 1 1 auto;
+    width: 100%;
+    display: table;
+    table-layout: fixed;
+}
+
+.projection-table tr {
+    display: table-row;
+    width: 100%;
+    height: 48px;
+}
+
+.projection-table th,
+.projection-table td {
+    width: auto;
+    min-width: 0;
+    word-break: break-word;
+    padding: 12px;
+    border: 1px solid #23262F;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.projection-table tr:not(:last-child) td {
+    border-bottom: 2px solid #23262F;
+}
+
+/* Responsive: make rows stretch and wrap text if needed */
+@media (max-width: 900px) {
+    .projection-table th,
+    .projection-table td {
+        font-size: 0.85rem;
+        padding: 8px;
+    }
+    .projection-table tr {
+        height: auto;
+    }
 }
 
 .results {
@@ -319,11 +421,27 @@ select::placeholder {
     font-weight: 700;
 }
 
+/* Chart.js custom styles for STRIKE-inspired look */
 .projection-chart {
-    background: #252F31;
-    border-radius: 8px;
-    padding: 20px;
+    background: #111;
+    border-radius: 16px;
+    box-shadow: 0 4px 32px rgba(0,0,0,0.35);
+    padding: 32px 0px 24px 0px;
     margin-top: 24px;
+    width: 100%;
+    max-width: 1280px;
+    box-sizing: border-box;
+}
+
+#wealthChart {
+    background: transparent;
+    border-radius: 16px;
+    box-shadow: none;
+}
+
+/* Chart grid lines and axes */
+.chartjs-render-monitor {
+    /* Chart.js canvas, let JS handle sizing */
 }
 
 .highlight {
@@ -473,18 +591,41 @@ select::placeholder {
     gap: 20px;
     width: 100%;
     max-width: 1280px;
+    align-items: stretch;
+}
+
+.portfolio-setup,
+.portfolio-positions,
+.card.portfolio-setup,
+.card.portfolio-positions {
+    flex: 1 1 0;
+    max-width: none;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    min-height: 0;
+    height: 100%;
 }
 
 .portfolio-setup {
-    flex: 1 1 0;
-    width: 33.3333%;
-    max-width: none;
+    /* Make sure background stretches to match sibling height */
+    align-self: stretch;
 }
 
-.portfolio-positions {
-    flex: 2 1 0;
-    width: 66.6667%;
-    max-width: none;
+.card.portfolio-setup {
+    /* Ensure card background stretches to match parent height */
+    height: 100%;
+}
+
+.portfolio-positions,
+.card.portfolio-positions {
+    align-self: stretch;
+    height: 100%;
+}
+
+/* Fix for overflow: ensure card content does not overflow */
+.card {
+    overflow: visible;
 }
 
 /* Responsive: stack on mobile */
