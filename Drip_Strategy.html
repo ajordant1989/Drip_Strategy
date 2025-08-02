@@ -13,7 +13,24 @@
 <body>
     <div class="container">
         <h1>DRIP Strategy Calculator & Tracker</h1>
-
+        <div class="results full-width" id="results" style="display: flex;">
+            <div class="result-card">
+                <h3>Blended Yield</h3>
+                <div class="value" id="blendedYield">0%</div>
+            </div>
+            <div class="result-card">
+                <h3>Weekly Income</h3>
+                <div class="value" id="weeklyIncome">$0</div>
+            </div>
+            <div class="result-card">
+                <h3>Annual Income</h3>
+                <div class="value" id="annualIncome">$0</div>
+            </div>
+            <div class="result-card">
+                <h3>Time to Target</h3>
+                <div class="value" id="timeToTarget">0 months</div>
+            </div>
+        </div>
         <div class="main-content-grid portfolio-grid">
             <div class="card portfolio-setup">
                 <h2>📊 Portfolio Setup</h2>
@@ -296,25 +313,6 @@
             </div>
         </div>
 
-        <div class="results full-widt" id="results" style="display: flex;">
-            <div class="result-card">
-                <h3>Blended Yield</h3>
-                <div class="value" id="blendedYield">0%</div>
-            </div>
-            <div class="result-card">
-                <h3>Weekly Income</h3>
-                <div class="value" id="weeklyIncome">$0</div>
-            </div>
-            <div class="result-card">
-                <h3>Annual Income</h3>
-                <div class="value" id="annualIncome">$0</div>
-            </div>
-            <div class="result-card">
-                <h3>Time to Target</h3>
-                <div class="value" id="timeToTarget">0 months</div>
-            </div>
-        </div>
-
         <div class="projection-chart" id="projectionChartContainer" style="display: none; height: 500px;">
             <h2>📊 Monthly Growth Projection</h2>
             <canvas id="wealthChart" style="margin-bottom: 16px; height: 400px;"></canvas>
@@ -567,7 +565,10 @@
             document.getElementById('annualIncome').textContent = '$' + annualIncome.toLocaleString('en-US', { maximumFractionDigits: 0 });
             document.getElementById('timeToTarget').textContent = projectionResults.timeToTarget !== 'N/A' ? `${projectionResults.timeToTarget} months` : 'N/A';
 
-            document.getElementById('results').style.display = 'grid';
+            // FIX: Do not change display style here!
+            // Remove or comment out this line:
+            // document.getElementById('results').style.display = 'grid';
+
             document.getElementById('projectionChartContainer').style.display = 'block';
 
             renderChart(projectionResults.chartData);
