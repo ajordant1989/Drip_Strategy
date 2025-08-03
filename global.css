@@ -36,7 +36,7 @@ h1 {
     font-size: 2.2rem;
     font-weight: 700;
     margin-top: 48px;
-    margin-bottom: 32px;
+    margin-bottom: 8px;
     text-align: center;
     letter-spacing: 0.01em;
 }
@@ -750,29 +750,672 @@ select::placeholder {
     min-width: 0;
 }
 
+label {
+    color: #8F90A6;
+    font-size: 0.95rem;
+    margin-bottom: 6px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    transition: color 0.2s;
+}
+
+input,
+select {
+    background: #181A20;
+    color: #fff;
+    border: 1.5px solid #23262F;
+    border-radius: 10px;
+    padding: 0px 16px 0px 0px;
+    font-size: 1rem;
+    margin-bottom: 0;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-shadow: none;
+}
+
+input:focus,
+select:focus {
+    border-color: #5F6AFF;
+    box-shadow: 0 0 0 2px rgba(95, 106, 255, 0.15);
+    outline: none;
+}
+
+/* Error state */
+.input-error input,
+.input-error select {
+    border-color: #FF4747 !important;
+    color: #FF4747;
+}
+
+.input-error label {
+    color: #FF4747 !important;
+}
+
+.error-message {
+    color: #FF4747;
+    font-size: 0.85rem;
+    margin-top: 6px;
+    text-align: left;
+    font-weight: 500;
+}
+
+/* Helper text */
+.helper-text {
+    color: #8F90A6;
+    font-size: 0.85rem;
+    margin-top: 6px;
+    text-align: left;
+    font-weight: 400;
+}
+
+/* Input field text default */
+input::placeholder,
+select::placeholder {
+    color: #8F90A6;
+    opacity: 1;
+}
+
+.btn {
+    background: #fff;
+    color: #000;
+    border: none;
+    border-radius: 10px;
+    padding: 14px 0;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 12px;
+    margin-bottom: 0;
+    width: 100%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: background 0.2s, color 0.2s;
+}
+
+.btn:hover {
+    background: #f2f2f2;
+    color: #222;
+}
+
+/* Green button style for Calculate Strategy */
+.btn-green {
+    background: #065f46;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 14px 0;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: background 0.2s, color 0.2s;
+}
+
+.btn-green:hover {
+    background: #064e3b;
+    color: #fff;
+}
+
+/* Blue button style for Add New Position */
+.btn-blue {
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 14px 0;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    width: 30%;
+    margin: 0 auto;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: background 0.2s, color 0.2s;
+}
+
+.btn-blue:hover {
+    background: #1d4ed8;
+    color: #fff;
+}
+
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: auto;
+    justify-content: flex-end;
+    align-items: stretch;
+    height: 100%;
+}
+
+.button-group .btn {
+    border: none;
+    border-radius: 10px;
+    padding: 14px 0;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: background 0.2s, color 0.2s;
+    margin: 0;
+    display: block;
+    text-align: center;
+}
+
+.button-group .btn:first-child {
+    background: #2563eb;
+    color: #fff;
+}
+
+.button-group .btn:first-child:hover {
+    background: #1d4ed8;
+    color: #fff;
+}
+
+.button-group .btn:last-child {
+    background: #065f46;
+    color: #fff;
+}
+
+.button-group .btn:last-child:hover {
+    background: #064e3b;
+    color: #fff;
+}
+
+/* Space below main buttons for projection button */
+.button-group .main-action-btns {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.projection-btn {
+    background: transparent;
+    color: #fff;
+    border: 2px solid #fff;
+    border-radius: 10px;
+    padding: 14px 0;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    margin: 0;
+    display: block;
+    text-align: center;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.projection-btn:hover {
+    background: #000;
+    color: #fff;
+    border-color: #FF;
+}
+
+/* Portfolio Table Styles */
+.portfolio-table {
+    background: #111;
+    color: #fff;
+    border-radius: 12px;
+    width: 100%;
+    margin: 16px 0;
+    font-size: 0.95rem;
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: fixed; /* Fixed layout to control column widths */
+    display: table;
+    overflow-x: visible;
+    min-width: 100%;
+    box-sizing: border-box;
+    table-layout: auto; /* Let columns size based on content */
+}
+
+.portfolio-table th {
+    background: #181A20;
+    color: #8F90A6;
+    font-weight: 600;
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #23262F;
+}
+
+.portfolio-table td {
+    padding: 12px;
+    border: 1px solid #23262F;
+    text-align: left;
+}
+
+.portfolio-table tr:not(:last-child) td {
+    border-bottom: 2px solid #23262F;
+}
+
+.portfolio-table .flex-row {
+    display: flex;
+    width: 100%;
+    align-items: center;
+}
+
+.portfolio-table input[type="number"], 
+.portfolio-table input[type="text"] {
+    width: 100%;
+    min-width: 40px;
+    max-width: 80px;
+    box-sizing: border-box;
+}
+
+.portfolio-table td > div {
+    flex: 1;
+    min-width: 0;
+    padding: 12px;
+    box-sizing: border-box;
+}
+
+.portfolio-table td > div:last-child {
+    text-align: right;
+}
+
+/* Projection Table Styles */
+.projection-table {
+    background: #111;
+    color: #fff;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 100%;
+    margin: 32px 0;
+    font-size: 0.95rem;
+    border-collapse: separate;
+    border-spacing: 0;
+    box-sizing: border-box;
+    table-layout: fixed;
+    overflow-x: auto;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+}
+
+.projection-table thead {
+    flex: 0 0 auto;
+    width: 100%;
+    display: table;
+    table-layout: fixed;
+    background: #181A20;
+    color: #8F90A6;
+    font-weight: 600;
+    border-bottom: 2px solid #23262F;
+}
+
+.projection-table tbody {
+    flex: 1 1 auto;
+    width: 100%;
+    display: table;
+    table-layout: fixed;
+}
+
+.projection-table tr {
+    display: table-row;
+    width: 100%;
+    height: 48px;
+}
+
+.projection-table th,
+.projection-table td {
+    width: auto;
+    min-width: 0;
+    word-break: break-word;
+    padding: 12px;
+    border: 1px solid #23262F;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.projection-table tr:not(:last-child) td {
+    border-bottom: 2px solid #23262F;
+}
+
+/* Responsive: make rows stretch and wrap text if needed */
 @media (max-width: 900px) {
-    .portfolio-setup-inputs {
-        flex-direction: column;
-        gap: 12px;
+    .projection-table th,
+    .projection-table td {
+        font-size: 0.85rem;
+        padding: 8px;
     }
-    .portfolio-section {
-        gap: 16px;
+    .projection-table tr {
+        height: auto;
     }
 }
 
-/* Responsive: stack on mobile */
-@media (max-width: 900px) {
-    .portfolio-grid {
-        flex-direction: column;
-        gap: 12px;
+.results {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    margin: 16px 0;
+    width: 100%;
+    max-width: 1280px;
+    border: 1px solid #065f46;
+}
+
+.result-card {
+    flex: 1 1 0;
+    background: #111;
+    color: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin-bottom: 0;
+    min-width: 0;
+}
+
+.result-card h3 {
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: #8F90A6;
+}
+
+.result-card .value {
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+/* Chart.js custom styles for STRIKE-inspired look */
+.projection-chart {
+    background: #111;
+    border-radius: 16px;
+    box-shadow: 0 4px 32px rgba(0,0,0,0.35);
+    padding: 32px 0px 24px 0px;
+    margin-top: 24px;
+    width: 100%;
+    max-width: 1280px;
+    box-sizing: border-box;
+}
+
+#wealthChart {
+    background: transparent;
+    border-radius: 16px;
+    box-shadow: none;
+}
+
+/* Chart grid lines and axes */
+.chartjs-render-monitor {
+    /* Chart.js canvas, let JS handle sizing */
+}
+
+.highlight {
+    background: #F5A623;
+    color: #1C2526;
+    font-weight: 600;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: #111;
+    padding: 20px;
+    border-radius: 8px;
+    width: 360px;
+    max-width: 90%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.modal-content h3 {
+    margin-bottom: 12px;
+    color: #FFF;
+}
+
+.modal-content .btn,
+.modal-content .close-btn {
+    background: transparent;
+    border: 1.5px solid;
+    border-radius: 8px;
+    padding: 10px 0;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    display: block;
+    text-align: center;
+    margin: 0;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.modal-content .btn {
+    color: #3B82F6;
+    border-color: #3B82F6;
+    margin-bottom: 8px;
+}
+
+.modal-content .btn:hover {
+    background: #000;
+    color: #3B82F6;
+    border-color: #2563eb;
+}
+
+.modal-content .close-btn {
+    color: #EF4444;
+    border-color: #EF4444;
+}
+
+.modal-content .close-btn:hover {
+    background: #000;
+    color: #EF4444;
+    border-color: #dc2626;
+}
+
+/* Space between modal buttons */
+.modal-content .btn + .close-btn {
+    margin-top: 8px;
+}
+
+/* Floating Bitcoin icons */
+.btc-float {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    z-index: 10;
+    animation: btcFloat 4s infinite ease-in-out alternate;
+}
+
+.btc-float.btc1 {
+    left: 10%;
+    top: 20%;
+    animation-delay: 0s;
+}
+
+.btc-float.btc2 {
+    right: 10%;
+    top: 30%;
+    animation-delay: 1s;
+}
+
+        /* Toggle Switch Styles */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 54px;
+            height: 28px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #222;
+            border: 2px solid #fff;
+            border-radius: 999px;
+            transition: background 0.2s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 2px;
+            background: #fff;
+            border-radius: 50%;
+            transition: transform 0.2s;
+        }
+
+        .toggle-switch input:checked+.slider {
+            background: #222;
+        }
+
+        .toggle-switch input:checked+.slider:before {
+            transform: translateX(24px);
+        }
+
+                /* Highlight row for time to target */
+        .projection-table tr.highlight {
+            background-color: #065f46 !important;
+            color: #fff !important;
+        }
+
+@keyframes btcFloat {
+    0% {
+        transform: translateY(0) rotate(-10deg);
     }
-    .portfolio-setup,
-    .portfolio-positions {
-        width: 100%;
+
+    100% {
+        transform: translateY(30px) rotate(10deg);
     }
 }
 
-/* Responsive styles */
+/* Main content grid for Portfolio Setup and Positions */
+.main-content-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    max-width: 1280px;
+}
+
+/* Portfolio Setup and Positions full width */
+.portfolio-setup,
+.portfolio-positions {
+    width: 100%;
+    max-width: none;
+}
+
+/* Integration grid for IUL and Bitcoin side by side */
+.integration-grid {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    max-width: 1280px;
+    margin-bottom: 24px;
+}
+
+.iul-integration,
+.bitcoin-integration {
+    flex: 1 1 0;
+    width: 50%;
+    max-width: none;
+}
+
+/* Portfolio grid for side-by-side layout */
+.portfolio-grid {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    width: 100%;
+    max-width: 1280px;
+    align-items: stretch;
+}
+
+.portfolio-setup,
+.portfolio-positions,
+.card.portfolio-setup,
+.card.portfolio-positions {
+    flex: 1 1 0;
+    max-width: none;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    min-height: 0;
+    height: 100%;
+}
+
+.portfolio-setup {
+    /* Make sure background stretches to match sibling height */
+    align-self: stretch;
+}
+
+.card.portfolio-setup {
+    /* Ensure card background stretches to match parent height */
+    height: 100%;
+}
+
+.portfolio-positions,
+.card.portfolio-positions {
+    align-self: stretch;
+    height: 100%;
+    width: 100%;
+    max-width: none;
+}
+
+/* Fix for overflow: ensure card content does not overflow */
+.card {
+    overflow: visible;
+}
+
+/* Portfolio section: stack setup above positions, both full width */
+.portfolio-section {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: 100%;
+    max-width: 1280px;
+}
+
+/* Portfolio setup inputs: row on desktop, stacked on mobile */
+.portfolio-setup-inputs {
+    display: flex;
+    flex-direction: row;
+    gap: 24px;
+    width: 100%;
+}
+
+.portfolio-setup-inputs .input-group {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+@media (min-width: 900px) {
+    .portfolio-setup .input-group {
+        flex-direction: row;
+        gap: 32px;
+        align-items: flex-end;
+    }
+    
+    .portfolio-setup .input-group > div {
+        flex: 1 1 0;
+    }
+    
+    .portfolio-setup .input-group > div:not(:last-child) {
+        margin-bottom: 0 !important;
+    }
+}
+
 @media (max-width: 1400px) {
     .container {
         max-width: 98vw;
@@ -782,16 +1425,75 @@ select::placeholder {
 }
 
 @media (max-width: 900px) {
+    /* Projection table adjustments */
+    .projection-table th,
+    .projection-table td {
+        font-size: 0.85rem;
+        padding: 8px;
+    }
+    
+    .projection-table tr {
+        height: auto;
+    }
+    
+    /* Portfolio layout adjustments */
+    .portfolio-setup-inputs {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .portfolio-section {
+        gap: 16px;
+    }
+    
+    .portfolio-grid {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .portfolio-setup,
+    .portfolio-positions {
+        width: 100%;
+    }
+    
+    /* Integration section */
     .integration-grid {
         flex-direction: column;
         gap: 12px;
     }
+    
     .iul-integration,
     .bitcoin-integration {
         width: 100%;
     }
+    
     .main-content-grid {
         gap: 12px;
+    }
+    
+    /* Results cards */
+    .results {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .result-card {
+        margin-bottom: 0;
+    }
+    
+    /* Table scrolling */
+    .portfolio-table,
+    .projection-table {
+        overflow-x: auto;
+        display: block; /* Only change to block on small screens */
+        width: 100%;
+    }
+}
+
+@media (max-width: 899px) {
+    .portfolio-setup .input-group {
+        flex-direction: column;
+        gap: 0;
     }
 }
 
@@ -810,9 +1512,7 @@ select::placeholder {
     }
 
     h1 {
-        font-size: 1.1rem;
-        margin-top: 16px;
-        margin-bottom: 16px;
+        font-size: 2.1rem;
     }
 
     .card,
@@ -847,18 +1547,12 @@ select::placeholder {
     .projection-table {
         font-size: 0.85rem;
     }
-}
-
-/* Make tables horizontally scrollable on small screens */
-@media (max-width: 900px) {
-    /* ...existing code... */
     
-    /* Ensure tables remain full width while allowing horizontal scroll */
-    .portfolio-table,
-    .projection-table {
-        overflow-x: auto;
-        display: block; /* Only change to block on small screens */
-        width: 100%;
+    .action-buttons {
+        flex-direction: column;
+        gap: 12px;
+        max-width: 100%;
+        margin: 16px 0;
     }
 }
 
@@ -1072,17 +1766,6 @@ input[type="number"] {
     min-width: 0;
 }
 
-/* Responsive: stack results on mobile */
-@media (max-width: 900px) {
-    .results {
-        flex-direction: column;
-        gap: 12px;
-    }
-    .result-card {
-        margin-bottom: 0;
-    }
-}
-
 /* Action buttons styles */
 .action-buttons {
     display: flex;
@@ -1102,35 +1785,6 @@ input[type="number"] {
     width: 100%;
 }
 
-@media (max-width: 600px) {
-    .action-buttons {
-        flex-direction: column;
-        gap: 12px;
-        max-width: 100%;
-        margin: 16px 0;
-    }
-}
-
-@media (min-width: 900px) {
-    .portfolio-setup .input-group {
-        flex-direction: row;
-        gap: 32px;
-        align-items: flex-end;
-    }
-    .portfolio-setup .input-group > div {
-        flex: 1 1 0;
-    }
-    .portfolio-setup .input-group > div:not(:last-child) {
-        margin-bottom: 0 !important;
-    }
-}
-@media (max-width: 899px) {
-    .portfolio-setup .input-group {
-        flex-direction: column;
-        gap: 0;
-    }
-}
-
 /* New text button style for Add Position */
 .add-position-text-btn {
     background: none;
@@ -1147,6 +1801,171 @@ input[type="number"] {
 .add-position-text-btn:hover {
     color: #3B82F6;
     text-decoration: underline;
+}
+
+/* ----------------------------------------------- */
+/* ---------------- MEDIA QUERIES ---------------- */
+/* ----------------------------------------------- */
+
+/* Larger Desktop Screens */
+@media (min-width: 900px) {
+    .portfolio-setup .input-group {
+        flex-direction: row;
+        gap: 32px;
+        align-items: flex-end;
+    }
+    
+    .portfolio-setup .input-group > div {
+        flex: 1 1 0;
+    }
+    
+    .portfolio-setup .input-group > div:not(:last-child) {
+        margin-bottom: 0 !important;
+    }
+}
+
+/* Large Desktop Screens */
+@media (max-width: 1400px) {
+    .container {
+        max-width: 98vw;
+        padding-left: 32px;
+        padding-right: 32px;
+    }
+}
+
+/* Tablet and Small Desktop */
+@media (max-width: 900px) {
+    /* Projection table adjustments */
+    .projection-table th,
+    .projection-table td {
+        font-size: 0.85rem;
+        padding: 8px;
+    }
+    
+    .projection-table tr {
+        height: auto;
+    }
+    
+    /* Portfolio layout adjustments */
+    .portfolio-setup-inputs {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .portfolio-section {
+        gap: 16px;
+    }
+    
+    .portfolio-grid {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .portfolio-setup,
+    .portfolio-positions {
+        width: 100%;
+    }
+    
+    /* Integration section */
+    .integration-grid {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .iul-integration,
+    .bitcoin-integration {
+        width: 100%;
+    }
+    
+    .main-content-grid {
+        gap: 12px;
+    }
+    
+    /* Results cards */
+    .results {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .result-card {
+        margin-bottom: 0;
+    }
+    
+    /* Table scrolling */
+    .portfolio-table,
+    .projection-table {
+        overflow-x: auto;
+        display: block; /* Only change to block on small screens */
+        width: 100%;
+    }
+}
+
+/* Smaller Tablets */
+@media (max-width: 899px) {
+    .portfolio-setup .input-group {
+        flex-direction: column;
+        gap: 0;
+    }
+}
+
+/* Mobile Devices */
+@media (max-width: 600px) {
+    body {
+        align-items: flex-start;
+        justify-content: flex-start;
+    }
+
+    .container,
+    .card,
+    .full-width {
+        max-width: 100vw;
+        padding-left: 4px;
+        padding-right: 4px;
+    }
+
+    h1 {
+        font-size: 2.1rem;
+    }
+
+    .card,
+    .full-width {
+        padding: 12px 4px 10px 4px;
+        margin-bottom: 12px;
+        margin-left: 8px;
+        margin-right: 8px;
+    }
+
+    .main-content-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .results {
+        gap: 8px;
+        margin: 10px 0;
+    }
+
+    .result-card {
+        padding: 12px;
+        font-size: 0.9rem;
+    }
+
+    .projection-chart {
+        padding: 8px;
+        margin-top: 12px;
+    }
+
+    .portfolio-table,
+    .projection-table {
+        font-size: 0.85rem;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        gap: 12px;
+        max-width: 100%;
+        margin: 16px 0;
+    }
 }
 
 /* --- End STRIKE-inspired style update --- */

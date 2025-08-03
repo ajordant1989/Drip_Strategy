@@ -16,6 +16,10 @@
 <body>
     <div class="container">
         <h1>DRIP Strategy Calculator & Tracker</h1>
+        <div class="action-buttons">
+            <button class="btn btn-green" onclick="calculateResults()">Calculate Strategy</button>
+            <button class="projection-btn" onclick="scrollToProjection()">See Growth Chart</button>
+        </div>
         <div class="results full-width" id="results" style="display: flex;">
             <div class="result-card">
                 <h3>Blended Yield</h3>
@@ -122,10 +126,6 @@
                             </select>
                         </div>
                     </div>
-                </div>
-                <div class="action-buttons">
-                    <button class="btn btn-green" onclick="calculateResults()">Calculate Strategy</button>
-                    <button class="projection-btn" onclick="scrollToProjection()">See Growth Chart</button>
                 </div>
             </div>
         </section>
