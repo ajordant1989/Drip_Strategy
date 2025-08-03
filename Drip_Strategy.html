@@ -670,6 +670,10 @@
             const bitcoinMonthlySavingsUSD = parseFloat(document.getElementById('bitcoinMonthlySavingsUSD').value.replace(/,/g, '')) || 0;
             const reinvestToBitcoin = parseFloat(document.getElementById('reinvestToBitcoin').value) || 0;
 
+            // Check if IUL and Bitcoin sections should be displayed
+            const showIUL = (iulPremium > 0 || iulCashValue > 0 || reinvestToIUL > 0);
+            const showBitcoin = (bitcoinAmountBTC > 0 || bitcoinMonthlySavingsUSD > 0 || reinvestToBitcoin > 0);
+
             let totalWeightedYield = 0;
             const totalAllocation = positions.reduce((sum, pos) => sum + pos.allocation, 0);
             positions.forEach(position => {
@@ -688,6 +692,14 @@
 
             const tbody = document.getElementById('projectionBody');
             tbody.innerHTML = '';
+
+            // Update table headers to hide/show IUL and Bitcoin columns
+            const monthlyTable = document.getElementById('projectionTable');
+            const monthlyHeaders = monthlyTable.querySelectorAll('thead th');
+            if (monthlyHeaders.length >= 6) {
+                monthlyHeaders[3].style.display = showIUL ? '' : 'none'; // IUL Value column
+                monthlyHeaders[4].style.display = showBitcoin ? '' : 'none'; // Bitcoin Value column
+            }
 
             const chartData = { labels: [], portfolio: [], iul: [], bitcoin: [], total: [] };
             let timeToTarget = 'N/A';
@@ -726,12 +738,14 @@
                     if (month === timeToTarget) {
                         row.className = 'highlight';
                     }
+
+                    // Create row with conditionally hidden cells
                     row.innerHTML = `
                         <td>${month}</td>
                         <td>$${portfolioValue.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
                         <td>$${monthlyIncome.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
-                        <td>$${currentIULValue.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
-                        <td>$${currentBitcoinValueUSD.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
+                        <td style="display:${showIUL ? '' : 'none'}">$${currentIULValue.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
+                        <td style="display:${showBitcoin ? '' : 'none'}">$${currentBitcoinValueUSD.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
                         <td>$${totalWealth.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
                     `;
                     tbody.appendChild(row);
@@ -755,14 +769,16 @@
             annualTableWrapper.className = 'table-scroll';
             const annualTable = document.createElement('table');
             annualTable.className = 'projection-table';
+
+            // Create annual table with conditionally hidden columns
             annualTable.innerHTML = `
                 <thead>
                     <tr>
                         <th>Year</th>
                         <th>Portfolio Value</th>
                         <th>Annual Income</th>
-                        <th>IUL Value</th>
-                        <th>Bitcoin Value</th>
+                        ${showIUL ? '<th>IUL Value</th>' : ''}
+                        ${showBitcoin ? '<th>Bitcoin Value</th>' : ''}
                         <th>Total Wealth</th>
                     </tr>
                 </thead>
@@ -771,21 +787,41 @@
             annualTableWrapper.appendChild(annualTable);
             document.getElementById('projectionChartContainer').appendChild(annualTableWrapper);
             const annualTbody = document.getElementById('annualProjectionBody');
+
             for (let year = 1; year <= 5; year++) {
                 // Calculate values at the end of each year
                 const monthIdx = year * 12;
                 if (chartData.portfolio[monthIdx] !== undefined) {
                     const row = document.createElement('tr');
-                    row.innerHTML = `
+
+                    // Create annual table row with conditionally hidden cells
+                    let rowHTML = `
                         <td>${year}</td>
                         <td>$${chartData.portfolio[monthIdx].toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
-                        <td>$${(chartData.portfolio[monthIdx] * blendedYield / 100).toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
-                        <td>$${chartData.iul[monthIdx].toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
-                        <td>$${chartData.bitcoin[monthIdx].toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
-                        <td>$${chartData.total[monthIdx].toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
-                    `;
+                        <td>$${(chartData.portfolio[monthIdx] * blendedYield / 100).toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>`;
+
+                    if (showIUL) {
+                        rowHTML += `<td>$${chartData.iul[monthIdx].toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>`;
+                    }
+
+                    if (showBitcoin) {
+                        rowHTML += `<td>$${chartData.bitcoin[monthIdx].toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>`;
+                    }
+
+                    rowHTML += `<td>$${chartData.total[monthIdx].toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>`;
+
+                    row.innerHTML = rowHTML;
                     annualTbody.appendChild(row);
                 }
+            }
+
+            // Also update the chart datasets
+            if (!showIUL) {
+                chartData.iul = [];
+            }
+
+            if (!showBitcoin) {
+                chartData.bitcoin = [];
             }
 
             return { timeToTarget, chartData };
@@ -797,60 +833,72 @@
             }
 
             const ctx = document.getElementById('wealthChart').getContext('2d');
+
+            // Create datasets array with only visible data series
+            const datasets = [
+                {
+                    label: 'Portfolio Value',
+                    data: chartData.portfolio,
+                    borderColor: '#38BDF8',
+                    backgroundColor: 'rgba(56,189,248,0.08)',
+                    pointBackgroundColor: '#111',
+                    pointBorderColor: '#38BDF8',
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                    fill: false,
+                    tension: 0.45
+                },
+                {
+                    label: 'Total Wealth',
+                    data: chartData.total,
+                    borderColor: '#FBBF24',
+                    backgroundColor: 'rgba(251,191,36,0.08)',
+                    pointBackgroundColor: '#111',
+                    pointBorderColor: '#FBBF24',
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                    fill: false,
+                    tension: 0.45
+                }
+            ];
+
+            // Only add IUL dataset if it has values
+            if (chartData.iul && chartData.iul.length > 0) {
+                datasets.splice(1, 0, {
+                    label: 'IUL Cash Value',
+                    data: chartData.iul,
+                    borderColor: '#A3E635',
+                    backgroundColor: 'rgba(163,230,53,0.08)',
+                    pointBackgroundColor: '#111',
+                    pointBorderColor: '#A3E635',
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                    fill: false,
+                    tension: 0.45
+                });
+            }
+
+            // Only add Bitcoin dataset if it has values
+            if (chartData.bitcoin && chartData.bitcoin.length > 0) {
+                datasets.splice(datasets.length - 1, 0, {
+                    label: 'Bitcoin Value (USD)',
+                    data: chartData.bitcoin,
+                    borderColor: '#F472B6',
+                    backgroundColor: 'rgba(244,114,182,0.08)',
+                    pointBackgroundColor: '#111',
+                    pointBorderColor: '#F472B6',
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                    fill: false,
+                    tension: 0.45
+                });
+            }
+
             wealthChart = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: chartData.labels,
-                    datasets: [
-                        {
-                            label: 'Portfolio Value',
-                            data: chartData.portfolio,
-                            borderColor: '#38BDF8',
-                            backgroundColor: 'rgba(56,189,248,0.08)',
-                            pointBackgroundColor: '#111',
-                            pointBorderColor: '#38BDF8',
-                            pointRadius: 5,
-                            pointHoverRadius: 7,
-                            fill: false,
-                            tension: 0.45
-                        },
-                        {
-                            label: 'IUL Cash Value',
-                            data: chartData.iul,
-                            borderColor: '#A3E635',
-                            backgroundColor: 'rgba(163,230,53,0.08)',
-                            pointBackgroundColor: '#111',
-                            pointBorderColor: '#A3E635',
-                            pointRadius: 5,
-                            pointHoverRadius: 7,
-                            fill: false,
-                            tension: 0.45
-                        },
-                        {
-                            label: 'Bitcoin Value (USD)',
-                            data: chartData.bitcoin,
-                            borderColor: '#F472B6',
-                            backgroundColor: 'rgba(244,114,182,0.08)',
-                            pointBackgroundColor: '#111',
-                            pointBorderColor: '#F472B6',
-                            pointRadius: 5,
-                            pointHoverRadius: 7,
-                            fill: false,
-                            tension: 0.45
-                        },
-                        {
-                            label: 'Total Wealth',
-                            data: chartData.total,
-                            borderColor: '#FBBF24',
-                            backgroundColor: 'rgba(251,191,36,0.08)',
-                            pointBackgroundColor: '#111',
-                            pointBorderColor: '#FBBF24',
-                            pointRadius: 5,
-                            pointHoverRadius: 7,
-                            fill: false,
-                            tension: 0.45
-                        }
-                    ]
+                    datasets: datasets
                 },
                 options: {
                     responsive: true,
