@@ -26,8 +26,8 @@
                 <div class="value" id="blendedYield">0%</div>
             </div>
             <div class="result-card">
-                <h3>Weekly Income</h3>
-                <div class="value" id="weeklyIncome">$0</div>
+                <h3 id="incomeLabel">Weekly Income</h3>
+                <div class="value" id="incomeValue">$0</div>
             </div>
             <div class="result-card">
                 <h3>Annual Income</h3>
@@ -619,8 +619,27 @@
 
             const projectionResults = generateAndRenderProjections();
 
+            // Get distribution frequency and label
+            const freqSelect = document.getElementById('distributionFreq');
+            const freqValue = parseInt(freqSelect.value, 10);
+            let freqLabel = 'Weekly Income';
+            if (freqValue === 52) freqLabel = 'Weekly Income';
+            else if (freqValue === 26) freqLabel = 'Bi-weekly Income';
+            else if (freqValue === 12) freqLabel = 'Monthly Income';
+            else if (freqValue === 4) freqLabel = 'Quarterly Income';
+
+            // Update result card label
+            document.getElementById('incomeLabel').textContent = freqLabel;
+
+            // Calculate income based on frequency
+            let freqIncome = annualIncome / freqValue;
+            if (freqValue === 4) freqIncome = annualIncome / 4; // Quarterly
+            else if (freqValue === 12) freqIncome = annualIncome / 12; // Monthly
+            else if (freqValue === 26) freqIncome = annualIncome / 26; // Bi-weekly
+            else if (freqValue === 52) freqIncome = annualIncome / 52; // Weekly
+
             document.getElementById('blendedYield').textContent = blendedYield.toFixed(2) + '%';
-            document.getElementById('weeklyIncome').textContent = '$' + weeklyIncome.toLocaleString('en-US', { maximumFractionDigits: 2 });
+            document.getElementById('incomeValue').textContent = '$' + freqIncome.toLocaleString('en-US', { maximumFractionDigits: 2 });
             document.getElementById('annualIncome').textContent = '$' + annualIncome.toLocaleString('en-US', { maximumFractionDigits: 0 });
             document.getElementById('timeToTarget').textContent = projectionResults.timeToTarget !== 'N/A' ? `${projectionResults.timeToTarget} months` : 'N/A';
 
@@ -943,7 +962,10 @@
                 }
             });
             // Update table when distribution frequency changes
-            document.getElementById('distributionFreq').addEventListener('change', updatePortfolioDisplay);
+            document.getElementById('distributionFreq').addEventListener('change', function () {
+                updatePortfolioDisplay();
+                calculateResults();
+            });
 
             document.querySelectorAll('.with-unit').forEach(input => {
                 input.addEventListener('input', function () {
