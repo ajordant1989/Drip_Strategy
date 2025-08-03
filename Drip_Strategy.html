@@ -389,7 +389,7 @@
                 </div>
             </div>
             <div id="modalError" class="error-message" style="display: none;"></div>
-            <button class="btn" onclick="submitNewPosition()">Add Position</button>
+            <button class="btn" id="modalSubmitBtn" onclick="submitNewPosition()">Add Position</button>
             <button class="close-btn" onclick="closeAddPositionModal()">Cancel</button>
         </div>
     </div>
@@ -460,6 +460,7 @@
             document.getElementById('modalError').style.display = 'none';
             editingPositionId = editId;
 
+            const submitBtn = document.getElementById('modalSubmitBtn');
             if (editId !== null) {
                 // Editing existing position
                 const pos = positions.find(p => p.id === editId);
@@ -468,11 +469,13 @@
                     document.getElementById('modalAllocation').value = pos.allocation;
                     document.getElementById('modalYield').value = pos.yield;
                 }
+                submitBtn.textContent = 'Update Position';
             } else {
                 // Adding new position
                 document.getElementById('modalTicker').value = '';
                 document.getElementById('modalAllocation').value = '';
                 document.getElementById('modalYield').value = '';
+                submitBtn.textContent = 'Add Position';
             }
         }
 
