@@ -8,6 +8,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="global.css">
+    <style>
+
+    </style>
 </head>
 
 <body>
@@ -31,8 +34,8 @@
                 <div class="value" id="timeToTarget">0 months</div>
             </div>
         </div>
-        <div class="main-content-grid portfolio-grid">
-            <div class="card portfolio-setup">
+        <div class="portfolio-grid">
+            <div class="card portfolio-setup" style="display: flex;">
                 <h2>📊 Portfolio Setup</h2>
                 <div class="input-group">
                     <div style="display: flex; flex-direction: column; position: relative;">
@@ -129,7 +132,7 @@
                         <tr>
                             <th>Ticker</th>
                             <th>Allocation %</th>
-                            <th>Amount ($)</th>
+                            <th>Amount</th>
                             <th>Yield %</th>
                             <th>Annual Income</th>
                             <th>Weekly Income</th>
@@ -340,20 +343,22 @@
             style="height: 500px; width: 100%; max-width: 1280px;">
             <h2>📊 Monthly Growth Projection</h2>
             <canvas id="wealthChart" style="margin-bottom: 16px; height: 400px; width: 100%;"></canvas>
-            <table class="projection-table" id="projectionTable" style="width: 100%; max-width: 1280px;">
-                <thead>
-                    <tr>
-                        <th>Month</th>
-                        <th>Portfolio Value</th>
-                        <th>Monthly Income</th>
-                        <th>IUL Value</th>
-                        <th>Bitcoin Value</th>
-                        <th>Total Wealth</th>
-                    </tr>
-                </thead>
-                <tbody id="projectionBody">
-                </tbody>
-            </table>
+            <div class="table-scroll">
+                <table class="projection-table" id="projectionTable" style="width: 100%; max-width: 1280px;">
+                    <thead>
+                        <tr>
+                            <th>Month</th>
+                            <th>Portfolio Value</th>
+                            <th>Monthly Income</th>
+                            <th>IUL Value</th>
+                            <th>Bitcoin Value</th>
+                            <th>Total Wealth</th>
+                        </tr>
+                    </thead>
+                    <tbody id="projectionBody">
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -363,15 +368,16 @@
             <div class="input-group">
                 <div style="display: flex; flex-direction: column;">
                     <label for="modalTicker">Ticker Symbol</label>
-                    <input type="text" id="modalTicker" placeholder="e.g., AAPL">
+                    <input type="text" id="modalTicker" placeholder="e.g., AAPL" class="input-row">
                 </div>
                 <div style="display: flex; flex-direction: column;">
                     <label for="modalAllocation">Allocation (%)</label>
-                    <input type="number" id="modalAllocation" step="0.1" min="0" placeholder="e.g., 25">
+                    <input type="number" id="modalAllocation" step="0.1" min="0" placeholder="e.g., 25"
+                        class="input-row">
                 </div>
                 <div style="display: flex; flex-direction: column;">
                     <label for="modalYield">Yield (%)</label>
-                    <input type="number" id="modalYield" step="0.1" min="0" placeholder="e.g., 5">
+                    <input type="number" id="modalYield" step="0.1" min="0" placeholder="e.g., 5" class="input-row">
                 </div>
             </div>
             <div id="modalError" class="error-message" style="display: none;"></div>
@@ -713,6 +719,8 @@
             }
 
             // After the monthly table, render a 5-year annual projection table
+            const annualTableWrapper = document.createElement('div');
+            annualTableWrapper.className = 'table-scroll';
             const annualTable = document.createElement('table');
             annualTable.className = 'projection-table';
             annualTable.innerHTML = `
@@ -728,7 +736,8 @@
                 </thead>
                 <tbody id="annualProjectionBody"></tbody>
             `;
-            document.getElementById('projectionChartContainer').appendChild(annualTable);
+            annualTableWrapper.appendChild(annualTable);
+            document.getElementById('projectionChartContainer').appendChild(annualTableWrapper);
             const annualTbody = document.getElementById('annualProjectionBody');
             for (let year = 1; year <= 5; year++) {
                 // Calculate values at the end of each year
@@ -953,6 +962,21 @@
                     toggleText.textContent = 'Show Integrations';
                 }
             });
+
+            // Automatically run calculation if there is saved state and positions
+            const state = JSON.parse(localStorage.getItem('dripStrategyState') || '{}');
+            if (
+                Array.isArray(state.positions) &&
+                state.positions.length > 0 &&
+                state.totalInvestment &&
+                state.targetAmount &&
+                !isNaN(parseFloat(state.totalInvestment)) &&
+                !isNaN(parseFloat(state.targetAmount)) &&
+                parseFloat(state.totalInvestment) > 0 &&
+                parseFloat(state.targetAmount) > 0
+            ) {
+                calculateResults();
+            }
         });
 
         function scrollToProjection() {

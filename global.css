@@ -33,7 +33,7 @@ body {
 
 h1 {
     color: #fff;
-    font-size: 2.2rem;
+    font-size: 3.2rem;
     font-weight: 700;
     margin-top: 48px;
     margin-bottom: 32px;
@@ -333,10 +333,7 @@ select::placeholder {
     box-sizing: border-box;
     table-layout: fixed;
     overflow-x: auto;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    min-height: 0;
+    display: table;
 }
 
 .projection-table thead {
@@ -500,8 +497,8 @@ select::placeholder {
 }
 
 .modal-content .btn:hover {
-    background: #1e293b;
-    color: #fff;
+    background: #000;
+    color: #3B82F6;
     border-color: #2563eb;
 }
 
@@ -511,8 +508,8 @@ select::placeholder {
 }
 
 .modal-content .close-btn:hover {
-    background: #1e293b;
-    color: #fff;
+    background: #000;
+    color: #EF4444;
     border-color: #dc2626;
 }
 
@@ -589,6 +586,12 @@ select::placeholder {
             transform: translateX(24px);
         }
 
+                /* Highlight row for time to target */
+        .projection-table tr.highlight {
+            background-color: #065f46 !important;
+            color: #fff !important;
+        }
+
 @keyframes btcFloat {
     0% {
         transform: translateY(0) rotate(-10deg);
@@ -650,7 +653,6 @@ select::placeholder {
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    min-height: 0;
     height: 100%;
 }
 
@@ -684,6 +686,23 @@ select::placeholder {
     .portfolio-setup,
     .portfolio-positions {
         width: 100%;
+    }
+}
+
+/* Responsive: stack results on mobile */
+@media (max-width: 600px) {
+    .results {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        grid-template-rows: 1fr 1fr !important;
+        gap: 12px !important;
+        margin: 10px 0;
+    }
+    .result-card {
+        width: 100% !important;
+        margin: 0 !important;
+        text-align: center;
+        min-width: 0;
     }
 }
 
@@ -764,10 +783,30 @@ select::placeholder {
     }
 }
 
+/* Table scroll wrapper for horizontal scrolling on mobile */
+.table-scroll {
+    width: 100%;
+}
+
+@media (max-width: 600px) {
+    .table-scroll {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    .projection-table {
+        min-width: 600px;
+        width: 100%;
+        /* Remove vertical scrolling */
+        max-height: none;
+        height: auto;
+    }
+}
+
 /* Make tables horizontally scrollable on small screens */
 .portfolio-table,
-.projection-table {
+ {
     overflow-x: auto;
+    height: 100%;
     display: block;
 }
 
@@ -938,8 +977,8 @@ input[type="number"] {
 }
 
 .edit-btn:hover {
-    background: #1e293b;
-    color: #fff;
+    background: #000;
+    color: #3B82F6;
     border-color: #2563eb;
 }
 
@@ -949,9 +988,9 @@ input[type="number"] {
 }
 
 .remove-btn:hover {
-    background: #1e293b;
-    color: #fff;
-    border-color: #dc2626;
+    background: #000;
+    color: #EF4444;
+    border-color: #EF4444;
 }
 
 /* Space between buttons in table cell */
@@ -981,14 +1020,34 @@ input[type="number"] {
 }
 
 /* Responsive: stack results on mobile */
-@media (max-width: 900px) {
+@media (max-width: 600px) {
     .results {
-        flex-direction: column;
-        gap: 12px;
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        grid-template-rows: 1fr 1fr !important;
+        gap: 12px !important;
+        margin: 10px 0;
     }
     .result-card {
-        margin-bottom: 0;
+        width: 100% !important;
+        margin: 0 !important;
+        text-align: center;
+        min-width: 0;
     }
 }
 
 /* --- End STRIKE-inspired style update --- */
+
+/* Make projection tables horizontally scrollable on mobile */
+@media (max-width: 600px) {
+    .projection-table {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        min-width: 600px;
+        /* Prevent squishing columns */
+        /* No vertical scrolling */
+        max-height: none;
+        height: auto;
+    }
+}
