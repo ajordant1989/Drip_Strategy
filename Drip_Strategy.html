@@ -34,8 +34,9 @@
                 <div class="value" id="timeToTarget">0 months</div>
             </div>
         </div>
-        <div class="portfolio-grid">
-            <div class="card portfolio-setup" style="display: flex;">
+
+        <section class="full-width" style="margin-bottom: 16px;">
+            <div class="card portfolio-setup">
                 <h2>📊 Portfolio Setup</h2>
                 <div class="input-group">
                     <div style="display: flex; flex-direction: column; position: relative;">
@@ -96,36 +97,47 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="" style="display: flex; flex-direction: column;">
-                    <label for="distributionFreq" style="display: flex; align-items: center;">
-                        Distribution Frequency
-                        <span class="tooltip-icon" tabindex="0" style="margin-left: 8px;">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                                <circle cx="12" cy="12" r="10" fill="#FFFFFF" />
-                                <text x="12" y="16" text-anchor="middle" font-size="16" fill="#000"
-                                    font-family="Inter, Arial" font-weight="bold">?</text>
-                            </svg>
-                            <span class="tooltip-text">
-                                This is the frequency of how often your adding additional money into your IUL
+                    <div style="display: flex; flex-direction: column; position: relative;">
+                        <label for="distributionFreq" style="display: flex; align-items: center;">
+                            Distribution Frequency
+                            <span class="tooltip-icon" tabindex="0" style="margin-left: 8px;">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                                    <circle cx="12" cy="12" r="10" fill="#FFFFFF" />
+                                    <text x="12" y="16" text-anchor="middle" font-size="16" fill="#000"
+                                        font-family="Inter, Arial" font-weight="bold">?</text>
+                                </svg>
+                                <span class="tooltip-text">
+                                    This is the frequency of how often your adding additional money into your IUL
+                                </span>
                             </span>
-                        </span>
-                    </label>
-                    <div class="input-row">
-                        <select id="distributionFreq"
-                            style="flex:1; background: transparent; border: none; color: #fff; font-size: 1.15rem; font-weight: 500; height: 56px; outline: none;"
-                            class="input-no-border">
-                            <option value="52">Weekly (52x/year)</option>
-                            <option value="26">Bi-weekly (26x/year)</option>
-                            <option value="12" selected>Monthly (12x/year)</option>
-                            <option value="4">Quarterly (4x/year)</option>
-                        </select>
+                        </label>
+                        <div class="input-row">
+                            <select id="distributionFreq"
+                                style="flex:1; background: transparent; border: none; color: #fff; font-size: 1.15rem; font-weight: 500; height: 56px; outline: none;"
+                                class="input-no-border">
+                                <option value="52">Weekly (52x/year)</option>
+                                <option value="26">Bi-weekly (26x/year)</option>
+                                <option value="12" selected>Monthly (12x/year)</option>
+                                <option value="4">Quarterly (4x/year)</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
+                <div class="action-buttons">
+                    <button class="btn btn-green" onclick="calculateResults()">Calculate Strategy</button>
+                    <button class="projection-btn" onclick="scrollToProjection()">See Growth Chart</button>
+                </div>
             </div>
+        </section>
 
+        <section class="full-width" style="margin-bottom: 16px;">
             <div class="card portfolio-positions">
-                <h2>📈 Portfolio Positions</h2>
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                    <h2 style="margin: 0;">📈 Portfolio Positions</h2>
+                    <button class="add-position-text-btn" onclick="openAddPositionModal()" type="button">+ Add New
+                        Position
+                    </button>
+                </div>
                 <div id="allocationError" class="error-message" style="display: none;"></div>
                 <table class="portfolio-table" id="portfolioTable">
                     <thead>
@@ -142,15 +154,8 @@
                     <tbody id="portfolioBody">
                     </tbody>
                 </table>
-                <div class="button-group">
-                    <div class="main-action-btns">
-                        <button class="btn" onclick="openAddPositionModal()">+ Add New Position</button>
-                        <button class="btn" onclick="calculateResults()">Calculate Strategy</button>
-                    </div>
-                    <button class="projection-btn" onclick="scrollToProjection()">Growth Projection</button>
-                </div>
             </div>
-        </div>
+        </section>
 
         <!-- Integration Grid Toggle Switch -->
         <div style="width:100%; display:flex; justify-content:flex-end; margin-bottom:16px;">
