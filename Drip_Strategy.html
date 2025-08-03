@@ -231,7 +231,7 @@
                             </div>
                         </div>
                         <div style="display: flex; flex-direction: column; position: relative;">
-                            <label for="reinvestToIUL">Reinvest % to IUL</label>
+                            <label for="reinvestToIUL">Reinvest Dividend %</label>
                             <div class="input-row">
                                 <input type="number" id="reinvestToIUL" step="5" min="0" max="100" placeholder="0"
                                     class="with-unit">
@@ -326,7 +326,7 @@
                             </div>
                         </div>
                         <div style="display: flex; flex-direction: column; position: relative;">
-                            <label for="reinvestToBitcoin">Reinvest % to Bitcoin</label>
+                            <label for="reinvestToBitcoin">Reinvest Dividend %</label>
                             <div class="input-row">
                                 <input type="number" id="reinvestToBitcoin" step="5" min="0" max="100" placeholder="0"
                                     class="with-unit input-no-border">
@@ -348,11 +348,11 @@
             </div>
         </div>
 
-        <div class="projection-chart card full-width" style="height:600px;" id="projectionChartContainer">
+        <div class="projection-chart card full-width" style="height:600px;padding-bottom: 48px" id="projectionChartContainer">
             <h2>📊 Monthly Growth Projection</h2>
             <canvas id="wealthChart" style="margin-bottom: 16px; height: 400px; width: 100%;"></canvas>
             <div class="table-scroll">
-                <table class="projection-table" id="projectionTable" style="width: 100%; max-width: 1280px;">
+                <table class="projection-table" id="projectionTable" style="width: 100%; max-width: 1280px;;">
                     <thead>
                         <tr>
                             <th>Month</th>
@@ -688,7 +688,8 @@
             const blendedYield = totalAllocation > 0 ? totalWeightedYield / totalAllocation : 0;
 
             const monthlyYield = blendedYield / 100 / 12;
-            const monthlyIULGrowth = iulGrowthRate / 100 / 12;
+            // Calculate monthly growth factor from annual rate for compounding
+            const monthlyIULGrowth = Math.pow(1 + iulGrowthRate / 100, 1 / 12) - 1;
             const monthlyBitcoinGrowth = Math.pow(1 + bitcoinCAGR / 100, 1 / 12) - 1;
 
             let portfolioValue = totalInvestment;
@@ -712,25 +713,36 @@
             let targetReached = false;
 
             for (let month = 0; month <= 600; month++) { // Calculate for up to 50 years
-                const monthlyIncome = portfolioValue * monthlyYield;
+                // Calculate monthly income
+                let monthlyIncome = portfolioValue * monthlyYield;
+                // Calculate reinvestment amounts
                 const toIUL = monthlyIncome * (reinvestToIUL / 100);
                 const toBitcoin = monthlyIncome * (reinvestToBitcoin / 100);
+                // Monthly income available for withdrawal (not reinvested)
                 const toDRIP = monthlyIncome - toIUL - toBitcoin;
+                // If 100% reinvested, monthly income should be zero
+                let displayMonthlyIncome = toDRIP;
+                if (reinvestToIUL === 100 || reinvestToBitcoin === 100) {
+                    displayMonthlyIncome = 0;
+                }
 
                 if (month > 0) {
                     portfolioValue += toDRIP;
 
                     currentIULValue += toIUL + iulPremium;
+                    // Compound IUL value monthly at annual rate
                     currentIULValue *= (1 + monthlyIULGrowth);
 
                     const btcFromSavings = bitcoinMonthlySavingsUSD / currentBitcoinPriceUSD;
                     const btcFromReinvest = toBitcoin / currentBitcoinPriceUSD;
                     currentBitcoinAmountBTC += btcFromSavings + btcFromReinvest;
 
+                    // Compound Bitcoin price monthly at annual rate
                     currentBitcoinPriceUSD *= (1 + monthlyBitcoinGrowth);
                 }
 
                 const currentBitcoinValueUSD = currentBitcoinAmountBTC * currentBitcoinPriceUSD;
+                // Ensure total wealth is the sum of all components
                 const totalWealth = portfolioValue + currentIULValue + currentBitcoinValueUSD;
 
                 if (totalWealth >= targetAmount && timeToTarget === 'N/A') {
@@ -749,7 +761,7 @@
                     row.innerHTML = `
                         <td>${month}</td>
                         <td>$${portfolioValue.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
-                        <td>$${monthlyIncome.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
+                        <td>$${displayMonthlyIncome.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
                         <td style="display:${showIUL ? '' : 'none'}">$${currentIULValue.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
                         <td style="display:${showBitcoin ? '' : 'none'}">$${currentBitcoinValueUSD.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
                         <td>$${totalWealth.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
