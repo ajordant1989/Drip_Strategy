@@ -310,9 +310,12 @@ select::placeholder {
     font-size: 0.95rem;
     border-collapse: separate;
     border-spacing: 0;
-    overflow-x: auto;
-    display: block;
-    table-layout: fixed;
+    table-layout: fixed; /* Fixed layout to control column widths */
+    display: table;
+    overflow-x: visible;
+    min-width: 100%;
+    box-sizing: border-box;
+    table-layout: auto; /* Let columns size based on content */
 }
 
 .portfolio-table th {
@@ -847,10 +850,16 @@ select::placeholder {
 }
 
 /* Make tables horizontally scrollable on small screens */
-.portfolio-table,
-.projection-table {
-    overflow-x: auto;
-    display: block;
+@media (max-width: 900px) {
+    /* ...existing code... */
+    
+    /* Ensure tables remain full width while allowing horizontal scroll */
+    .portfolio-table,
+    .projection-table {
+        overflow-x: auto;
+        display: block; /* Only change to block on small screens */
+        width: 100%;
+    }
 }
 
 /* Custom input field container for dark mode */
