@@ -593,8 +593,24 @@
                 incomeValueEl.textContent = '$' + totalWeeklyIncome.toLocaleString('en-US', { maximumFractionDigits: 2 });
             }
             const annualIncomeEl = document.getElementById('annualIncome');
+            if (annualIncomeEl) {
+                // Sum annual income from all positions
+                let totalInvestment = parseFloat(document.getElementById('totalInvestment').value.replace(/,/g, '')) || 0;
+                let totalAnnualIncome = positions.reduce((sum, pos) => {
+                    const alloc = parseFloat(pos.allocation) || 0;
+                    const yld = parseFloat(pos.yield) || 0;
+                    const amount = totalInvestment * alloc / 100;
+                    return sum + (amount * yld / 100);
+                }, 0);
+                annualIncomeEl.textContent = '$' + totalAnnualIncome.toLocaleString('en-US', { maximumFractionDigits: 0 });
+            }
             const timeToTargetEl = document.getElementById('timeToTarget');
-            if (!annualIncomeEl || !timeToTargetEl) return;
+            if (timeToTargetEl) {
+                // Use monthly projection for time to target
+                const projectionResults = generateAndRenderProjections();
+                const timeToTargetMonths = projectionResults.timeToTarget !== 'N/A' ? projectionResults.timeToTarget : 'N/A';
+                timeToTargetEl.textContent = timeToTargetMonths !== 'N/A' ? `${timeToTargetMonths} months` : 'N/A';
+            }
             const totalInvestment = parseFloat(document.getElementById('totalInvestment').value.replace(/,/g, '')) || 0;
             const targetAmount = parseFloat(document.getElementById('targetAmount').value.replace(/,/g, '')) || 0;
             const reinvestToIUL = parseFloat(document.getElementById('reinvestToIUL').value) || 0;
