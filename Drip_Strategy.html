@@ -22,8 +22,8 @@
                     <img src="/images/bespoke-white.svg" alt="Bespoke Financial Logo" class="bespoke-logo">
                 </div>
                 <div class="nav-right">
-                    <p class="nav-link">Resources</p>
-                    <p class="nav-link">Save View</p>
+                    <a class="nav-link" href="Past_Drip_Calculations.html">Past Drip Calculations</a>
+                    <p class="nav-link" onclick="saveCurrentView()" style="cursor:pointer;">Save View</p>
                     <button class="btn-green nav-calc-btn" id="calculateStrategyNavBtn"
                         onclick="calculateAndScroll()">Calculate
                         strategy</button>
@@ -397,6 +397,18 @@
         </div>
     </div>
 
+    <div class="modal" id="saveViewModal">
+        <div class="modal-content">
+            <h3>Name This Saved View</h3>
+            <div class="input-group">
+                <input type="text" id="saveViewNameInput" class="input-row" placeholder="e.g., My DRIP Plan">
+            </div>
+            <div id="saveViewError" class="error-message" style="display:none;"></div>
+            <button class="btn" id="saveViewSubmitBtn">Save</button>
+            <button class="close-btn" onclick="closeSaveViewModal()">Cancel</button>
+        </div>
+    </div>
+
     <script>
         // Calculate and scroll to chart
         function calculateAndScroll() {
@@ -425,6 +437,44 @@
             });
             state.positions = positions;
             localStorage.setItem('dripStrategyState', JSON.stringify(state));
+        }
+
+        // Save View logic
+        function openSaveViewModal() {
+            document.getElementById('saveViewModal').style.display = 'flex';
+            document.getElementById('saveViewNameInput').value = '';
+            document.getElementById('saveViewError').style.display = 'none';
+        }
+        function closeSaveViewModal() {
+            document.getElementById('saveViewModal').style.display = 'none';
+        }
+        window.saveCurrentView = function () {
+            openSaveViewModal();
+        }
+        document.getElementById('saveViewSubmitBtn').onclick = function () {
+            const name = document.getElementById('saveViewNameInput').value.trim();
+            const successMsg = document.getElementById('saveViewError');
+            if (!name) {
+                successMsg.textContent = 'Please enter a name.';
+                successMsg.style.display = 'block';
+                successMsg.style.color = '#FF4747';
+                return;
+            }
+            const state = JSON.parse(localStorage.getItem('dripStrategyState') || '{}');
+            const saved = JSON.parse(localStorage.getItem('dripSavedViews') || '[]');
+            saved.push({
+                name,
+                date: new Date().toLocaleString(),
+                data: state
+            });
+            localStorage.setItem('dripSavedViews', JSON.stringify(saved));
+            successMsg.textContent = 'Successfully saved!';
+            successMsg.style.display = 'block';
+            successMsg.style.color = '#065f46'; // Tailwind green-500
+            setTimeout(function () {
+                closeSaveViewModal();
+                window.location.href = 'Past_Drip_Calculations.html';
+            }, 1200);
         }
 
         // Restore all inputs and positions from localStorage
