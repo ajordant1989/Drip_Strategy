@@ -19,7 +19,7 @@
             <div class="nav-content"
                 style="max-width:1280px; margin:0 auto; width:100%; display:flex; align-items:center; justify-content:space-between;">
                 <div class="nav-left">
-                    <img src="/images/bespoke-white.svg" alt="Bespoke Financial Logo" class="bespoke-logo">
+                    <img src="images/bespoke-white.svg" alt="Bespoke Financial Logo" class="bespoke-logo">
                 </div>
                 <div class="nav-right">
                     <a class="nav-link" href="Past_Drip_Calculations.html">Past Drip Calculations</a>
@@ -1135,7 +1135,10 @@
                                 color: '#fff',
                                 font: { size: 14, family: 'Inter, Arial' },
                                 usePointStyle: true, // Show legend colors as circles
-                                pointStyle: 'circle'
+                                pointStyle: 'circle',
+                                pointRadius: 4, // Make circles smaller (default is 6)
+                                boxWidth: 10, // Reduce box width for smaller circles
+                                padding: 24 // Add space between legend items
                             }
                         },
                         tooltip: {
