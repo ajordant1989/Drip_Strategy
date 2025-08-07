@@ -1,4 +1,10 @@
-/* --- Modern STRIKE-inspired style update --- */
+/* Focus ring for input-row container when child input/select is focused */
+.input-row:focus-within {
+    border-color: #5F6AFF;
+    box-shadow: 0 0 0 2px rgba(95, 106, 255, 0.15);
+    outline: none;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -35,6 +41,7 @@ h1 {
     color: #fff;
     font-size: 35.2px; /* 2.2rem */
     font-weight: 700;
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
     margin-top: 8px;
     margin-bottom: 8px;
     text-align: center;
@@ -132,10 +139,11 @@ select {
 }
 
 input:focus,
-select:focus {
+select:focus, .input-row:focus {
     border-color: #5F6AFF;
     box-shadow: 0 0 0 2px rgba(95, 106, 255, 0.15);
     outline: none;
+    border-radius: 10px;
 }
 
 /* Error state */
@@ -1265,12 +1273,6 @@ input[type="number"] {
 }
 .input-arrow:hover {
     opacity: 1;
-}
-
-/* Focus state for input-row */
-.input-row:focus-within {
-    border-color: none;
-    box-shadow: none;
 }
 
 /* Tooltip styles */
