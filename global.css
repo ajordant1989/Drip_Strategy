@@ -1,3 +1,61 @@
+/* Bespoke Navigation Bar Styles */
+.bespoke-nav {
+    background: #181A20;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 96px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    width: 100vw;
+}
+.nav-left {
+    display: flex;
+    align-items: center;
+}
+.bespoke-logo {
+    width: 235px;
+    margin-right: 18px;
+}
+.nav-link {
+    color: #8F90A6;
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    transition: color 0.2s;
+    display: inline-block;
+    white-space: nowrap;
+    margin: 0;
+}
+.nav-link:hover {
+    color: #fff;
+}
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+}
+.nav-calc-btn {
+    font-size: 1.15rem;
+    margin: 0;
+}
+@media (max-width: 900px) {
+    .bespoke-nav {
+        padding: 0 12px;
+        height: 72px;
+    }
+    .bespoke-logo {
+        height: 36px;
+        margin-right: 10px;
+    }
+    .nav-calc-btn {
+        min-width: 120px;
+        font-size: 1rem;
+        padding: 10px 0;
+    }
+}
 /* Focus ring for input-row container when child input/select is focused */
 .input-row:focus-within {
     border-color: #5F6AFF;
@@ -222,8 +280,6 @@ select::placeholder {
     width: 100%;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     transition: background 0.2s, color 0.2s;
-    margin-top: 12px;
-    margin-bottom: 0;
     display: block;
     text-align: center;
     padding: 14px;

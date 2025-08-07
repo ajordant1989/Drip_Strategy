@@ -14,6 +14,22 @@
 
 <body>
     <div class="container">
+        <!-- Sticky Navigation Bar AT TOP -->
+        <nav class="sticky-nav bespoke-nav">
+            <div class="nav-content"
+                style="max-width:1280px; margin:0 auto; width:100%; display:flex; align-items:center; justify-content:space-between;">
+                <div class="nav-left">
+                    <img src="/images/bespoke-white.svg" alt="Bespoke Financial Logo" class="bespoke-logo">
+                </div>
+                <div class="nav-right">
+                    <p class="nav-link">Resources</p>
+                    <p class="nav-link">Save View</p>
+                    <button class="btn-green nav-calc-btn" id="calculateStrategyNavBtn"
+                        onclick="calculateAndScroll()">Calculate
+                        strategy</button>
+                </div>
+            </div>
+        </nav>
         <div style="text-align:center; margin:32px;">
             <h3>DRIP Calculator</h3>
             <h1>Strategy Tracker</h1>
@@ -347,10 +363,7 @@
 
     <!-- Add floating calculate button -->
     <div class="floating-btn-container">
-        <div class="button-group">
-            <button class="btn-green" onclick="calculateResults()">Calculate Strategy</button>
-            <button class="projection-btn" onclick="scrollToProjection()">See Growth Chart</button>
-        </div>
+        <!-- Floating button group removed, navigation now handles Calculate -->
     </div>
 
     <div class="modal" id="addPositionModal">
@@ -385,6 +398,13 @@
     </div>
 
     <script>
+        // Calculate and scroll to chart
+        function calculateAndScroll() {
+            calculateResults();
+            setTimeout(() => {
+                scrollToProjection();
+            }, 200); // slight delay to ensure chart is rendered
+        }
         let positions = [];
         let positionCounter = 0;
         let wealthChart = null;
@@ -560,10 +580,13 @@
                 // Calculate monthly income based on position frequency
                 let monthlyIncome;
                 if (position.frequency === 52) {
+                    // Weekly: annualIncome / 52 weeks, then times 4 (approximate weeks per month)
                     monthlyIncome = annualIncome / 52 * 4;
                 } else if (position.frequency === 13) {
+                    // Monthly: annualIncome / 13 (monthly distributions per year)
                     monthlyIncome = annualIncome / 13;
                 } else {
+                    // Default to monthly if frequency is missing or invalid
                     monthlyIncome = annualIncome / 13;
                 }
 
