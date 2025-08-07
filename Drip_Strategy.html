@@ -770,13 +770,17 @@
                 }
             }
 
-            // After the monthly table, render a 5-year annual projection table
+            // Remove previous annual tables before appending a new one
+            const projectionChartContainer = document.getElementById('projectionChartContainer');
+            Array.from(projectionChartContainer.querySelectorAll('.table-scroll')).forEach((el, idx) => {
+                if (idx > 0) el.remove();
+            });
+
+            // --- Annual table: create and insert after chart but before monthly table ---
             const annualTableWrapper = document.createElement('div');
             annualTableWrapper.className = 'table-scroll';
             const annualTable = document.createElement('table');
             annualTable.className = 'projection-table';
-
-            // Create annual table with conditionally hidden columns
             annualTable.innerHTML = `
                 <thead>
                     <tr>
@@ -791,34 +795,82 @@
                 <tbody id="annualProjectionBody"></tbody>
             `;
             annualTableWrapper.appendChild(annualTable);
-            document.getElementById('projectionChartContainer').appendChild(annualTableWrapper);
-            const annualTbody = document.getElementById('annualProjectionBody');
+            const chartCanvas = document.getElementById('wealthChart');
+            // Insert annual table after chartCanvas
+            if (chartCanvas && chartCanvas.parentNode) {
+                chartCanvas.parentNode.insertBefore(annualTableWrapper, chartCanvas.nextSibling);
+            }
+            const annualTbody = annualTable.querySelector('tbody');
 
-            for (let year = 1; year <= 5; year++) {
-                // Calculate values at the end of each year
-                const monthIdx = year * 12;
-                if (chartData.portfolio[monthIdx] !== undefined) {
-                    const row = document.createElement('tr');
+            // Calculate annual values for years 1-10 using compounding logic
+            for (let year = 1; year <= 10; year++) {
+                let months = year * 12;
+                let portfolioValue = parseFloat(document.getElementById('totalInvestment').value.replace(/,/g, '')) || 0;
+                let iulValue = parseFloat(document.getElementById('iulCashValue').value.replace(/,/g, '')) || 0;
+                let bitcoinAmountBTC = parseFloat(document.getElementById('bitcoinAmountBTC').value) || 0;
+                let bitcoinPriceUSD = parseFloat(document.getElementById('bitcoinPriceUSD').value.replace(/,/g, '')) || 60000;
 
-                    // Create annual table row with conditionally hidden cells
-                    let rowHTML = `
-                        <td>${year}</td>
-                        <td>$${chartData.portfolio[monthIdx].toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
-                        <td>$${(chartData.portfolio[monthIdx] * blendedYield / 100).toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>`;
+                // Use input values for rates
+                let blendedYield = (() => {
+                    let totalWeightedYield = 0;
+                    let totalAllocation = positions.reduce((sum, pos) => sum + pos.allocation, 0);
+                    positions.forEach(position => {
+                        totalWeightedYield += position.allocation * position.yield;
+                    });
+                    return totalAllocation > 0 ? totalWeightedYield / totalAllocation : 0;
+                })();
+                let monthlyYield = blendedYield / 100 / 12;
+                let iulPremium = parseFloat(document.getElementById('iulPremium').value.replace(/,/g, '')) || 0;
+                let iulGrowthRate = parseFloat(document.getElementById('iulGrowthRate').value) || 0;
+                let monthlyIULGrowth = iulGrowthRate / 100 / 12;
+                let reinvestToIUL = parseFloat(document.getElementById('reinvestToIUL').value) || 0;
+                let bitcoinCAGR = parseFloat(document.getElementById('bitcoinCAGR').value) || 0;
+                let monthlyBitcoinGrowth = Math.pow(1 + bitcoinCAGR / 100, 1 / 12) - 1;
+                let bitcoinMonthlySavingsUSD = parseFloat(document.getElementById('bitcoinMonthlySavingsUSD').value.replace(/,/g, '')) || 0;
+                let reinvestToBitcoin = parseFloat(document.getElementById('reinvestToBitcoin').value) || 0;
 
-                    if (showIUL) {
-                        rowHTML += `<td>$${chartData.iul[monthIdx].toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>`;
-                    }
+                // Simulate compounding for 'months'
+                let extPortfolioValue = portfolioValue;
+                let extIULValue = iulValue;
+                let extBitcoinAmountBTC = bitcoinAmountBTC;
+                let extBitcoinPriceUSD = bitcoinPriceUSD;
 
-                    if (showBitcoin) {
-                        rowHTML += `<td>$${chartData.bitcoin[monthIdx].toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>`;
-                    }
+                for (let m = 1; m <= months; m++) {
+                    const monthlyIncome = extPortfolioValue * monthlyYield;
+                    const toIUL = monthlyIncome * (reinvestToIUL / 100);
+                    const toBitcoin = monthlyIncome * (reinvestToBitcoin / 100);
+                    const toDRIP = monthlyIncome - toIUL - toBitcoin;
 
-                    rowHTML += `<td>$${chartData.total[monthIdx].toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>`;
+                    extPortfolioValue += toDRIP;
+                    extIULValue += toIUL + iulPremium;
+                    extIULValue *= (1 + monthlyIULGrowth);
 
-                    row.innerHTML = rowHTML;
-                    annualTbody.appendChild(row);
+                    const btcFromSavings = bitcoinMonthlySavingsUSD / extBitcoinPriceUSD;
+                    const btcFromReinvest = toBitcoin / extBitcoinPriceUSD;
+                    extBitcoinAmountBTC += btcFromSavings + btcFromReinvest;
+
+                    extBitcoinPriceUSD *= (1 + monthlyBitcoinGrowth);
                 }
+                const extBitcoinValueUSD = extBitcoinAmountBTC * extBitcoinPriceUSD;
+                const extTotalWealth = extPortfolioValue + extIULValue + extBitcoinValueUSD;
+                const extAnnualIncome = extPortfolioValue * blendedYield / 100;
+
+                let rowHTML = `
+                    <td>${year}</td>
+                    <td>$${extPortfolioValue.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
+                    <td>$${extAnnualIncome.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
+                `;
+                if (showIUL) {
+                    rowHTML += `<td>$${extIULValue.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>`;
+                }
+                if (showBitcoin) {
+                    rowHTML += `<td>$${extBitcoinValueUSD.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>`;
+                }
+                rowHTML += `<td>$${extTotalWealth.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>`;
+
+                const row = document.createElement('tr');
+                row.innerHTML = rowHTML;
+                annualTbody.appendChild(row);
             }
 
             // Also update the chart datasets
