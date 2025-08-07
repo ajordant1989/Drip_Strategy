@@ -822,9 +822,55 @@
 
             const chartData = { labels: [], portfolio: [], iul: [], bitcoin: [], total: [] };
             let timeToTarget = 'N/A';
-            let targetReached = false;
 
-            for (let month = 0; month <= 600; month++) { // Calculate for up to 50 years
+
+            // --- Collect annual chart data ---
+            const annualChartData = { labels: [], portfolio: [], iul: [], bitcoin: [], total: [] };
+            // Use only one declaration for timeToTarget and targetReached
+            let annualPortfolioValue = totalInvestment;
+            let annualIULValue = iulCashValue;
+            let annualBitcoinAmountBTC = bitcoinAmountBTC;
+            let annualBitcoinPriceUSD = initialBitcoinPriceUSD;
+
+            for (let year = 0; year <= 10; year++) {
+                // Simulate compounding for 12 months each year
+                for (let m = 1; m <= 12; m++) {
+                    const monthlyIncome = annualPortfolioValue * monthlyYield;
+                    const toIUL = monthlyIncome * (reinvestToIUL / 100);
+                    const toBitcoin = monthlyIncome * (reinvestToBitcoin / 100);
+                    const toDRIP = monthlyIncome - toIUL - toBitcoin;
+
+                    annualPortfolioValue += toDRIP;
+                    annualIULValue += toIUL + iulPremium;
+                    annualIULValue *= (1 + monthlyIULGrowth);
+
+                    const btcFromSavings = bitcoinMonthlySavingsUSD / annualBitcoinPriceUSD;
+                    const btcFromReinvest = toBitcoin / annualBitcoinPriceUSD;
+                    annualBitcoinAmountBTC += btcFromSavings + btcFromReinvest;
+
+                    annualBitcoinPriceUSD *= (1 + monthlyBitcoinGrowth);
+                }
+                const annualBitcoinValueUSD = annualBitcoinAmountBTC * annualBitcoinPriceUSD;
+                const annualTotalWealth = annualPortfolioValue + annualIULValue + annualBitcoinValueUSD;
+
+                if (annualTotalWealth >= targetAmount && timeToTarget === 'N/A') {
+                    timeToTarget = year;
+                    targetReached = true;
+                }
+
+                annualChartData.labels.push(`Year ${year}`);
+                annualChartData.portfolio.push(annualPortfolioValue);
+                annualChartData.iul.push(annualIULValue);
+                annualChartData.bitcoin.push(annualBitcoinValueUSD);
+                annualChartData.total.push(annualTotalWealth);
+            }
+
+            // --- Keep monthly table logic for display, but chart will use annualChartData ---
+            portfolioValue = totalInvestment;
+            currentIULValue = iulCashValue;
+            currentBitcoinAmountBTC = bitcoinAmountBTC;
+            currentBitcoinPriceUSD = initialBitcoinPriceUSD;
+            for (let month = 0; month <= 48; month++) {
                 const monthlyIncome = portfolioValue * monthlyYield;
                 const toIUL = monthlyIncome * (reinvestToIUL / 100);
                 const toBitcoin = monthlyIncome * (reinvestToBitcoin / 100);
@@ -832,59 +878,28 @@
 
                 if (month > 0) {
                     portfolioValue += toDRIP;
-
                     currentIULValue += toIUL + iulPremium;
                     currentIULValue *= (1 + monthlyIULGrowth);
-
                     const btcFromSavings = bitcoinMonthlySavingsUSD / currentBitcoinPriceUSD;
                     const btcFromReinvest = toBitcoin / currentBitcoinPriceUSD;
                     currentBitcoinAmountBTC += btcFromSavings + btcFromReinvest;
-
                     currentBitcoinPriceUSD *= (1 + monthlyBitcoinGrowth);
                 }
 
                 const currentBitcoinValueUSD = currentBitcoinAmountBTC * currentBitcoinPriceUSD;
                 const totalWealth = portfolioValue + currentIULValue + currentBitcoinValueUSD;
 
-                if (totalWealth >= targetAmount && timeToTarget === 'N/A') {
-                    timeToTarget = month;
-                    targetReached = true;
-                }
-
-                // Only render up to 48 months in the monthly table and chart
-                if (month <= 48) {
-                    const row = document.createElement('tr');
-                    if (month === timeToTarget) {
-                        row.className = 'highlight';
-                    }
-
-                    // Create row with conditionally hidden cells
-                    row.innerHTML = `
-                        <td>${month}</td>
-                        <td>$${portfolioValue.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
-                        <td>$${monthlyIncome.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
-                        <td style="display:${showIUL ? '' : 'none'}">$${currentIULValue.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
-                        <td style="display:${showBitcoin ? '' : 'none'}">$${currentBitcoinValueUSD.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
-                        <td>$${totalWealth.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
-                    `;
-                    tbody.appendChild(row);
-
-                    // Only push chart data for months 0-48
-                    chartData.labels.push(`Month ${month}`);
-                    chartData.portfolio.push(portfolioValue);
-                    chartData.iul.push(currentIULValue);
-                    chartData.bitcoin.push(currentBitcoinValueUSD);
-                    chartData.total.push(totalWealth);
-                }
-
-                // Stop charting data after 5 years unless target hasn't been
-                if (month > 60 && targetReached) {
-                    break;
-                }
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${month}</td>
+                    <td>$${portfolioValue.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
+                    <td>$${monthlyIncome.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
+                    <td style="display:${showIUL ? '' : 'none'}">$${currentIULValue.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
+                    <td style="display:${showBitcoin ? '' : 'none'}">$${currentBitcoinValueUSD.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
+                    <td>$${totalWealth.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
+                `;
+                tbody.appendChild(row);
             }
-
-            // Remove previous annual tables before appending a new one
-            const projectionChartContainer = document.getElementById('projectionChartContainer');
             Array.from(projectionChartContainer.querySelectorAll('.table-scroll')).forEach((el, idx) => {
                 if (idx > 0) el.remove();
             });
@@ -988,14 +1003,12 @@
 
             // Also update the chart datasets
             if (!showIUL) {
-                chartData.iul = [];
+                annualChartData.iul = [];
             }
-
             if (!showBitcoin) {
-                chartData.bitcoin = [];
+                annualChartData.bitcoin = [];
             }
-
-            return { timeToTarget, chartData };
+            return { timeToTarget, chartData: annualChartData };
         }
 
         function renderChart(chartData) {
@@ -1012,7 +1025,7 @@
                     data: chartData.portfolio,
                     borderColor: '#8B80F9',
                     backgroundColor: 'rgba(56,189,248,0.08)',
-                    pointBackgroundColor: '#111',
+                    pointBackgroundColor: '#8B80F9',
                     pointBorderColor: '#8B80F9',
                     pointRadius: 5,
                     pointHoverRadius: 7,
@@ -1024,7 +1037,7 @@
                     data: chartData.total,
                     borderColor: '#065f46',
                     backgroundColor: 'rgba(251,191,36,0.08)',
-                    pointBackgroundColor: '#111',
+                    pointBackgroundColor: '#065f46',
                     pointBorderColor: '#065f46',
                     pointRadius: 5,
                     pointHoverRadius: 7,
@@ -1040,7 +1053,7 @@
                     data: chartData.iul,
                     borderColor: '#2563eb',
                     backgroundColor: 'rgba(163,230,53,0.08)',
-                    pointBackgroundColor: '#111',
+                    pointBackgroundColor: '#2563eb',
                     pointBorderColor: '#2563eb',
                     pointRadius: 5,
                     pointHoverRadius: 7,
@@ -1056,7 +1069,7 @@
                     data: chartData.bitcoin,
                     borderColor: '#F7931A',
                     backgroundColor: 'rgba(244,114,182,0.08)',
-                    pointBackgroundColor: '#111',
+                    pointBackgroundColor: '#F7931A',
                     pointBorderColor: '#F7931A',
                     pointRadius: 5,
                     pointHoverRadius: 7,
@@ -1128,10 +1141,6 @@
                         }
                     },
                     elements: {
-                        point: {
-                            borderWidth: 2,
-                            hoverBorderWidth: 3
-                        },
                         line: {
                             borderWidth: 3
                         }
