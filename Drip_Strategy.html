@@ -870,6 +870,11 @@
             currentIULValue = iulCashValue;
             currentBitcoinAmountBTC = bitcoinAmountBTC;
             currentBitcoinPriceUSD = initialBitcoinPriceUSD;
+            let targetMonth = null;
+            portfolioValue = totalInvestment;
+            currentIULValue = iulCashValue;
+            currentBitcoinAmountBTC = bitcoinAmountBTC;
+            currentBitcoinPriceUSD = initialBitcoinPriceUSD;
             for (let month = 0; month <= 48; month++) {
                 const monthlyIncome = portfolioValue * monthlyYield;
                 const toIUL = monthlyIncome * (reinvestToIUL / 100);
@@ -889,6 +894,11 @@
                 const currentBitcoinValueUSD = currentBitcoinAmountBTC * currentBitcoinPriceUSD;
                 const totalWealth = portfolioValue + currentIULValue + currentBitcoinValueUSD;
 
+                // Find the first month where target is reached
+                if (targetMonth === null && totalWealth >= targetAmount) {
+                    targetMonth = month;
+                }
+
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${month}</td>
@@ -898,8 +908,15 @@
                     <td style="display:${showBitcoin ? '' : 'none'}">$${currentBitcoinValueUSD.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
                     <td>$${totalWealth.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
                 `;
+                if (targetMonth !== null && month === targetMonth) {
+                    row.style.background = '#065f46';
+                    row.style.color = '#fff';
+                }
                 tbody.appendChild(row);
             }
+            // Set timeToTarget to targetMonth for consistency
+            timeToTarget = targetMonth !== null ? targetMonth : 'N/A';
+
             Array.from(projectionChartContainer.querySelectorAll('.table-scroll')).forEach((el, idx) => {
                 if (idx > 0) el.remove();
             });
