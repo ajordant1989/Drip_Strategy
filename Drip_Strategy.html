@@ -330,10 +330,21 @@
     <script>
         // Calculate and scroll to chart
         function calculateAndScroll() {
-            calculateResults();
-            setTimeout(() => {
-                scrollToProjection();
-            }, 200); // slight delay to ensure chart is rendered
+            try {
+                calculateResults();
+            } catch (e) {
+                console.error('Calculation error:', e);
+            }
+            const container = document.getElementById('projectionChartContainer');
+            if (container) {
+                container.style.display = 'block';
+                // Ensure scroll after layout/paint
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    });
+                });
+            }
         }
         let positions = [];
         let positionCounter = 0;
