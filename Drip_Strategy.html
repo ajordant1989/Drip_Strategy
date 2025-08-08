@@ -78,18 +78,8 @@
                         </label>
                         <div class="input-row">
                             <span class="input-unit input-unit-left" aria-hidden="true">$</span>
-                            <input type="text" id="totalInvestment" step="100" min="0" placeholder="0"
+                            <input type="text" id="totalInvestment" min="0" placeholder="0"
                                 class="with-unit input-no-border" data-unit="$">
-                            <div class="input-arrows">
-                                <svg class="input-arrow" onclick="stepInput('totalInvestment', 100)"
-                                    viewBox="0 0 24 24">
-                                    <path d="M12 8l-6 6h12z" />
-                                </svg>
-                                <svg class="input-arrow" onclick="stepInput('totalInvestment', -100)"
-                                    viewBox="0 0 24 24">
-                                    <path d="M12 16l6-6H6z" />
-                                </svg>
-                            </div>
                         </div>
                     </div>
                     <div style="display: flex; flex-direction: column; position: relative;">
@@ -108,16 +98,8 @@
                         </label>
                         <div class="input-row">
                             <span class="input-unit input-unit-left" aria-hidden="true">$</span>
-                            <input type="text" id="targetAmount" step="100" min="0" placeholder="0"
+                            <input type="text" id="targetAmount" min="0" placeholder="0"
                                 class="with-unit input-no-border">
-                            <div class="input-arrows">
-                                <svg class="input-arrow" onclick="stepInput('targetAmount', 100)" viewBox="0 0 24 24">
-                                    <path d="M12 8l-6 6h12z" />
-                                </svg>
-                                <svg class="input-arrow" onclick="stepInput('targetAmount', -100)" viewBox="0 0 24 24">
-                                    <path d="M12 16l6-6H6z" />
-                                </svg>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -192,34 +174,16 @@
                             <label for="iulPremium">Monthly IUL Premium</label>
                             <div class="input-row">
                                 <span class="input-unit input-unit-left" aria-hidden="true">$</span>
-                                <input type="number" id="iulPremium" step="50" min="0" placeholder="0"
+                                <input type="text" id="iulPremium" min="0" placeholder="0"
                                     class="with-unit input-no-border">
-                                <div class="input-arrows">
-                                    <svg class="input-arrow" onclick="stepInput('iulPremium', 50)" viewBox="0 0 24 24">
-                                        <path d="M12 8l-6 6h12z" />
-                                    </svg>
-                                    <svg class="input-arrow" onclick="stepInput('iulPremium', -50)" viewBox="0 0 24 24">
-                                        <path d="M12 16l6-6H6z" />
-                                    </svg>
-                                </div>
                             </div>
                         </div>
                         <div style="display: flex; flex-direction: column; position: relative;">
                             <label for="iulCashValue">Current Cash Value</label>
                             <div class="input-row">
                                 <span class="input-unit input-unit-left" aria-hidden="true">$</span>
-                                <input type="text" id="iulCashValue" step="100" min="0" placeholder="0"
+                                <input type="text" id="iulCashValue" min="0" placeholder="0"
                                     class="with-unit input-no-border">
-                                <div class="input-arrows">
-                                    <svg class="input-arrow" onclick="stepInput('iulCashValue', 100)"
-                                        viewBox="0 0 24 24">
-                                        <path d="M12 8l-6 6h12z" />
-                                    </svg>
-                                    <svg class="input-arrow" onclick="stepInput('iulCashValue', -100)"
-                                        viewBox="0 0 24 24">
-                                        <path d="M12 16l6-6H6z" />
-                                    </svg>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -227,37 +191,16 @@
                         <div style="display: flex; flex-direction: column; position: relative;">
                             <label for="iulGrowthRate">Expected Growth Rate</label>
                             <div class="input-row">
-                                <input type="number" id="iulGrowthRate" step="0.5" min="0" placeholder="0"
-                                    class="with-unit">
+                                <input type="number" id="iulGrowthRate" min="0" placeholder="0" class="with-unit">
                                 <span class="input-unit input-unit-right">%</span>
-                                <div class="input-arrows">
-                                    <svg class="input-arrow" onclick="stepInput('iulGrowthRate', 0.5)"
-                                        viewBox="0 0 24 24">
-                                        <path d="M12 8l-6 6h12z" />
-                                    </svg>
-                                    <svg class="input-arrow" onclick="stepInput('iulGrowthRate', -0.5)"
-                                        viewBox="0 0 24 24">
-                                        <path d="M12 16l6-6H6z" />
-                                    </svg>
-                                </div>
                             </div>
                         </div>
                         <div style="display: flex; flex-direction: column; position: relative;">
                             <label for="reinvestToIUL">Reinvest % to IUL</label>
                             <div class="input-row">
-                                <input type="number" id="reinvestToIUL" step="5" min="0" max="100" placeholder="0"
+                                <input type="number" id="reinvestToIUL" min="0" max="100" placeholder="0"
                                     class="with-unit">
                                 <span class="input-unit input-unit-right">%</span>
-                                <div class="input-arrows">
-                                    <svg class="input-arrow" onclick="stepInput('reinvestToIUL', 5)"
-                                        viewBox="0 0 24 24">
-                                        <path d="M12 8l-6 6h12z" />
-                                    </svg>
-                                    <svg class="input-arrow" onclick="stepInput('reinvestToIUL', -5)"
-                                        viewBox="0 0 24 24">
-                                        <path d="M12 16l6-6H6z" />
-                                    </svg>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -269,90 +212,40 @@
                         <div style="display: flex; flex-direction: column; position: relative;">
                             <label for="bitcoinAmountBTC">Current Bitcoin Amount (BTC)</label>
                             <div class="input-row">
-                                <input type="number" id="bitcoinAmountBTC" step="0.001" min="0" placeholder="0"
+                                <input type="number" id="bitcoinAmountBTC" min="0" placeholder="0"
                                     class="with-unit input-no-border" data-unit="BTC">
-                                <div class="input-arrows">
-                                    <svg class="input-arrow" onclick="stepInput('bitcoinAmountBTC', 0.001)"
-                                        viewBox="0 0 24 24">
-                                        <path d="M12 8l-6 6h12z" />
-                                    </svg>
-                                    <svg class="input-arrow" onclick="stepInput('bitcoinAmountBTC', -0.001)"
-                                        viewBox="0 0 24 24">
-                                        <path d="M12 16l6-6H6z" />
-                                    </svg>
-                                </div>
                             </div>
                         </div>
                         <div style="display: flex; flex-direction: column; position: relative;">
                             <label for="bitcoinPriceUSD">Current Bitcoin Price</label>
                             <div class="input-row">
                                 <span class="input-unit input-unit-left" aria-hidden="true">$</span>
-                                <input type="text" id="bitcoinPriceUSD" step="100" min="0" placeholder="0"
+                                <input type="text" id="bitcoinPriceUSD" min="0" placeholder="0"
                                     class="with-unit input-no-border" data-unit="$">
-                                <div class="input-arrows">
-                                    <svg class="input-arrow" onclick="stepInput('bitcoinPriceUSD', 100)"
-                                        viewBox="0 0 24 24">
-                                        <path d="M12 8l-6 6h12z" />
-                                    </svg>
-                                    <svg class="input-arrow" onclick="stepInput('bitcoinPriceUSD', -100)"
-                                        viewBox="0 0 24 24">
-                                        <path d="M12 16l6-6H6z" />
-                                    </svg>
-                                </div>
                             </div>
                         </div>
                         <div style="display: flex; flex-direction: column; position: relative;">
                             <label for="bitcoinCAGR">Bitcoin CAGR (%)</label>
                             <div class="input-row">
-                                <input type="number" id="bitcoinCAGR" step="0.5" min="0" placeholder="0"
+                                <input type="number" id="bitcoinCAGR" min="0" placeholder="0"
                                     class="with-unit input-no-border">
                                 <span class="input-unit input-unit-right">%</span>
-                                <div class="input-arrows">
-                                    <svg class="input-arrow" onclick="stepInput('bitcoinCAGR', 0.5)"
-                                        viewBox="0 0 24 24">
-                                        <path d="M12 8l-6 6h12z" />
-                                    </svg>
-                                    <svg class="input-arrow" onclick="stepInput('bitcoinCAGR', -0.5)"
-                                        viewBox="0 0 24 24">
-                                        <path d="M12 16l6-6H6z" />
-                                    </svg>
-                                </div>
                             </div>
                         </div>
                         <div style="display: flex; flex-direction: column; position: relative;">
                             <label for="bitcoinMonthlySavingsUSD">Monthly Bitcoin Savings</label>
                             <div class="input-row">
                                 <span class="input-unit input-unit-left" aria-hidden="true">$</span>
-                                <input type="number" id="bitcoinMonthlySavingsUSD" step="1" min="0" placeholder="0"
+                                <input type="text" id="bitcoinMonthlySavingsUSD" min="0" placeholder="0"
                                     class="with-unit input-no-border">
-                                <div class="input-arrows">
-                                    <svg class="input-arrow" onclick="stepInput('bitcoinMonthlySavingsUSD', 1)"
-                                        viewBox="0 0 24 24">
-                                        <path d="M12 8l-6 6h12z" />
-                                    </svg>
-                                    <svg class="input-arrow" onclick="stepInput('bitcoinMonthlySavingsUSD', -1)"
-                                        viewBox="0 0 24 24">
-                                        <path d="M12 16l6-6H6z" />
-                                    </svg>
-                                </div>
                             </div>
                         </div>
                         <div style="display: flex; flex-direction: column; position: relative;">
                             <label for="reinvestToBitcoin">Reinvest % to Bitcoin</label>
                             <div class="input-row">
-                                <input type="number" id="reinvestToBitcoin" step="5" min="0" max="100" placeholder="0"
+                                <input type="number" id="reinvestToBitcoin" min="0" max="100" placeholder="0"
                                     class="with-unit input-no-border">
                                 <span class="input-unit input-unit-right">%</span>
-                                <div class="input-arrows">
-                                    <svg class="input-arrow" onclick="stepInput('reinvestToBitcoin', 5)"
-                                        viewBox="0 0 24 24">
-                                        <path d="M12 8l-6 6h12z" />
-                                    </svg>
-                                    <svg class="input-arrow" onclick="stepInput('reinvestToBitcoin', -5)"
-                                        viewBox="0 0 24 24">
-                                        <path d="M12 16l6-6H6z" />
-                                    </svg>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -437,10 +330,21 @@
     <script>
         // Calculate and scroll to chart
         function calculateAndScroll() {
-            calculateResults();
-            setTimeout(() => {
-                scrollToProjection();
-            }, 200); // slight delay to ensure chart is rendered
+            try {
+                calculateResults();
+            } catch (e) {
+                console.error('Calculation error:', e);
+            }
+            const container = document.getElementById('projectionChartContainer');
+            if (container) {
+                container.style.display = 'block';
+                // Ensure scroll after layout/paint
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    });
+                });
+            }
         }
         let positions = [];
         let positionCounter = 0;
@@ -510,19 +414,16 @@
                 'iulPremium', 'iulCashValue', 'iulGrowthRate', 'reinvestToIUL',
                 'bitcoinAmountBTC', 'bitcoinPriceUSD', 'bitcoinCAGR', 'bitcoinMonthlySavingsUSD', 'reinvestToBitcoin'
             ];
+            const currencyIds = ['totalInvestment', 'targetAmount', 'iulPremium', 'iulCashValue', 'bitcoinPriceUSD', 'bitcoinMonthlySavingsUSD'];
+
             inputs.forEach(id => {
                 const el = document.getElementById(id);
                 if (el && state[id] !== undefined) {
-                    // Format with commas for display if it's a number or can be parsed as a number
-                    if (el.type === 'number') {
-                        el.value = state[id];
+                    if (currencyIds.includes(id)) {
+                        // Ensure commas are shown for currency fields
+                        el.value = state[id] === '' ? '' : Number(state[id]).toLocaleString('en-US');
                     } else {
-                        // Try to format as number if possible
-                        if (state[id] !== '' && !isNaN(state[id])) {
-                            el.value = Number(state[id]).toLocaleString('en-US');
-                        } else {
-                            el.value = state[id];
-                        }
+                        el.value = state[id];
                     }
                 }
             });
@@ -772,7 +673,7 @@
             });
 
             document.getElementById('incomeLabel').textContent = 'Monthly Income';
-            document.getElementById('blendedYield').textContent = blendedYield.toFixed(2) + '%';
+            document.getElementById('blendedYield').textContent = blendedYield.toFixed(0) + '%';
             document.getElementById('incomeValue').textContent = '$' + blendedMonthlyIncome.toLocaleString('en-US', { maximumFractionDigits: 2 });
             document.getElementById('annualIncome').textContent = '$' + annualIncome.toLocaleString('en-US', { maximumFractionDigits: 0 });
             document.getElementById('timeToTarget').textContent = projectionResults.timeToTarget !== 'N/A' ? `${projectionResults.timeToTarget} months` : 'N/A';
@@ -1227,61 +1128,81 @@
             }
         }
 
+        // Improved: Format input value with commas as you type, but allow any length and decimals
+        function formatWithCommas(input) {
+            let val = input.value.replace(/,/g, '');
+            if (val === '') return;
+            if (/^-?\d*\.?\d*$/.test(val)) {
+                if (val.match(/\.\d*$/)) {
+                    input.value = val;
+                } else {
+                    let parts = val.split('.');
+                    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                    input.value = parts.length > 1 ? parts[0] + '.' + parts[1] : parts[0];
+                }
+            }
+        }
+
+        // Attach listeners after DOM is ready
         document.addEventListener('DOMContentLoaded', () => {
             restoreState();
-            const inputIds = [
-                'totalInvestment', 'targetAmount', 'iulPremium', 'iulCashValue', 'iulGrowthRate', 'reinvestToIUL', 'bitcoinAmountBTC', 'bitcoinPriceUSD', 'bitcoinCAGR', 'bitcoinMonthlySavingsUSD', 'reinvestToBitcoin'
-            ];
-            inputIds.forEach(id => {
+
+            const currencyIds = ['totalInvestment', 'targetAmount', 'iulPremium', 'iulCashValue', 'bitcoinPriceUSD', 'bitcoinMonthlySavingsUSD'];
+
+            // Set up live comma formatting on currency inputs only
+            currencyIds.forEach(id => {
                 const el = document.getElementById(id);
-                if (el) {
-                    el.addEventListener('input', saveState);
-                    el.addEventListener('change', saveState);
-                }
-            });
-            // No global distribution frequency anymore
-
-            document.querySelectorAll('.with-unit').forEach(input => {
-                input.addEventListener('input', function () {
-                    // Only update units, do not format
-                    updateInputUnits();
+                if (!el) return;
+                try { el.type = 'text'; } catch (e) { }
+                el.addEventListener('input', () => {
+                    const caretStart = el.selectionStart || 0;
+                    const before = el.value;
+                    formatWithCommas(el);
+                    const diff = (el.value.length - before.length);
+                    const newPos = Math.max(0, caretStart + diff);
+                    el.setSelectionRange(newPos, newPos);
+                    saveState();
                 });
-                input.addEventListener('blur', function () {
-                    formatNumberInput(input);
-                    updateInputUnits();
-                });
-            });
-            updateInputUnits();
-
-            // Collapse/Expand Integration Grid using toggle switch
-            const toggleSwitch = document.getElementById('toggleIntegrationGridSwitch');
-            const integrationGridContainer = document.getElementById('integrationGridContainer');
-            const toggleText = document.getElementById('toggleIntegrationGridText');
-            toggleSwitch.addEventListener('change', function () {
-                if (toggleSwitch.checked) {
-                    integrationGridContainer.style.display = 'block';
-                    toggleText.textContent = 'Hide Integrations';
-                } else {
-                    integrationGridContainer.style.display = 'none';
-                    toggleText.textContent = 'Show Integrations';
-                }
+                el.addEventListener('change', saveState);
             });
 
-            // Automatically run calculation if there is saved state and positions
-            const state = JSON.parse(localStorage.getItem('dripStrategyState') || '{}');
-            if (
-                Array.isArray(state.positions) &&
-                state.positions.length > 0 &&
-                state.totalInvestment &&
-                state.targetAmount &&
-                !isNaN(parseFloat(state.totalInvestment)) &&
-                !isNaN(parseFloat(state.targetAmount)) &&
-                parseFloat(state.totalInvestment) > 0 &&
-                parseFloat(state.targetAmount) > 0
-            ) {
-                calculateResults();
+            // For non-currency numeric inputs, just save on change/input
+            ['iulGrowthRate', 'reinvestToIUL', 'bitcoinAmountBTC', 'bitcoinCAGR', 'reinvestToBitcoin'].forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.addEventListener('input', saveState);
+                el.addEventListener('change', saveState);
+            });
+        });
+
+        // Collapse/Expand Integration Grid using toggle switch
+        const toggleSwitch = document.getElementById('toggleIntegrationGridSwitch');
+        const integrationGridContainer = document.getElementById('integrationGridContainer');
+        const toggleText = document.getElementById('toggleIntegrationGridText');
+        toggleSwitch.addEventListener('change', function () {
+            if (toggleSwitch.checked) {
+                integrationGridContainer.style.display = 'block';
+                toggleText.textContent = 'Hide Integrations';
+            } else {
+                integrationGridContainer.style.display = 'none';
+                toggleText.textContent = 'Show Integrations';
             }
         });
+
+        // Automatically run calculation if there is saved state and positions
+        const state = JSON.parse(localStorage.getItem('dripStrategyState') || '{}');
+        if (
+            Array.isArray(state.positions) &&
+            state.positions.length > 0 &&
+            state.totalInvestment &&
+            state.targetAmount &&
+            !isNaN(parseFloat(state.totalInvestment)) &&
+            !isNaN(parseFloat(state.targetAmount)) &&
+            parseFloat(state.totalInvestment) > 0 &&
+            parseFloat(state.targetAmount) > 0
+        ) {
+            calculateResults();
+        }
 
         function scrollToProjection() {
             const chart = document.getElementById('projectionChartContainer');
