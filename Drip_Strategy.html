@@ -174,7 +174,7 @@
                             <label for="iulPremium">Monthly IUL Premium</label>
                             <div class="input-row">
                                 <span class="input-unit input-unit-left" aria-hidden="true">$</span>
-                                <input type="number" id="iulPremium" min="0" placeholder="0"
+                                <input type="text" id="iulPremium" min="0" placeholder="0"
                                     class="with-unit input-no-border">
                             </div>
                         </div>
@@ -236,7 +236,7 @@
                             <label for="bitcoinMonthlySavingsUSD">Monthly Bitcoin Savings</label>
                             <div class="input-row">
                                 <span class="input-unit input-unit-left" aria-hidden="true">$</span>
-                                <input type="number" id="bitcoinMonthlySavingsUSD" min="0" placeholder="0"
+                                <input type="text" id="bitcoinMonthlySavingsUSD" min="0" placeholder="0"
                                     class="with-unit input-no-border">
                             </div>
                         </div>
@@ -403,19 +403,16 @@
                 'iulPremium', 'iulCashValue', 'iulGrowthRate', 'reinvestToIUL',
                 'bitcoinAmountBTC', 'bitcoinPriceUSD', 'bitcoinCAGR', 'bitcoinMonthlySavingsUSD', 'reinvestToBitcoin'
             ];
+            const currencyIds = ['totalInvestment', 'targetAmount', 'iulPremium', 'iulCashValue', 'bitcoinPriceUSD', 'bitcoinMonthlySavingsUSD'];
+
             inputs.forEach(id => {
                 const el = document.getElementById(id);
                 if (el && state[id] !== undefined) {
-                    // Format with commas for display if it's a number or can be parsed as a number
-                    if (el.type === 'number') {
-                        el.value = state[id];
+                    if (currencyIds.includes(id)) {
+                        // Ensure commas are shown for currency fields
+                        el.value = state[id] === '' ? '' : Number(state[id]).toLocaleString('en-US');
                     } else {
-                        // Try to format as number if possible
-                        if (state[id] !== '' && !isNaN(state[id])) {
-                            el.value = Number(state[id]).toLocaleString('en-US');
-                        } else {
-                            el.value = state[id];
-                        }
+                        el.value = state[id];
                     }
                 }
             });
@@ -1123,15 +1120,11 @@
         // Improved: Format input value with commas as you type, but allow any length and decimals
         function formatWithCommas(input) {
             let val = input.value.replace(/,/g, '');
-            // Only format if it's a valid number and not empty
             if (val === '') return;
-            // Allow typing decimals and negative numbers
             if (/^-?\d*\.?\d*$/.test(val)) {
-                // Don't format if user is typing a decimal point at the end
                 if (val.match(/\.\d*$/)) {
                     input.value = val;
                 } else {
-                    // Format integer part with commas, keep decimals
                     let parts = val.split('.');
                     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
                     input.value = parts.length > 1 ? parts[0] + '.' + parts[1] : parts[0];
@@ -1139,30 +1132,37 @@
             }
         }
 
+        // Attach listeners after DOM is ready
         document.addEventListener('DOMContentLoaded', () => {
             restoreState();
-            const inputIds = [
-                'totalInvestment', 'targetAmount', 'iulPremium', 'iulCashValue', 'iulGrowthRate', 'reinvestToIUL',
-                'bitcoinAmountBTC', 'bitcoinPriceUSD', 'bitcoinCAGR', 'bitcoinMonthlySavingsUSD', 'reinvestToBitcoin'
-            ];
-            inputIds.forEach(id => {
+
+            const currencyIds = ['totalInvestment', 'targetAmount', 'iulPremium', 'iulCashValue', 'bitcoinPriceUSD', 'bitcoinMonthlySavingsUSD'];
+
+            // Set up live comma formatting on currency inputs only
+            currencyIds.forEach(id => {
                 const el = document.getElementById(id);
-                if (el) {
-                    el.addEventListener('input', function (e) {
-                        // Save cursor position before formatting
-                        let pos = el.selectionStart;
-                        let oldLength = el.value.length;
-                        formatWithCommas(el);
-                        // Restore cursor position after formatting
-                        let newLength = el.value.length;
-                        el.selectionEnd = el.selectionStart = pos + (newLength - oldLength);
-                        saveState();
-                    });
+                if (!el) return;
+                try { el.type = 'text'; } catch (e) { }
+                el.addEventListener('input', () => {
+                    const caretStart = el.selectionStart || 0;
+                    const before = el.value;
+                    formatWithCommas(el);
+                    const diff = (el.value.length - before.length);
+                    const newPos = Math.max(0, caretStart + diff);
+                    el.setSelectionRange(newPos, newPos);
+                    saveState();
                 });
-            el.addEventListener('change', saveState);
-        }
+                el.addEventListener('change', saveState);
             });
 
+            // For non-currency numeric inputs, just save on change/input
+            ['iulGrowthRate', 'reinvestToIUL', 'bitcoinAmountBTC', 'bitcoinCAGR', 'reinvestToBitcoin'].forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.addEventListener('input', saveState);
+                el.addEventListener('change', saveState);
+            });
+        });
 
         // Collapse/Expand Integration Grid using toggle switch
         const toggleSwitch = document.getElementById('toggleIntegrationGridSwitch');
@@ -1192,7 +1192,6 @@
         ) {
             calculateResults();
         }
-        });
 
         function scrollToProjection() {
             const chart = document.getElementById('projectionChartContainer');
