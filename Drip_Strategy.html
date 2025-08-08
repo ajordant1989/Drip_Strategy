@@ -662,7 +662,7 @@
             });
 
             document.getElementById('incomeLabel').textContent = 'Monthly Income';
-            document.getElementById('blendedYield').textContent = blendedYield.toFixed(2) + '%';
+            document.getElementById('blendedYield').textContent = blendedYield.toFixed(0) + '%';
             document.getElementById('incomeValue').textContent = '$' + blendedMonthlyIncome.toLocaleString('en-US', { maximumFractionDigits: 2 });
             document.getElementById('annualIncome').textContent = '$' + annualIncome.toLocaleString('en-US', { maximumFractionDigits: 0 });
             document.getElementById('timeToTarget').textContent = projectionResults.timeToTarget !== 'N/A' ? `${projectionResults.timeToTarget} months` : 'N/A';
