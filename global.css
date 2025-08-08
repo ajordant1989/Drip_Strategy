@@ -73,7 +73,7 @@
 }
 
 body {
-    background: #000;
+    background: #0C0D0F;
     color: #fff;
     font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
     min-height: 100vh;
@@ -129,7 +129,7 @@ h3 {
 
 .card,
 .full-width {
-    background: #111;
+    background: #131519;
     border-radius: 18px;
     box-shadow: 0 2px 16px rgba(0, 0, 0, 0.15);
     padding: 32px 24px 24px 24px;
@@ -275,7 +275,7 @@ select::placeholder {
 /* Green button style for Calculate Strategy */
 .btn-gold {
     background: #DDBD85;
-    color: #111;
+    color: #0C0D0F;
     border: none;
     border-radius: 10px;
     padding: 14px 0;
@@ -292,7 +292,7 @@ select::placeholder {
 
 .btn-gold:hover {
     background: #CCAF7A;
-    color: #111;
+    color: #0C0D0F;
 }
 
 /* Blue button style for Add New Position */
@@ -310,7 +310,7 @@ select::placeholder {
 
 /* Projection button style */
 .projection-btn {
-    background: #111;
+    background: #0C0D0F;
     color: #fff;
     border: 2px solid #fff;
     border-radius: 10px;
@@ -372,7 +372,7 @@ select::placeholder {
 
 /* Portfolio Table Styles */
 .portfolio-table {
-    background: #111;
+    background: #0C0D0F;
     color: #fff;
     border-radius: 12px;
     width: 100%;
@@ -434,7 +434,7 @@ select::placeholder {
 
 /* Projection Table Styles */
 .projection-table {
-    background: #111;
+    background: #0C0D0F;
     color: #fff;
     border-radius: 12px;
     width: 100%;
@@ -516,7 +516,7 @@ select::placeholder {
 
 .result-card {
     flex: 1 1 0;
-    background: #111;
+    background: #0C0D0F;
     color: #fff;
     border-radius: 12px;
     padding: 24px;
@@ -539,7 +539,7 @@ select::placeholder {
 
 /* Chart.js custom styles for STRIKE-inspired look */
 .projection-chart {
-    background: #111;
+    background: #0C0D0F;
     border-radius: 16px;
     box-shadow: 0 4px 32px rgba(0,0,0,0.35);
     padding: 32px 24px 24px 24px;
@@ -579,7 +579,7 @@ select::placeholder {
 }
 
 .modal-content {
-    background: #111;
+    background: #0C0D0F;
     padding: 20px;
     border-radius: 8px;
     width: 360px;
@@ -979,7 +979,7 @@ select::placeholder {
 
 .result-card {
     flex: 1 1 0;
-    background: #111;
+    background: #0C0D0F;
     color: #fff;
     border-radius: 12px;
     padding: 24px;
