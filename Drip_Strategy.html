@@ -24,7 +24,7 @@
                 <div class="nav-right">
                     <a class="nav-link" href="Past_Drip_Calculations.html">Past Drip Calculations</a>
                     <p class="nav-link" onclick="saveCurrentView()" style="cursor:pointer;">Save View</p>
-                    <button class="btn-green nav-calc-btn" id="calculateStrategyNavBtn"
+                    <button class="btn-gold nav-calc-btn" id="calculateStrategyNavBtn"
                         onclick="calculateAndScroll()">Calculate
                         strategy</button>
                 </div>
@@ -56,7 +56,11 @@
 
         <section class="full-width" style="margin-bottom: 16px;">
             <div class="portfolio-setup">
-                <h2 style="margin-bottom:16px;">📊 Portfolio Setup</h2>
+                <h2 style="display:inline-flex; align-items:center;gap:4px;"><svg xmlns="http://www.w3.org/2000/svg"
+                        fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="#DDBD85" width="24" height="24">
+                        <path strokeLinecap="round" strokeLinejoin="round"
+                            d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" />
+                    </svg> Portfolio Setup</h2>
                 <div class="input-group">
                     <div style="display: flex; flex-direction: column; position: relative;">
                         <label for="totalInvestment" style="display: flex; align-items: center;">
@@ -122,8 +126,13 @@
 
         <section class="full-width" style="margin-bottom: 16px;">
             <div class="portfolio-positions">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                    <h2 style="margin: 0;">📈 Portfolio Positions</h2>
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <h2 style="display:inline-flex; align-items:center;gap:4px;"><svg xmlns="http://www.w3.org/2000/svg"
+                            fill="none" viewBox="0 0 24 24" strokeWidth='1.5' stroke="#DDBD85" width="24" height="24">
+                            <path strokeLinecap="round" strokeLinejoin="round"
+                                d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0 1 18 16.5h-2.25m-7.5 0h7.5m-7.5 0-1 3m8.5-3 1 3m0 0 .5 1.5m-.5-1.5h-9.5m0 0-.5 1.5m.75-9 3-3 2.148 2.148A12.061 12.061 0 0 1 16.5 7.605" />
+                        </svg>
+                        Portfolio Positions</h2>
                     <button class="add-position-text-btn" onclick="openAddPositionModal()" type="button">+ Add New
                         Position
                     </button>
@@ -150,7 +159,13 @@
         <!-- Integration Grid Toggle Switch -->
         <div class="card"
             style="width:100%; display:flex;align-items: center; justify-content:space-between; margin-bottom:16px;">
-            <h2>Additional Income</h2>
+            <h2 style="display:inline-flex; align-items:center;gap:4px;"><svg xmlns="http://www.w3.org/2000/svg"
+                    fill="none" color="#DDBD85" viewBox="0 0 24 24" strokeWidth="1.5" stroke="#DDBD85" width="24"
+                    height="24">
+                    <path strokeLinecap="round" strokeLinejoin="round"
+                        d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                </svg>
+                Additional Income</h2>
             <div style="display: flex; align-items: center;">
                 <label class="toggle-switch" id="integrationToggleLabel">
                     <input type="checkbox" id="toggleIntegrationGridSwitch" checked>
@@ -165,7 +180,13 @@
         <div id="integrationGridContainer" style="width: 100%;">
             <div class="integration-grid" style="display: flex; gap: 32px; width: 100;">
                 <div class="card iul-integration">
-                    <h2>💰 IUL Integration</h2>
+                    <h2 style="display:inline-flex; align-items:center;gap:4px;"><svg xmlns="http://www.w3.org/2000/svg"
+                            fill="none" viewBox="0 0 24 24" strokeWidth="1.5" color="#DDBD85" stroke="currentColor"
+                            width="24" height="24">
+                            <path strokeLinecap="round" strokeLinejoin="round"
+                                d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
+                        IUL Integration</h2>
                     <div class="input-group">
                         <div style="display: flex; flex-direction: column; position: relative;">
                             <label for="iulPremium">Monthly IUL Premium</label>
@@ -243,7 +264,7 @@
                 </div>
 
                 <div class="card bitcoin-integration">
-                    <h2>₿ Bitcoin Integration</h2>
+                    <h2><span style="color:#DDBD85;margin-right:4px;">₿</span>Bitcoin Integration</h2>
                     <div class="input-group">
                         <div style="display: flex; flex-direction: column; position: relative;">
                             <label for="bitcoinAmountBTC">Current Bitcoin Amount (BTC)</label>
@@ -340,7 +361,11 @@
         </div>
 
         <div class="projection-chart card full-width" style="height:600px;" id="projectionChartContainer">
-            <h2>📊 Monthly Growth Projection</h2>
+            <h2 style="display:inline-flex; align-items:center;gap:4px;"><svg xmlns="http://www.w3.org/2000/svg"
+                    fill="none" viewBox="0 0 24 24" strokeWidth='1.5' stroke="#DDBD85" width="24" height="24">
+                    <path strokeLinecap="round" strokeLinejoin="round"
+                        d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0 1 18 16.5h-2.25m-7.5 0h7.5m-7.5 0-1 3m8.5-3 1 3m0 0 .5 1.5m-.5-1.5h-9.5m0 0-.5 1.5m.75-9 3-3 2.148 2.148A12.061 12.061 0 0 1 16.5 7.605" />
+                </svg> Monthly Growth Projection</h2>
             <canvas id="wealthChart" style="margin-bottom: 16px; height: 400px; width: 100%;"></canvas>
             <div class="table-scroll">
                 <table class="projection-table" id="projectionTable" style="width: 100%; max-width: 1280px;">
@@ -470,7 +495,7 @@
             localStorage.setItem('dripSavedViews', JSON.stringify(saved));
             successMsg.textContent = 'Successfully saved!';
             successMsg.style.display = 'block';
-            successMsg.style.color = '#065f46'; // Tailwind green-500
+            successMsg.style.color = '#DDBD85'; // Tailwind green-500
             setTimeout(function () {
                 closeSaveViewModal();
                 window.location.href = 'Past_Drip_Calculations.html';
@@ -684,9 +709,9 @@
                 summaryRow.className = 'summary-row';
                 summaryRow.innerHTML = `
             <td style="font-weight:bold;">Total</td>
-            <td style="font-weight:bold;">${totalAllocation.toFixed(1)}%</td>
+            <td style="font-weight:bold;">${totalAllocation.toFixed(0)}%</td>
             <td style="font-weight:bold;">$${totalAmount.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
-            <td style="font-weight:bold;">${blendedYield.toFixed(2)}%</td>
+            <td style="font-weight:bold;">${blendedYield.toFixed(0)}%</td>
             <td style="font-weight:bold;">$${totalAnnualIncome.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
             <td style="font-weight:bold;">$${totalMonthlyIncome.toLocaleString('en-US', { maximumFractionDigits: 2 })}</td>
             <td></td>
@@ -909,7 +934,7 @@
                     <td>$${totalWealth.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
                 `;
                 if (targetMonth !== null && month === targetMonth) {
-                    row.style.background = '#065f46';
+                    row.style.background = '#DDBD85';
                     row.style.color = '#fff';
                 }
                 tbody.appendChild(row);
@@ -1052,10 +1077,10 @@
                 {
                     label: 'Total Wealth',
                     data: chartData.total,
-                    borderColor: '#065f46',
+                    borderColor: '#DDBD85',
                     backgroundColor: 'rgba(251,191,36,0.08)',
-                    pointBackgroundColor: '#065f46',
-                    pointBorderColor: '#065f46',
+                    pointBackgroundColor: '#DDBD85',
+                    pointBorderColor: '#DDBD85',
                     pointRadius: 5,
                     pointHoverRadius: 7,
                     fill: false,
@@ -1068,10 +1093,10 @@
                 datasets.splice(1, 0, {
                     label: 'IUL Cash Value',
                     data: chartData.iul,
-                    borderColor: '#2563eb',
+                    borderColor: '#3D6BA1',
                     backgroundColor: 'rgba(163,230,53,0.08)',
-                    pointBackgroundColor: '#2563eb',
-                    pointBorderColor: '#2563eb',
+                    pointBackgroundColor: '#3D6BA1',
+                    pointBorderColor: '#3D6BA1',
                     pointRadius: 5,
                     pointHoverRadius: 7,
                     fill: false,

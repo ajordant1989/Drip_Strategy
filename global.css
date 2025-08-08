@@ -61,7 +61,7 @@
 }
 /* Focus ring for input-row container when child input/select is focused */
 .input-row:focus-within {
-    border-color: #5F6AFF;
+    border-color: #DDBD85;
     box-shadow: 0 0 0 2px rgba(95, 106, 255, 0.15);
     outline: none;
 }
@@ -105,6 +105,10 @@ h1 {
     margin-bottom: 8px;
     text-align: center;
     letter-spacing: 0.01em;
+}
+
+h2 {
+    margin-bottom: 16px;
 }
 
 h3 {
@@ -199,7 +203,7 @@ select {
 
 input:focus,
 select:focus, .input-row:focus {
-    border-color: #5F6AFF;
+    border-color: #DDBD85;
     box-shadow: 0 0 0 2px rgba(95, 106, 255, 0.15);
     outline: none;
     border-radius: 10px;
@@ -269,9 +273,9 @@ select::placeholder {
 }
 
 /* Green button style for Calculate Strategy */
-.btn-green {
-    background: #065f46;
-    color: #fff;
+.btn-gold {
+    background: #DDBD85;
+    color: #111;
     border: none;
     border-radius: 10px;
     padding: 14px 0;
@@ -286,21 +290,21 @@ select::placeholder {
     padding: 14px;
 }
 
-.btn-green:hover {
-    background: #064e3b;
-    color: #fff;
+.btn-gold:hover {
+    background: #CCAF7A;
+    color: #111;
 }
 
 /* Blue button style for Add New Position */
 .btn-blue {
-    background: #2563eb;
+    background: #3D6BA1;
     color: #fff;
     width: 30%;
     margin: 0 auto;
 }
 
 .btn-blue:hover {
-    background: #1d4ed8;
+    background: #3D6BA1;
     color: #fff;
 }
 
@@ -331,7 +335,7 @@ select::placeholder {
 .add-position-text-btn {
     background: none;
     border: none;
-    color: #3B82F6;
+    color: #3D6BA1;
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
@@ -341,7 +345,7 @@ select::placeholder {
 }
 
 .add-position-text-btn:hover {
-    color: #3B82F6;
+    color: #3D6BA1;
     text-decoration: underline;
 }
 
@@ -507,7 +511,7 @@ select::placeholder {
     margin: 16px 0;
     width: 100%;
     max-width: 1280px;
-    border: 1px solid #065f46;
+    border: 1px solid #DDBD85;
 }
 
 .result-card {
@@ -605,27 +609,27 @@ select::placeholder {
 }
 
 .modal-content .btn {
-    color: #3B82F6;
-    border-color: #3B82F6;
+    color: #3D6BA1;
+    border-color: #3D6BA1;
     margin-bottom: 8px;
 }
 
 .modal-content .btn:hover {
     background: #000;
-    color: #3B82F6;
-    border-color: #2563eb;
+    color: #3D6BA1;
+    border-color: #3D6BA1;
 }
 
 .modal-content .close-btn {
     background: transparent;
-    color: #EF4444;
-    border: 1.5px solid #EF4444;
+    color: #C62A21;
+    border: 1.5px solid #C62A21;
     border-radius: 8px;
 }
 
 .modal-content .close-btn:hover {
     background: #000;
-    color: #EF4444;
+    color: #C62A21;
     border-color: #dc2626;
 }
 
@@ -704,7 +708,7 @@ select::placeholder {
 
                 /* Highlight row for time to target */
         .projection-table tr.highlight {
-            background-color: #065f46 !important;
+            background-color: #DDBD85 !important;
             color: #fff !important;
         }
 
@@ -832,7 +836,7 @@ select {
 
 input:focus,
 select:focus {
-    border-color: #5F6AFF;
+    border-color: #DDBD85;
     box-shadow: 0 0 0 2px rgba(95, 106, 255, 0.15);
     outline: none;
 }
@@ -894,28 +898,28 @@ select::placeholder {
 /* Modal button styles (inherits .btn, only color overrides needed) */
 .modal-content .btn {
     background: transparent;
-    color: #3B82F6;
-    border: 1.5px solid #3B82F6;
+    color: #3D6BA1;
+    border: 1.5px solid #3D6BA1;
     border-radius: 8px;
     margin-bottom: 8px;
 }
 
 .modal-content .btn:hover {
     background: #000;
-    color: #3B82F6;
-    border-color: #2563eb;
+    color: #3D6BA1;
+    border-color: #3D6BA1;
 }
 
 .modal-content .close-btn {
     background: transparent;
-    color: #EF4444;
-    border: 1.5px solid #EF4444;
+    color: #C62A21;
+    border: 1.5px solid #C62A21;
     border-radius: 8px;
 }
 
 .modal-content .close-btn:hover {
     background: #000;
-    color: #EF4444;
+    color: #C62A21;
     border-color: #dc2626;
 }
 
@@ -936,26 +940,26 @@ select::placeholder {
 }
 
 .edit-btn {
-    color: #3B82F6;
-    border-color: #3B82F6;
+    color: #3D6BA1;
+    border-color: #3D6BA1;
     margin-bottom: 8px;
 }
 
 .edit-btn:hover {
     background: #000;
-    color: #3B82F6;
-    border-color: #2563eb;
+    color: #3D6BA1;
+    border-color: #3D6BA1;
 }
 
 .remove-btn {
-    color: #EF4444;
-    border-color: #EF4444;
+    color: #C62A21;
+    border-color: #C62A21;
 }
 
 .remove-btn:hover {
     background: #000;
-    color: #EF4444;
-    border-color: #EF4444;
+    color: #C62A21;
+    border-color: #C62A21;
 }
 
 /* Space between buttons in table cell */
@@ -1051,7 +1055,7 @@ select::placeholder {
     .btn {
         /* ...existing code, if any overrides needed... */
     }
-    .btn-green {
+    .btn-gold {
         /* ...existing code, if any overrides needed... */
     }
     .btn-blue {
@@ -1073,7 +1077,7 @@ select::placeholder {
     .btn {
         /* ...existing code, if any overrides needed... */
     }
-    .btn-green {
+    .btn-gold {
         /* ...existing code, if any overrides needed... */
     }
     .btn-blue {
