@@ -41,11 +41,11 @@
                 <div class="value" id="blendedYield">0%</div>
             </div>
             <div class="result-card">
-                <h3 id="incomeLabel">Weekly Income</h3>
+                <h3 id="incomeLabel">Weekly Dividends</h3>
                 <div class="value" id="incomeValue">$0</div>
             </div>
             <div class="result-card">
-                <h3>Annual Income</h3>
+                <h3>Annual Dividends</h3>
                 <div class="value" id="annualIncome">$0</div>
             </div>
             <div class="result-card">
@@ -127,8 +127,8 @@
                             <th>Allocation %</th>
                             <th>Amount</th>
                             <th>Yield %</th>
-                            <th>Annual Income</th>
-                            <th>Weekly Income</th>
+                            <th>Annual Dividends</th>
+                            <th>Weekly Dividends</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -266,7 +266,7 @@
                         <tr>
                             <th>Month</th>
                             <th>Portfolio Value</th>
-                            <th>Monthly Income</th>
+                            <th>Monthly Dividends</th>
                             <th>IUL Value</th>
                             <th>Bitcoin Value</th>
                             <th>Total Wealth</th>
@@ -363,6 +363,11 @@
         let positionCounter = 0;
         let wealthChart = null;
         let editingPositionId = null; // Track which position is being edited
+
+        // Treat missing reinvest as true (backward compatibility)
+        function isReinvesting(pos) {
+            return pos && (pos.reinvest === undefined ? true : !!pos.reinvest);
+        }
 
         // Save all inputs and positions to localStorage
         function saveState() {
@@ -566,7 +571,7 @@
             // Update table header to always show 'Monthly Income'
             const ths = document.querySelectorAll('#portfolioTable thead th');
             if (ths.length >= 6) {
-                ths[5].textContent = 'Monthly Income';
+                ths[5].textContent = 'Monthly Dividends';
             }
 
             const allocationError = document.getElementById('allocationError');
@@ -592,7 +597,7 @@
                     monthlyIncome = annualIncome / 13;
                 }
                 // If reinvesting (DRIP), income is not paid out
-                if (position.reinvest) {
+                if (isReinvesting(position)) {
                     monthlyIncome = 0;
                     annualIncome = 0;
                 }
@@ -618,12 +623,12 @@
                 const totalAllocation = positions.reduce((sum, pos) => sum + pos.allocation, 0);
                 const totalAmount = positions.reduce((sum, pos) => sum + (totalInvestment * pos.allocation / 100), 0);
                 const totalAnnualIncome = positions.reduce((sum, pos) => {
-                    if (pos.reinvest) return sum;
+                    if (isReinvesting(pos)) return sum;
                     const amount = totalInvestment * pos.allocation / 100;
                     return sum + (amount * pos.yield / 100);
                 }, 0);
                 const totalMonthlyIncome = positions.reduce((sum, pos) => {
-                    if (pos.reinvest) return sum;
+                    if (isReinvesting(pos)) return sum;
                     const amount = totalInvestment * pos.allocation / 100;
                     const annualIncome = amount * pos.yield / 100;
                     let monthlyIncome;
@@ -693,7 +698,7 @@
             // Calculate paid-out monthly income from NON-DRIP positions only
             let paidMonthlyIncome = 0;
             positions.forEach(position => {
-                if (position.reinvest) return; // DRIP positions do not pay out
+                if (isReinvesting(position)) return; // DRIP positions do not pay out
                 const amount = totalInvestment * position.allocation / 100;
                 const annualIncome = amount * position.yield / 100;
                 let monthlyIncome;
@@ -751,9 +756,8 @@
             let monthlyFracCash = 0; // fraction paid out as cash
             positions.forEach(pos => {
                 const annualFrac = (pos.allocation / 100) * (pos.yield / 100);
-                // Both weekly and monthly map ~ to annual/13 per month
                 const monthlyFrac = annualFrac / 13;
-                if (pos.reinvest) monthlyFracDRIP += monthlyFrac; else monthlyFracCash += monthlyFrac;
+                if (isReinvesting(pos)) monthlyFracDRIP += monthlyFrac; else monthlyFracCash += monthlyFrac;
             });
 
             // State variables
@@ -876,7 +880,7 @@
                     <tr>
                         <th>Year</th>
                         <th>Portfolio Value</th>
-                        <th>Annual Income</th>
+                        <th>Annual Dividends</th>
                         ${showIUL ? '<th>IUL Value</th>' : ''}
                         ${showBitcoin ? '<th>Bitcoin Value</th>' : ''}
                         <th>Total Wealth</th>
@@ -1175,6 +1179,11 @@
                 el.addEventListener('input', saveState);
                 el.addEventListener('change', saveState);
             });
+
+            // After restoring state and wiring events, auto-run calculation if inputs are valid
+            if (canCalculate()) {
+                calculateResults();
+            }
         });
 
         // Collapse/Expand Integration Grid using toggle switch
@@ -1190,21 +1199,6 @@
                 toggleText.textContent = 'Show Integrations';
             }
         });
-
-        // Automatically run calculation if there is saved state and positions
-        const state = JSON.parse(localStorage.getItem('dripStrategyState') || '{}');
-        if (
-            Array.isArray(state.positions) &&
-            state.positions.length > 0 &&
-            state.totalInvestment &&
-            state.targetAmount &&
-            !isNaN(parseFloat(state.totalInvestment)) &&
-            !isNaN(parseFloat(state.targetAmount)) &&
-            parseFloat(state.totalInvestment) > 0 &&
-            parseFloat(state.targetAmount) > 0
-        ) {
-            calculateResults();
-        }
 
         function scrollToProjection() {
             const chart = document.getElementById('projectionChartContainer');
