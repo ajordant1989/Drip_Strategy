@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>M2‑Based Income Growth Calculator (50‑yr Avg)</title>
+<style>
+  body {font-family:Arial,Helvetica,sans-serif; max-width:720px; margin:2rem auto; line-height:1.5;}
+  label {display:block;margin-top:1rem;}
+  input,button {font-size:1rem;padding:0.4rem;}
+  .result {margin-top:1.5rem;padding:1rem;background:#f9f9f9;border-left:4px solid #2c7;}
+  .note {font-size:.9rem;color:#555;margin-top:.5rem;}
+</style>
+</head>
+<body>
+
+<h1>M2 Money‑Supply / Income Growth Calculator</h1>
+
+<p>This tool compares the growth of your nominal income with inflation that is proxied by the **average annual growth of the U.S. M2 money supply over the last 50 years**.</p>
+
+<p><strong>Formula</strong> (rates expressed as decimals, e.g., 0.04 for 4 %):</p>
+<pre>Real Income = Nominal Income × (1+IncGrowth)ⁿ ÷ (1+M2Growth)ⁿ</pre>
+
+<hr>
+
+<label>
+  Current annual income (USD):
+  <input type="number" id="income" placeholder="e.g. 60000" min="0">
+</label>
+
+<label>
+  Expected nominal income growth per year (%):
+  <input type="number" id="incGrowth" placeholder="e.g. 4" step="0.01">
+</label>
+
+<label>
+  Projection horizon (years):
+  <input type="number" id="years" placeholder="e.g. 10" min="1">
+</label>
+
+<label>
+  Annual M2 growth rate (%):
+  <input type="number" id="m2Growth" placeholder="Will be filled with 50‑yr avg…" step="0.01">
+  <div class="note" id="m2Note"></div>
+</label>
+
+<button id="calcBtn">Calculate</button>
+
+<div id="output" class="result" style="display:none;"></div>
+
+<!-- Real M2 Money Stock Chart -->
+<canvas id="realM2Chart" width="900" height="350" style="max-width:100%;margin:2rem auto;display:block;"></canvas>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script>
+// --- Real M2 Money Stock CSV data (truncated for brevity, see full data in file) ---
+const m2CsvData = `observation_date,M2REAL\n1959-01-01,987.9\n1959-02-01,992.1\n1959-03-01,998.3\n1959-04-01,1001.0\n1959-05-01,1006.2\n1959-06-01,1010.3\n1959-07-01,1012.7\n1959-08-01,1015.8\n1959-09-01,1014.4\n1959-10-01,1010.2\n1959-11-01,1012.3\n1959-12-01,1012.6\n1960-01-01,1015.3\n1960-02-01,1014.6\n1960-03-01,1017.7\n1960-04-01,1015.9\n1960-05-01,1017.6\n1960-06-01,1020.9\n1960-07-01,1029.1\n1960-08-01,1036.5\n1960-09-01,1041.5\n1960-10-01,1040.3\n1960-11-01,1044.0\n1960-12-01,1048.0\n1961-01-01,1052.6\n1961-02-01,1060.7\n1961-03-01,1066.7\n1961-04-01,1073.1\n1961-05-01,1079.8\n1961-06-01,1086.8\n1961-07-01,1088.2\n1961-08-01,1094.2\n1961-09-01,1099.1\n1961-10-01,1104.4\n1961-11-01,1112.1\n1961-12-01,1118.0\n1962-01-01,1123.5\n1962-02-01,1129.5\n1962-03-01,1137.2\n1962-04-01,1143.7\n1962-05-01,1149.1\n1962-06-01,1156.2\n1962-07-01,1160.8\n1962-08-01,1165.1\n1962-09-01,1166.7\n1962-10-01,1175.8\n1962-11-01,1184.3\n1962-12-01,1193.9\n1963-01-01,1199.7\n1963-02-01,1207.0\n1963-03-01,1215.0\n1963-04-01,1224.7\n1963-05-01,1232.7\n1963-06-01,1236.2\n1963-07-01,1241.8\n1963-08-01,1247.5\n1963-09-01,1256.5\n1963-10-01,1262.8\n1963-11-01,1271.9\n1963-12-01,1273.3\n1964-01-01,1277.3\n1964-02-01,1286.3\n1964-03-01,1292.2\n1964-04-01,1297.9\n1964-05-01,1304.7\n1964-06-01,1312.8\n1964-07-01,1322.1\n1964-08-01,1331.4\n1964-09-01,1341.4\n1964-10-01,1346.7\n1964-11-01,1352.1\n1964-12-01,1359.0\n1965-01-01,1366.7\n1965-02-01,1376.0\n1965-03-01,1383.6\n1965-04-01,1387.5\n1965-05-01,1388.5\n1965-06-01,1392.3\n1965-07-01,1402.5\n1965-08-01,1413.0\n1965-09-01,1421.6\n1965-10-01,1430.0\n1965-11-01,1435.3\n1965-12-01,1441.8\n1966-01-01,1449.2\n1966-02-01,1448.3\n1966-03-01,1451.8\n1966-04-01,1453.8\n1966-05-01,1453.2\n1966-06-01,1455.2\n1966-07-01,1451.2\n1966-08-01,1447.5\n1966-09-01,1451.6\n1966-10-01,1448.1\n1966-11-01,1451.6\n1966-12-01,1458.7\n1967-01-01,1463.8\n1967-02-01,1470.0\n1967-03-01,1483.9\n1967-04-01,1486.7\n1967-05-01,1502.1\n1967-06-01,1507.5\n1967-07-01,1515.9\n1967-08-01,1524.8\n1967-09-01,1531.8\n1967-10-01,1537.7\n1967-11-01,1537.5\n1967-12-01,1543.5\n1968-01-01,1546.6\n1968-02-01,1550.9\n1968-03-01,1554.5\n1968-04-01,1557.3\n1968-05-01,1562.0\n1968-06-01,1563.7\n1968-07-01,1563.3\n1968-08-01,1569.7\n1968-09-01,1577.2\n1968-10-01,1579.6\n1968-11-01,1588.7\n1968-12-01,1592.1\n1969-01-01,1594.7\n1969-02-01,1597.5\n1969-03-01,1591.1\n1969-04-01,1586.0\n1969-05-01,1583.8\n1969-06-01,1580.6\n1969-07-01,1574.7\n1969-08-01,1572.1\n1969-09-01,1569.0\n1969-10-01,1564.1\n1969-11-01,1561.1\n1969-12-01,1559.4\n1970-01-01,1555.7\n1970-02-01,1538.8\n1970-03-01,1533.4\n1970-04-01,1528.3\n1970-05-01,1532.4\n1970-06-01,1534.0\n1970-07-01,1540.1\n1970-08-01,1551.0\n1970-09-01,1559.2\n1970-10-01,1564.5\n1970-11-01,1568.4\n1970-12-01,1574.1\n1971-01-01,1586.2\n1971-02-01,1606.5\n1971-03-01,1624.7\n1971-04-01,1641.9\n1971-05-01,1654.3\n1971-06-01,1661.7\n1971-07-01,1673.9\n1971-08-01,1684.3\n1971-09-01,1697.3\n1971-10-01,1707.6\n1971-11-01,1718.5\n1971-12-01,1728.2\n1972-01-01,1742.0\n1972-02-01,1752.9\n1972-03-01,1771.7\n1972-04-01,1779.3\n1972-05-01,1786.8\n1972-06-01,1797.8\n1972-07-01,1817.0\n1972-08-01,1834.6\n1972-09-01,1848.7\n1972-10-01,1864.7\n1972-11-01,1872.4\n1972-12-01,1887.8\n1973-01-01,1897.7\n1973-02-01,1893.3\n1973-03-01,1878.6\n1973-04-01,1875.7\n1973-05-01,1883.4\n1973-06-01,1885.3\n1973-07-01,1892.5\n1973-08-01,1864.0\n1973-09-01,1856.9\n1973-10-01,1847.8\n1973-11-01,1849.5\n1973-12-01,1847.7\n1974-01-01,1837.0\n1974-02-01,1827.1\n1974-03-01,1820.3\n1974-04-01,1814.8\n1974-05-01,1799.6\n1974-06-01,1791.4\n1974-07-01,1787.8\n1974-08-01,1771.7\n1974-09-01,1754.7\n1974-10-01,1751.6\n1974-11-01,1744.9\n1974-12-01,1738.2\n...`;
+
+function parseCsv(csv) {
+  const lines = csv.trim().split('\n');
+  const header = lines[0].split(',');
+  const dateIdx = header.indexOf('observation_date');
+  const valueIdx = header.indexOf('M2REAL');
+  const dates = [], values = [];
+  for (let i = 1; i < lines.length; i++) {
+    const parts = lines[i].split(',');
+    if (parts.length < 2) continue;
+    const date = parts[dateIdx];
+    const value = parseFloat(parts[valueIdx]);
+    if (!isNaN(value)) {
+      dates.push(date);
+      values.push(value);
+    }
+  }
+  return { dates, values };
+}
+
+const m2Data = parseCsv(m2CsvData);
+
+window.addEventListener('DOMContentLoaded', function() {
+  const ctx = document.getElementById('realM2Chart').getContext('2d');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: m2Data.dates,
+      datasets: [{
+        label: 'Real M2 Money Stock (Billions, 1982-84 Dollars)',
+        data: m2Data.values,
+        borderColor: '#1e90ff',
+        backgroundColor: 'rgba(30,144,255,0.1)',
+        pointRadius: 0,
+        fill: true,
+        tension: 0.1
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { labels: { color: '#333' } },
+        title: { display: true, text: 'Real M2 Money Stock (1959–2025, FRED)', color: '#222', font: { size: 18 } }
+      },
+      scales: {
+        x: {
+          type: 'time',
+          time: { unit: 'year', tooltipFormat: 'yyyy-MM' },
+          title: { display: true, text: 'Date', color: '#333' },
+          ticks: { color: '#333', maxTicksLimit: 12 }
+        },
+        y: {
+          title: { display: true, text: 'Billions of 1982-84 Dollars', color: '#333' },
+          ticks: { color: '#333' }
+        }
+      }
+    }
+  });
+});
+</script>
+
+<script>
+/* --------------------------------------------------------------
+   1️⃣ FETCH 50 years of M2 data from FRED and compute the avg.
+   -------------------------------------------------------------- */
+async function fetchM2AvgGrowth() {
+  // ---- INSERTED YOUR API KEY ---------------------------------
+  const apiKey   = 'abcdefghijklmnopqrstuvwxyz123456';
+  // -------------------------------------------------------------
+
+  const seriesId = 'M2SL';                         // M2, seasonally adjusted, level
+  const startDate = '1974-01-01';                  // approx. 50 years back
+  const url = `https://api.stlouisfed.org/fred/series/observations?series_id=${seriesId}&observation_start=${startDate}&frequency=a&api_key=${apiKey}&file_type=json`;
+
+  try {
+    const resp = await fetch(url);
+    const data = await resp.json();
+
+    if (!data.observations?.length) throw new Error('No observations returned');
+
+    // Parse numeric values, ignore missing entries (".")
+    const values = data.observations
+        .map(o => parseFloat(o.value))
+        .filter(v => !isNaN(v));
+
+    if (values.length < 2) throw new Error('Not enough data points');
+
+    // Compute annualized growth rates: (endValue/startValue)^(1/n) - 1
+    const n = values.length - 1;
+    const totalGrowth = (values[n] / values[0]) - 1;
+    const avgAnnGrowth = totalGrowth / n;
+
+    // Convert to percentage and update the input field
+    const m2Growth = (avgAnnGrowth * 100).toFixed(2);
+    document.getElementById('m2Growth').value = m2Growth;
+
+    // Display a note with the exact 50-year average growth rate
+    document.getElementById('m2Note').innerText = `50-year avg. M2 growth rate: ${m2Growth} %`;
+  }
+  catch (error) {
+    console.error('Error fetching M2 data:', error);
+    alert('Failed to fetch M2 data. Please try again later.');
+  }
+}
+
+// Fetch and display the 50-year average M2 growth rate on page load
+window.addEventListener('DOMContentLoaded', fetchM2AvgGrowth);
+</script>
+
+<script>
+/* --------------------------------------------------------------
+   2️⃣ CALCULATE real income based on user inputs
+   -------------------------------------------------------------- */
+document.getElementById('calcBtn').addEventListener('click', function() {
+  const income = parseFloat(document.getElementById('income').value);
+  const incGrowth = parseFloat(document.getElementById('incGrowth').value) / 100;
+  const years = parseInt(document.getElementById('years').value);
+  const m2Growth = parseFloat(document.getElementById('m2Growth').value) / 100;
+
+  // Basic validation
+  if (isNaN(income) || isNaN(incGrowth) || isNaN(years) || isNaN(m2Growth)) {
+    alert('Please enter valid numbers for all fields.');
+    return;
+  }
+
+  // Calculate real income using the formula: Real Income = Nominal Income × (1+IncGrowth)ⁿ ÷ (1+M2Growth)ⁿ
+  const realIncome = income * Math.pow(1 + incGrowth, years) / Math.pow(1 + m2Growth, years);
+
+  // Display the result
+  document.getElementById('output').innerText = `Projected real income in ${years} years: USD ${realIncome.toFixed(2)}`;
+  document.getElementById('output').style.display = 'block';
+});
+</script>
+
+</body>
+</html>

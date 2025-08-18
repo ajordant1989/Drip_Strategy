@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retirement Calculator</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f8f9fa; }
+        .container { max-width: 1200px; }
+        .card { margin-top: 20px; }
+        #balanceChart { width: 100%; height: 400px; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-4">Retirement Calculator</h1>
+        <form>
+            <div class="row">
+                <div class="col-md-6">
+                    <h2>Basic Information</h2>
+                    <div class="mb-3">
+                        <label for="currentAge" class="form-label">Current Age:</label>
+                        <input type="number" class="form-control" id="currentAge" value="30" min="18" max="100" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="retirementAge" class="form-label">Retirement Age:</label>
+                        <input type="number" class="form-control" id="retirementAge" value="65" min="25" max="95" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="lifeExpectancy" class="form-label">Life Expectancy:</label>
+                        <input type="number" class="form-control" id="lifeExpectancy" value="85" min="60" max="120" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h2>Investments and Growth</h2>
+                    <div class="mb-3">
+                        <label for="stocksBalance" class="form-label">Stocks Balance ($):</label>
+                        <input type="number" class="form-control" id="stocksBalance" value="10000" min="0" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="stocksGrowth" class="form-label">Stocks Growth Rate (%):</label>
+                        <input type="number" class="form-control" id="stocksGrowth" value="7" min="0" max="100" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="stocksSavings" class="form-label">Stocks Annual Savings ($):</label>
+                        <input type="number" class="form-control" id="stocksSavings" value="5000" min="0" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="bondsBalance" class="form-label">Bonds Balance ($):</label>
+                        <input type="number" class="form-control" id="bondsBalance" value="10000" min="0" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="bondsGrowth" class="form-label">Bonds Growth Rate (%):</label>
+                        <input type="number" class="form-control" id="bondsGrowth" value="3" min="0" max="100" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="bondsSavings" class="form-label">Bonds Annual Savings ($):</label>
+                        <input type="number" class="form-control" id="bondsSavings" value="2000" min="0" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="bitcoinBalance" class="form-label">Bitcoin Balance ($):</label>
+                        <input type="number" class="form-control" id="bitcoinBalance" value="5000" min="0" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="bitcoinGrowth" class="form-label">Bitcoin Growth Rate (%):</label>
+                        <input type="number" class="form-control" id="bitcoinGrowth" value="17" min="0" max="100" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="bitcoinSavings" class="form-label">Bitcoin Annual Savings ($):</label>
+                        <input type="number" class="form-control" id="bitcoinSavings" value="1000" min="0" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="otherBalance" class="form-label">Other Balance ($):</label>
+                        <input type="number" class="form-control" id="otherBalance" value="0" min="0" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="otherGrowth" class="form-label">Other Growth Rate (%):</label>
+                        <input type="number" class="form-control" id="otherGrowth" value="2" min="0" max="100" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="otherSavings" class="form-label">Other Annual Savings ($):</label>
+                        <input type="number" class="form-control" id="otherSavings" value="0" min="0" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="otherTaxStatus" class="form-label">Other Tax Status:</label>
+                        <select class="form-select" id="otherTaxStatus">
+                            <option value="Taxable">Taxable</option>
+                            <option value="Traditional">Traditional IRA</option>
+                            <option value="Roth">Roth IRA</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="contribGrowth" class="form-label">Contribution Growth Rate (%):</label>
+                        <input type="number" class="form-control" id="contribGrowth" value="2" min="0" max="100" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="otherIncome" class="form-label">Other Income at Retirement ($):</label>
+                        <input type="number" class="form-control" id="otherIncome" value="20000" min="0" required>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <h2>Expected Expenses</h2>
+                    <div class="mb-3">
+                        <label for="annualExpenses" class="form-label">Annual Expenses ($):</label>
+                        <input type="number" class="form-control" id="annualExpenses" value="50000" min="0" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="capitalGainsRate" class="form-label">Long-term Capital Gains Rate (%):</label>
+                        <input type="number" class="form-control" id="capitalGainsRate" value="15" min="0" max="100" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="inflationRate" class="form-label">Inflation Rate (%):</label>
+                        <input type="number" class="form-control" id="inflationRate" value="2" min="0" max="100" required>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="btn btn-primary mt-3" onclick="calculate()">Calculate</button>
+        </form>
+        <div id="results" class="mt-4"></div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Check if Chart.js loaded
+        if (typeof Chart === 'undefined') {
+            document.getElementById('results').innerHTML = `<div class="card"><div class="card-body"><p class="error">Error: Chart.js failed to load. Please check your internet connection.</p></div></div>`;
+        } else {
+            // Register annotation plugin
+            Chart.register(ChartAnnotationPlugin);
+        }
+
+        function calculate() {
+            // Get and validate inputs
+            const currentAge = parseFloat(document.getElementById('currentAge').value);
+            const retirementAge = parseFloat(document.getElementById('retirementAge').value);
+            const lifeExpectancy = parseFloat(document.getElementById('lifeExpectancy').value);
+            const assets = [
+                { type: 'stocks', tax_status: 'Taxable', balance: parseFloat(document.getElementById('stocksBalance').value), growth_rate: parseFloat(document.getElementById('stocksGrowth').value) / 100, additional_savings: parseFloat(document.getElementById('stocksSavings').value) },
+                { type: 'bonds', tax_status: 'Taxable', balance: parseFloat(document.getElementById('bondsBalance').value), growth_rate: parseFloat(document.getElementById('bondsGrowth').value) / 100, additional_savings: parseFloat(document.getElementById('bondsSavings').value) },
+                { type: 'bitcoin', tax_status: 'Taxable', balance: parseFloat(document.getElementById('bitcoinBalance').value), growth_rate: parseFloat(document.getElementById('bitcoinGrowth').value) / 100, additional_savings: parseFloat(document.getElementById('bitcoinSavings').value) },
+                { type: 'other', tax_status: document.getElementById('otherTaxStatus').value, balance: parseFloat(document.getElementById('otherBalance').value), growth_rate: parseFloat(document.getElementById('otherGrowth').value) / 100, additional_savings: parseFloat(document.getElementById('otherSavings').value) }
+            ];
+            const contribGrowthRate = parseFloat(document.getElementById('contribGrowth').value) / 100;
+            const otherIncome = parseFloat(document.getElementById('otherIncome').value);
+            const annualExpenses = parseFloat(document.getElementById('annualExpenses').value);
+            const capitalGainsRate = parseFloat(document.getElementById('capitalGainsRate').value) / 100;
+            const inflationRate = parseFloat(document.getElementById('inflationRate').value) / 100;
+
+            // Input validation
+            const inputs = [
+                { value: currentAge, name: 'Current Age' },
+                { value: retirementAge, name: 'Retirement Age' },
+                { value: lifeExpectancy, name: 'Life Expectancy' },
+                { value: assets[0].balance, name: 'Stocks Balance' },
+                { value: assets[0].growth_rate * 100, name: 'Stocks Growth Rate' },
+                { value: assets[0].additional_savings, name: 'Stocks Annual Savings' },
+                { value: assets[1].balance, name: 'Bonds Balance' },
+                { value: assets[1].growth_rate * 100, name: 'Bonds Growth Rate' },
+                { value: assets[1].additional_savings, name: 'Bonds Annual Savings' },
+                { value: assets[2].balance, name: 'Bitcoin Balance' },
+                { value: assets[2].growth_rate * 100, name: 'Bitcoin Growth Rate' },
+                { value: assets[2].additional_savings, name: 'Bitcoin Annual Savings' },
+                { value: assets[3].balance, name: 'Other Balance' },
+                { value: assets[3].growth_rate * 100, name: 'Other Growth Rate' },
+                { value: assets[3].additional_savings, name: 'Other Annual Savings' },
+                { value: contribGrowthRate * 100, name: 'Contribution Growth Rate' },
+                { value: otherIncome, name: 'Other Income at Retirement' },
+                { value: annualExpenses, name: 'Annual Expenses' },
+                { value: capitalGainsRate * 100, name: 'Capital Gains Rate' },
+                { value: inflationRate * 100, name: 'Inflation Rate' }
+            ];
+
+            for (let input of inputs) {
+                if (isNaN(input.value) || input.value < 0) {
+                    document.getElementById('results').innerHTML = `<div class="card"><div class="card-body"><p class="error">Error: ${input.name} must be a non-negative number.</p></div></div>`;
+                    return;
+                }
+            }
+
+            if (currentAge > retirementAge || retirementAge > lifeExpectancy) {
+                document.getElementById('results').innerHTML = `<div class="card"><div class="card-body"><p class="error">Error: Ensure Current Age ≤ Retirement Age ≤ Life Expectancy.</p></div></div>`;
+                return;
+            }
+
+            // Initialize balance history
+            let balanceHistory = [{ age: currentAge, balance: assets.reduce((sum, a) => sum + a.balance, 0) }];
+
+            // Accumulation phase
+            for (let year = currentAge; year < retirementAge; year++) {
+                for (let asset of assets) {
+                    asset.balance = Math.max(asset.balance * (1 + asset.growth_rate), 0);
+                    if (asset.additional_savings) {
+                        const contribution = asset.additional_savings * Math.pow(1 + contribGrowthRate, year - currentAge);
+                        asset.balance += contribution;
+                    }
+                }
+                const totalBalance = assets.reduce((sum, a) => sum + a.balance, 0);
+                balanceHistory.push({ age: year + 1, balance: totalBalance });
+            }
+
+            // Calculate balance at retirement
+            let balanceAtRetirement = assets.reduce((sum, asset) => sum + asset.balance, 0);
+            let sustainable = true;
+            let balanceAtDeath = balanceAtRetirement;
+
+            // Withdrawal phase
+            if (retirementAge < 59.5) {
+                let nonRothAssets = assets.filter(a => a.tax_status !== 'Roth');
+                let rothAssets = assets.filter(a => a.tax_status === 'Roth');
+                for (let year = retirementAge; year < lifeExpectancy; year++) {
+                    let expenses = annualExpenses * Math.pow(1 + inflationRate, year - retirementAge);
+                    let netWithdrawal = Math.max(expenses - otherIncome, 0);
+                    if (netWithdrawal > 0) {
+                        let totalNonRoth = nonRothAssets.reduce((sum, a) => sum + a.balance, 0);
+                        if (totalNonRoth > 0) {
+                            let G = netWithdrawal / (1 - capitalGainsRate);
+                            for (let asset of nonRothAssets) {
+                                if (totalNonRoth > 0) {
+                                    let withdrawal = G * (asset.balance / totalNonRoth);
+                                    asset.balance = Math.max(asset.balance - withdrawal, 0);
+                                }
+                            }
+                        } else {
+                            let totalRoth = rothAssets.reduce((sum, a) => sum + a.balance, 0);
+                            if (totalRoth > 0) {
+                                let G = netWithdrawal / 0.7; // 20% tax + 10% penalty
+                                for (let asset of rothAssets) {
+                                    if (totalRoth > 0) {
+                                        let withdrawal = G * (asset.balance / totalRoth);
+                                        asset.balance = Math.max(asset.balance - withdrawal, 0);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    for (let asset of assets) {
+                        asset.balance = Math.max(asset.balance * (1 + asset.growth_rate), 0);
+                    }
+                    const totalBalance = assets.reduce((sum, a) => sum + a.balance, 0);
+                    balanceHistory.push({ age: year + 1, balance: totalBalance });
+                    if (totalBalance < 0) {
+                        sustainable = false;
+                        break;
+                    }
+                }
+                balanceAtDeath = assets.reduce((sum, a) => sum + a.balance, 0);
+            } else {
+                for (let year = retirementAge; year < lifeExpectancy; year++) {
+                    let expenses = annualExpenses * Math.pow(1 + inflationRate, year - retirementAge);
+                    let netWithdrawal = Math.max(expenses - otherIncome, 0);
+                    if (netWithdrawal > 0) {
+                        let totalBalance = assets.reduce((sum, a) => sum + a.balance, 0);
+                        if (totalBalance > 0) {
+                            let effectiveNetRate = assets.reduce((sum, a) => sum + (a.balance / totalBalance) * (a.tax_status === 'Roth' ? 1 : 1 - capitalGainsRate), 0);
+                            let G = netWithdrawal / effectiveNetRate;
+                            for (let asset of assets) {
+                                let withdrawal = G * (asset.balance / totalBalance);
+                                asset.balance = Math.max(asset.balance - withdrawal, 0);
+                            }
+                        }
+                    }
+                    for (let asset of assets) {
+                        asset.balance = Math.max(asset.balance * (1 + asset.growth_rate), 0);
+                    }
+                    const totalBalance = assets.reduce((sum, a) => sum + a.balance, 0);
+                    balanceHistory.push({ age: year + 1, balance: totalBalance });
+                    if (totalBalance < 0) {
+                        sustainable = false;
+                        break;
+                    }
+                }
+                balanceAtDeath = assets.reduce((sum, a) => sum + a.balance, 0);
+            }
+
+            // Display results
+            document.getElementById('results').innerHTML = `
+                <div class="card">
+                    <div class="card-header">Results</div>
+                    <div class="card-body">
+                        <p>Balance at Retirement: $${balanceAtRetirement.toFixed(2)}</p>
+                        <p>Balance at Death: $${balanceAtDeath.toFixed(2)}</p>
+                        <p>Retirement Plan: ${sustainable ? 'Sustainable' : 'Unsustainable'}</p>
+                        <canvas id="balanceChart" height="200"></canvas>
+                    </div>
+                </div>
+            `;
+
+            // Create chart
+            try {
+                if (typeof Chart === 'undefined') {
+                    throw new Error('Chart.js not loaded');
+                }
+                const ctx = document.getElementById('balanceChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: balanceHistory.map(entry => entry.age),
+                        datasets: [{
+                            label: 'Portfolio Balance',
+                            data: balanceHistory.map(entry => entry.balance),
+                            borderColor: '#1e90ff',
+                            backgroundColor: '#1e90ff',
+                            fill: false
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                type: 'linear',
+                                title: {
+                                    display: true,
+                                    text: 'Age',
+                                    color: '#333333'
+                                },
+                                ticks: {
+                                    color: '#333333'
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Balance ($)',
+                                    color: '#333333'
+                                },
+                                ticks: {
+                                    color: '#333333'
+                                }
+                            }
+                        },
+                        plugins: {
+                            annotation: {
+                                annotations: [{
+                                    type: 'line',
+                                    mode: 'vertical',
+                                    scaleID: 'x',
+                                    value: retirementAge,
+                                    borderColor: '#ff4500',
+                                    borderWidth: 2,
+                                    label: {
+                                        content: 'Retirement Age',
+                                        enabled: true,
+                                        position: 'top',
+                                        backgroundColor: '#ff4500',
+                                        color: '#ffffff'
+                                    }
+                                }]
+                            },
+                            legend: {
+                                labels: {
+                                    color: '#333333'
+                                }
+                            },
+                            tooltip: {
+                                titleColor: '#ffffff',
+                                bodyColor: '#ffffff'
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                document.getElementById('results').innerHTML = `<div class="card"><div class="card-body"><p class="error">Error rendering chart: ${error.message}. Please ensure Chart.js is loaded correctly.</p></div></div>`;
+            }
+        }
+    </script>
+</body>
+</html>
