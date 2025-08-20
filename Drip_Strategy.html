@@ -255,35 +255,15 @@
                     <h2>₿ Bitcoin Integration</h2>
                     <div class="input-group">
                         <div style="display: flex; flex-direction: column; position: relative;">
-                            <label for="bitcoinAmountBTC">Current Bitcoin Amount (BTC)</label>
-                            <div class="input-row">
-                                <input type="number" id="bitcoinAmountBTC" step="0.001" min="0" placeholder="0"
-                                    class="with-unit input-no-border" data-unit="BTC">
-                                <div class="input-arrows">
-                                    <svg class="input-arrow" onclick="stepInput('bitcoinAmountBTC', 0.001)"
-                                        viewBox="0 0 24 24">
-                                        <path d="M12 8l-6 6h12z" />
-                                    </svg>
-                                    <svg class="input-arrow" onclick="stepInput('bitcoinAmountBTC', -0.001)"
-                                        viewBox="0 0 24 24">
-                                        <path d="M12 16l6-6H6z" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div style="display: flex; flex-direction: column; position: relative;">
-                            <label for="bitcoinPriceUSD">Current Bitcoin Price</label>
+                            <label for="bitcoinUSD">Bitcoin (USD)</label>
                             <div class="input-row">
                                 <span class="input-unit input-unit-left" aria-hidden="true">$</span>
-                                <input type="text" id="bitcoinPriceUSD" step="100" min="0" placeholder="0"
-                                    class="with-unit input-no-border" data-unit="$">
+                                <input type="number" id="bitcoinUSD" step="100" min="0" placeholder="0" class="with-unit input-no-border" data-unit="$">
                                 <div class="input-arrows">
-                                    <svg class="input-arrow" onclick="stepInput('bitcoinPriceUSD', 100)"
-                                        viewBox="0 0 24 24">
+                                    <svg class="input-arrow" onclick="stepInput('bitcoinUSD', 100)" viewBox="0 0 24 24">
                                         <path d="M12 8l-6 6h12z" />
                                     </svg>
-                                    <svg class="input-arrow" onclick="stepInput('bitcoinPriceUSD', -100)"
-                                        viewBox="0 0 24 24">
+                                    <svg class="input-arrow" onclick="stepInput('bitcoinUSD', -100)" viewBox="0 0 24 24">
                                         <path d="M12 16l6-6H6z" />
                                     </svg>
                                 </div>
@@ -292,16 +272,13 @@
                         <div style="display: flex; flex-direction: column; position: relative;">
                             <label for="bitcoinCAGR">Bitcoin CAGR (%)</label>
                             <div class="input-row">
-                                <input type="number" id="bitcoinCAGR" step="0.5" min="0" placeholder="0"
-                                    class="with-unit input-no-border">
+                                <input type="number" id="bitcoinCAGR" step="0.5" min="0" placeholder="0" class="with-unit input-no-border">
                                 <span class="input-unit input-unit-right">%</span>
                                 <div class="input-arrows">
-                                    <svg class="input-arrow" onclick="stepInput('bitcoinCAGR', 0.5)"
-                                        viewBox="0 0 24 24">
+                                    <svg class="input-arrow" onclick="stepInput('bitcoinCAGR', 0.5)" viewBox="0 0 24 24">
                                         <path d="M12 8l-6 6h12z" />
                                     </svg>
-                                    <svg class="input-arrow" onclick="stepInput('bitcoinCAGR', -0.5)"
-                                        viewBox="0 0 24 24">
+                                    <svg class="input-arrow" onclick="stepInput('bitcoinCAGR', -0.5)" viewBox="0 0 24 24">
                                         <path d="M12 16l6-6H6z" />
                                     </svg>
                                 </div>
@@ -311,15 +288,12 @@
                             <label for="bitcoinMonthlySavingsUSD">Monthly Bitcoin Savings</label>
                             <div class="input-row">
                                 <span class="input-unit input-unit-left" aria-hidden="true">$</span>
-                                <input type="number" id="bitcoinMonthlySavingsUSD" step="1" min="0" placeholder="0"
-                                    class="with-unit input-no-border">
+                                <input type="number" id="bitcoinMonthlySavingsUSD" step="1" min="0" placeholder="0" class="with-unit input-no-border">
                                 <div class="input-arrows">
-                                    <svg class="input-arrow" onclick="stepInput('bitcoinMonthlySavingsUSD', 1)"
-                                        viewBox="0 0 24 24">
+                                    <svg class="input-arrow" onclick="stepInput('bitcoinMonthlySavingsUSD', 1)" viewBox="0 0 24 24">
                                         <path d="M12 8l-6 6h12z" />
                                     </svg>
-                                    <svg class="input-arrow" onclick="stepInput('bitcoinMonthlySavingsUSD', -1)"
-                                        viewBox="0 0 24 24">
+                                    <svg class="input-arrow" onclick="stepInput('bitcoinMonthlySavingsUSD', -1)" viewBox="0 0 24 24">
                                         <path d="M12 16l6-6H6z" />
                                     </svg>
                                 </div>
@@ -328,16 +302,13 @@
                         <div style="display: flex; flex-direction: column; position: relative;">
                             <label for="reinvestToBitcoin">Reinvest Dividend %</label>
                             <div class="input-row">
-                                <input type="number" id="reinvestToBitcoin" step="5" min="0" max="100" placeholder="0"
-                                    class="with-unit input-no-border">
+                                <input type="number" id="reinvestToBitcoin" step="5" min="0" max="100" placeholder="0" class="with-unit input-no-border">
                                 <span class="input-unit input-unit-right">%</span>
                                 <div class="input-arrows">
-                                    <svg class="input-arrow" onclick="stepInput('reinvestToBitcoin', 5)"
-                                        viewBox="0 0 24 24">
+                                    <svg class="input-arrow" onclick="stepInput('reinvestToBitcoin', 5)" viewBox="0 0 24 24">
                                         <path d="M12 8l-6 6h12z" />
                                     </svg>
-                                    <svg class="input-arrow" onclick="stepInput('reinvestToBitcoin', -5)"
-                                        viewBox="0 0 24 24">
+                                    <svg class="input-arrow" onclick="stepInput('reinvestToBitcoin', -5)" viewBox="0 0 24 24">
                                         <path d="M12 16l6-6H6z" />
                                     </svg>
                                 </div>
@@ -413,7 +384,7 @@
             const inputs = [
                 'totalInvestment', 'targetAmount', 'distributionFreq',
                 'iulPremium', 'iulCashValue', 'iulGrowthRate', 'reinvestToIUL',
-                'bitcoinAmountBTC', 'bitcoinPriceUSD', 'bitcoinCAGR', 'bitcoinMonthlySavingsUSD', 'reinvestToBitcoin'
+                'bitcoinUSD', 'bitcoinCAGR', 'bitcoinMonthlySavingsUSD', 'reinvestToBitcoin'
             ];
             const state = {};
             inputs.forEach(id => {
@@ -431,16 +402,19 @@
             const inputs = [
                 'totalInvestment', 'targetAmount', 'distributionFreq',
                 'iulPremium', 'iulCashValue', 'iulGrowthRate', 'reinvestToIUL',
-                'bitcoinAmountBTC', 'bitcoinPriceUSD', 'bitcoinCAGR', 'bitcoinMonthlySavingsUSD', 'reinvestToBitcoin'
+                'bitcoinUSD', 'bitcoinCAGR', 'bitcoinMonthlySavingsUSD', 'reinvestToBitcoin'
             ];
             inputs.forEach(id => {
                 const el = document.getElementById(id);
                 if (el && state[id] !== undefined) {
-                    // Format with commas for display if it's a number or can be parsed as a number
                     if (el.type === 'number') {
-                        el.value = state[id];
+                        // Only set value if it's a valid number, otherwise set to 0 or leave unchanged
+                        if (state[id] !== '' && !isNaN(state[id])) {
+                            el.value = state[id];
+                        } else {
+                            el.value = '0';
+                        }
                     } else {
-                        // Try to format as number if possible
                         if (state[id] !== '' && !isNaN(state[id])) {
                             el.value = Number(state[id]).toLocaleString('en-US');
                         } else {
@@ -670,15 +644,14 @@
             const iulCashValue = parseFloat(document.getElementById('iulCashValue').value.replace(/,/g, '')) || 0;
             const iulGrowthRate = parseFloat(document.getElementById('iulGrowthRate').value) || 0;
             const reinvestToIUL = parseFloat(document.getElementById('reinvestToIUL').value) || 0;
-            const bitcoinAmountBTC = parseFloat(document.getElementById('bitcoinAmountBTC').value) || 0;
-            const initialBitcoinPriceUSD = parseFloat(document.getElementById('bitcoinPriceUSD').value.replace(/,/g, '')) || 60000;
+            const bitcoinUSD = parseFloat(document.getElementById('bitcoinUSD').value) || 0;
             const bitcoinCAGR = parseFloat(document.getElementById('bitcoinCAGR').value) || 0;
-            const bitcoinMonthlySavingsUSD = parseFloat(document.getElementById('bitcoinMonthlySavingsUSD').value.replace(/,/g, '')) || 0;
+            const bitcoinMonthlySavingsUSD = parseFloat(document.getElementById('bitcoinMonthlySavingsUSD').value) || 0;
             const reinvestToBitcoin = parseFloat(document.getElementById('reinvestToBitcoin').value) || 0;
 
             // Check if IUL and Bitcoin sections should be displayed
             const showIUL = (iulPremium > 0 || iulCashValue > 0 || reinvestToIUL > 0);
-            const showBitcoin = (bitcoinAmountBTC > 0 || bitcoinMonthlySavingsUSD > 0 || reinvestToBitcoin > 0);
+            const showBitcoin = (bitcoinUSD > 0 || bitcoinMonthlySavingsUSD > 0 || reinvestToBitcoin > 0);
 
             let totalWeightedYield = 0;
             const totalAllocation = positions.reduce((sum, pos) => sum + pos.allocation, 0);
@@ -694,8 +667,7 @@
 
             let portfolioValue = totalInvestment;
             let currentIULValue = iulCashValue;
-            let currentBitcoinAmountBTC = bitcoinAmountBTC;
-            let currentBitcoinPriceUSD = initialBitcoinPriceUSD;
+            let currentBitcoinValueUSD = bitcoinUSD;
 
             const tbody = document.getElementById('projectionBody');
             tbody.innerHTML = '';
@@ -711,6 +683,16 @@
             const chartData = { labels: [], portfolio: [], iul: [], bitcoin: [], total: [] };
             let timeToTarget = 'N/A';
             let targetReached = false;
+
+            // Remove any existing annual projection tables before appending a new one
+            const projectionChartContainer = document.getElementById('projectionChartContainer');
+            const oldAnnualTables = projectionChartContainer.querySelectorAll('.table-scroll');
+            oldAnnualTables.forEach(table => {
+                // Only remove annual tables that are not the main monthly table
+                if (!table.contains(document.getElementById('projectionTable'))) {
+                    table.remove();
+                }
+            });
 
             for (let month = 0; month <= 600; month++) { // Calculate for up to 50 years
                 // Calculate monthly income
@@ -733,15 +715,10 @@
                     // Compound IUL value monthly at annual rate
                     currentIULValue *= (1 + monthlyIULGrowth);
 
-                    const btcFromSavings = bitcoinMonthlySavingsUSD / currentBitcoinPriceUSD;
-                    const btcFromReinvest = toBitcoin / currentBitcoinPriceUSD;
-                    currentBitcoinAmountBTC += btcFromSavings + btcFromReinvest;
-
-                    // Compound Bitcoin price monthly at annual rate
-                    currentBitcoinPriceUSD *= (1 + monthlyBitcoinGrowth);
+                    // Compound Bitcoin value monthly at annual rate
+                    currentBitcoinValueUSD = (currentBitcoinValueUSD + bitcoinMonthlySavingsUSD + toBitcoin) * (1 + monthlyBitcoinGrowth);
                 }
 
-                const currentBitcoinValueUSD = currentBitcoinAmountBTC * currentBitcoinPriceUSD;
                 // Ensure total wealth is the sum of all components
                 const totalWealth = portfolioValue + currentIULValue + currentBitcoinValueUSD;
 
@@ -1023,13 +1000,26 @@
         document.addEventListener('DOMContentLoaded', () => {
             restoreState();
             const inputIds = [
-                'totalInvestment', 'targetAmount', 'distributionFreq', 'iulPremium', 'iulCashValue', 'iulGrowthRate', 'reinvestToIUL', 'bitcoinAmountBTC', 'bitcoinPriceUSD', 'bitcoinCAGR', 'bitcoinMonthlySavingsUSD', 'reinvestToBitcoin'
+                'totalInvestment', 'targetAmount', 'distributionFreq', 'iulPremium', 'iulCashValue', 'iulGrowthRate', 'reinvestToIUL', 'bitcoinUSD', 'bitcoinCAGR', 'bitcoinMonthlySavingsUSD', 'reinvestToBitcoin'
             ];
             inputIds.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) {
                     el.addEventListener('input', saveState);
                     el.addEventListener('change', saveState);
+                    // Add debounced live update for Bitcoin (USD) and related inputs
+                    if (id === 'bitcoinUSD' || id === 'bitcoinCAGR' || id === 'bitcoinMonthlySavingsUSD' || id === 'reinvestToBitcoin') {
+                        let debounceTimeout;
+                        el.addEventListener('input', function () {
+                            clearTimeout(debounceTimeout);
+                            debounceTimeout = setTimeout(() => {
+                                calculateResults();
+                            }, 300);
+                        });
+                        el.addEventListener('change', function () {
+                            calculateResults();
+                        });
+                    }
                 }
             });
             // Update table when distribution frequency changes
