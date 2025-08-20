@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purchasing Power Calculator - M2 Money Supply Impact</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #FFFFFF;
+            color: #FFFFFF;
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #000000;
+            padding: 60px 40px;
+            min-height: 100vh;
+        }
+
+        h1 {
+            color: #FFFFFF;
+            margin-bottom: 8px;
+            font-size: 48px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+        }
+
+        .subtitle {
+            color: #BBBBBB;
+            margin-bottom: 48px;
+            font-size: 18px;
+            font-weight: 400;
+            line-height: 1.5;
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 32px;
+            margin-bottom: 48px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            color: #FFFFFF;
+            margin-bottom: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            letter-spacing: -0.01em;
+        }
+
+        input, select {
+            padding: 16px;
+            border: 1px solid #FFFFFF;
+            border-radius: 0;
+            font-size: 16px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+            background: #000000;
+            color: #FFFFFF;
+            font-weight: 500;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-width: 2px;
+            padding: 15px;
+        }
+
+        button {
+            background: #FFFFFF;
+            color: #000000;
+            border: none;
+            padding: 20px 40px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 24px;
+            letter-spacing: -0.01em;
+            text-transform: uppercase;
+        }
+
+        button:hover {
+            background: #000000;
+            color: #FFFFFF;
+            outline: 2px solid #FFFFFF;
+        }
+
+        .results {
+            margin-top: 60px;
+            padding: 48px;
+            background: #181818;
+            border: 2px solid #FFFFFF;
+            display: none;
+        }
+
+        .results.show {
+            display: block;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+            margin-bottom: 48px;
+        }
+
+        .stat-card {
+            background: #000000;
+            padding: 24px;
+            border: 1px solid #FFFFFF;
+        }
+
+        .stat-label {
+            color: #BBBBBB;
+            font-size: 12px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
+        .stat-value {
+            color: #FFFFFF;
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .stat-value.negative {
+            color: #FFFFFF;
+        }
+
+        .stat-value.positive {
+            color: #FFFFFF;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin-top: 48px;
+            background: #000000;
+            padding: 32px;
+            border: 1px solid #FFFFFF;
+        }
+
+        .info-box {
+            background: #FFFFFF;
+            color: #000000;
+            padding: 32px;
+            margin-top: 48px;
+        }
+
+        .info-box h3 {
+            color: #000000;
+            margin-bottom: 16px;
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+
+        .info-box p {
+            color: #444444;
+            line-height: 1.6;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        .info-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-box strong {
+            color: #000000;
+            font-weight: 700;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+            margin-left: 4px;
+            font-weight: 400;
+            color: #BBBBBB;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 280px;
+            background-color: #FFFFFF;
+            color: #000000;
+            text-align: left;
+            padding: 16px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -140px;
+            opacity: 0;
+            transition: opacity 0.2s;
+            font-size: 13px;
+            line-height: 1.5;
+            font-weight: 400;
+            letter-spacing: 0;
+            text-transform: none;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 20px;
+            }
+
+            h1 {
+                font-size: 36px;
+            }
+
+            .subtitle {
+                font-size: 16px;
+            }
+
+            .input-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>PURCHASING POWER CALCULATOR</h1>
+        <p class="subtitle">Visualize how M2 money supply expansion affects your income's real value over time</p>
+        
+        <div class="input-grid">
+            <div class="input-group">
+                <label>ANNUAL INCOME ($)</label>
+                <input type="number" id="income" placeholder="75000" value="75000">
+            </div>
+            
+            <div class="input-group">
+                <label>
+                    M2 GROWTH RATE (%)
+                    <span class="tooltip">ⓘ
+                        <span class="tooltiptext">Historical average is ~6-7%. Recent years have seen higher rates due to monetary expansion.</span>
+                    </span>
+                </label>
+                <select id="m2Rate">
+                    <option value="4">4% (Low)</option>
+                    <option value="6">6% (Historical)</option>
+                    <option value="8" selected>8% (Recent Average)</option>
+                    <option value="10">10% (High)</option>
+                    <option value="12">12% (Very High)</option>
+                    <option value="custom">Custom</option>
+                </select>
+                <input type="number" id="customM2Rate" placeholder="Enter custom rate" style="display: none; margin-top: 10px;">
+            </div>
+            
+            <div class="input-group">
+                <label>
+                    CPI INFLATION RATE (%)
+                    <span class="tooltip">ⓘ
+                        <span class="tooltiptext">Official consumer price inflation. Often lower than M2 growth due to productivity gains and other factors.</span>
+                    </span>
+                </label>
+                <select id="cpiRate">
+                    <option value="2">2% (Target)</option>
+                    <option value="3" selected>3% (Moderate)</option>
+                    <option value="4">4% (Elevated)</option>
+                    <option value="5">5% (High)</option>
+                    <option value="custom">Custom</option>
+                </select>
+                <input type="number" id="customCpiRate" placeholder="Enter custom rate" style="display: none; margin-top: 10px;">
+            </div>
+            
+            <div class="input-group">
+                <label>YEARS TO PROJECT</label>
+                <input type="number" id="years" placeholder="20" value="20" min="1" max="50">
+            </div>
+            
+            <div class="input-group">
+                <label>ANNUAL SALARY INCREASE (%)</label>
+                <input type="number" id="salaryIncrease" placeholder="3" value="3" step="0.5">
+            </div>
+        </div>
+        
+        <button onclick="calculate()">Calculate Impact</button>
+        
+        <div id="results" class="results">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Starting Income</div>
+                    <div class="stat-value" id="startIncome">$0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Final Nominal Income</div>
+                    <div class="stat-value" id="finalIncome">$0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">M2-Adjusted Value</div>
+                    <div class="stat-value negative" id="m2Value">$0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">CPI-Adjusted Value</div>
+                    <div class="stat-value negative" id="cpiValue">$0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">M2 Purchasing Power Loss</div>
+                    <div class="stat-value negative" id="m2Loss">0%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">CPI Purchasing Power Loss</div>
+                    <div class="stat-value negative" id="cpiLoss">0%</div>
+                </div>
+            </div>
+            
+            <div class="chart-container">
+                <canvas id="powerChart"></canvas>
+            </div>
+            
+            <div class="info-box">
+                <h3>UNDERSTANDING THE RESULTS</h3>
+                <p><strong>M2-ADJUSTED VALUE:</strong> Shows your income's purchasing power when adjusted for monetary base expansion. This reflects the dilution of currency value as new money enters the system.</p>
+                <p><strong>CPI-ADJUSTED VALUE:</strong> Shows your income's purchasing power based on official inflation metrics. CPI typically understates true inflation as it doesn't fully capture asset price inflation or monetary debasement.</p>
+                <p><strong>THE GAP:</strong> The difference between M2 and CPI adjustments reveals hidden inflation not captured by official statistics. This affects asset prices, housing, and long-term wealth preservation.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let chart = null;
+
+        // Handle M2 rate dropdown change
+        document.getElementById('m2Rate').addEventListener('change', function(e) {
+            const customInput = document.getElementById('customM2Rate');
+            if (e.target.value === 'custom') {
+                customInput.style.display = 'block';
+                customInput.focus();
+            } else {
+                customInput.style.display = 'none';
+            }
+        });
+
+        // Handle CPI rate dropdown change
+        document.getElementById('cpiRate').addEventListener('change', function(e) {
+            const customInput = document.getElementById('customCpiRate');
+            if (e.target.value === 'custom') {
+                customInput.style.display = 'block';
+                customInput.focus();
+            } else {
+                customInput.style.display = 'none';
+            }
+        });
+
+        function calculate() {
+            // Get inputs
+            const income = parseFloat(document.getElementById('income').value) || 75000;
+            const years = parseInt(document.getElementById('years').value) || 20;
+            const salaryIncrease = parseFloat(document.getElementById('salaryIncrease').value) || 3;
+            
+            // Get M2 rate
+            let m2Rate;
+            const m2Select = document.getElementById('m2Rate');
+            if (m2Select.value === 'custom') {
+                m2Rate = parseFloat(document.getElementById('customM2Rate').value) || 8;
+            } else {
+                m2Rate = parseFloat(m2Select.value);
+            }
+            
+            // Get CPI rate
+            let cpiRate;
+            const cpiSelect = document.getElementById('cpiRate');
+            if (cpiSelect.value === 'custom') {
+                cpiRate = parseFloat(document.getElementById('customCpiRate').value) || 3;
+            } else {
+                cpiRate = parseFloat(cpiSelect.value);
+            }
+            
+            // Calculate values over time
+            const data = {
+                years: [],
+                nominalIncome: [],
+                m2AdjustedIncome: [],
+                cpiAdjustedIncome: [],
+                m2PurchasingPower: [],
+                cpiPurchasingPower: []
+            };
+            
+            for (let year = 0; year <= years; year++) {
+                const nominalIncome = income * Math.pow(1 + salaryIncrease / 100, year);
+                const m2Multiplier = Math.pow(1 + m2Rate / 100, year);
+                const cpiMultiplier = Math.pow(1 + cpiRate / 100, year);
+                
+                const m2AdjustedIncome = nominalIncome / m2Multiplier;
+                const cpiAdjustedIncome = nominalIncome / cpiMultiplier;
+                
+                data.years.push(year);
+                data.nominalIncome.push(nominalIncome);
+                data.m2AdjustedIncome.push(m2AdjustedIncome);
+                data.cpiAdjustedIncome.push(cpiAdjustedIncome);
+                data.m2PurchasingPower.push((m2AdjustedIncome / income) * 100);
+                data.cpiPurchasingPower.push((cpiAdjustedIncome / income) * 100);
+            }
+            
+            // Update stats
+            const finalNominal = data.nominalIncome[years];
+            const finalM2Adjusted = data.m2AdjustedIncome[years];
+            const finalCpiAdjusted = data.cpiAdjustedIncome[years];
+            
+            document.getElementById('startIncome').textContent = `$${income.toLocaleString()}`;
+            document.getElementById('finalIncome').textContent = `$${Math.round(finalNominal).toLocaleString()}`;
+            document.getElementById('m2Value').textContent = `$${Math.round(finalM2Adjusted).toLocaleString()}`;
+            document.getElementById('cpiValue').textContent = `$${Math.round(finalCpiAdjusted).toLocaleString()}`;
+            
+            const m2LossPercent = ((1 - finalM2Adjusted / income) * 100).toFixed(1);
+            const cpiLossPercent = ((1 - finalCpiAdjusted / income) * 100).toFixed(1);
+            
+            document.getElementById('m2Loss').textContent = m2LossPercent > 0 ? `-${m2LossPercent}%` : `+${Math.abs(m2LossPercent)}%`;
+            document.getElementById('cpiLoss').textContent = cpiLossPercent > 0 ? `-${cpiLossPercent}%` : `+${Math.abs(cpiLossPercent)}%`;
+            
+            // Update chart
+            updateChart(data);
+            
+            // Show results
+            document.getElementById('results').classList.add('show');
+        }
+        
+        function updateChart(data) {
+            const ctx = document.getElementById('powerChart').getContext('2d');
+            
+            if (chart) {
+                chart.destroy();
+            }
+            
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.years.map(y => `Year ${y}`),
+                    datasets: [
+                        {
+                            label: 'Nominal Income',
+                            data: data.nominalIncome,
+                            borderColor: '#FFFFFF',
+                            backgroundColor: 'rgba(255,255,255,0.05)',
+                            tension: 0,
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            pointHoverRadius: 4
+                        },
+                        {
+                            label: 'M2-Adjusted Real Value',
+                            data: data.m2AdjustedIncome,
+                            borderColor: '#BBBBBB',
+                            backgroundColor: 'rgba(187,187,187,0.05)',
+                            tension: 0,
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            pointHoverRadius: 4,
+                            borderDash: [5, 5]
+                        },
+                        {
+                            label: 'CPI-Adjusted Real Value',
+                            data: data.cpiAdjustedIncome,
+                            borderColor: '#FFFFFF', // Pure white for maximum visibility
+                            backgroundColor: 'rgba(255,255,255,0.18)', // Slightly brighter white fill
+                            tension: 0,
+                            borderWidth: 3, // Thicker line
+                            pointRadius: 0,
+                            pointHoverRadius: 4,
+                            borderDash: [2, 2]
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'INCOME VS PURCHASING POWER OVER TIME',
+                            font: {
+                                size: 14,
+                                weight: '700',
+                                family: "'Inter', sans-serif"
+                            },
+                            color: '#FFFFFF',
+                            padding: {
+                                bottom: 20
+                            }
+                        },
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                usePointStyle: false,
+                                padding: 15,
+                                font: {
+                                    size: 12,
+                                    weight: '600',
+                                    family: "'Inter', sans-serif"
+                                },
+                                color: '#FFFFFF'
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: '#FFFFFF',
+                            titleColor: '#000000',
+                            bodyColor: '#000000',
+                            borderColor: '#FFFFFF',
+                            borderWidth: 1,
+                            titleFont: {
+                                size: 12,
+                                weight: '700',
+                                family: "'Inter', sans-serif"
+                            },
+                            bodyFont: {
+                                size: 12,
+                                weight: '500',
+                                family: "'Inter', sans-serif"
+                            },
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': $';
+                                    }
+                                    label += Math.round(context.parsed.y).toLocaleString();
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            grid: {
+                                color: '#222222',
+                                lineWidth: 1
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + (value / 1000).toFixed(0) + 'k';
+                                },
+                                font: {
+                                    size: 11,
+                                    weight: '500',
+                                    family: "'Inter', sans-serif"
+                                },
+                                color: '#BBBBBB'
+                            },
+                            title: {
+                                display: true,
+                                text: 'INCOME VALUE',
+                                font: {
+                                    weight: '700',
+                                    size: 12,
+                                    family: "'Inter', sans-serif"
+                                },
+                                color: '#FFFFFF'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: '#222222',
+                                lineWidth: 1
+                            },
+                            ticks: {
+                                font: {
+                                    size: 11,
+                                    weight: '500',
+                                    family: "'Inter', sans-serif"
+                                },
+                                color: '#BBBBBB'
+                            },
+                            title: {
+                                display: true,
+                                text: 'TIME PERIOD',
+                                font: {
+                                    weight: '700',
+                                    size: 12,
+                                    family: "'Inter', sans-serif"
+                                },
+                                color: '#FFFFFF'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Calculate on load with default values
+        window.addEventListener('load', () => {
+            calculate();
+        });
+    </script>
+</body>
+</html>
