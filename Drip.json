@@ -1,0 +1,138 @@
+import React, { useState, useEffect } from 'react';
+
+function DripStrategy() {
+  const [totalInvestment, setTotalInvestment] = useState(0);
+  const [targetAmount, setTargetAmount] = useState(0);
+  const [ratePercent, setRatePercent] = useState(1); // Displayed as percent
+  const [rate, setRate] = useState(0.01); // Internal decimal
+  const [timePeriod, setTimePeriod] = useState(30); // Example: 30 days
+  const [results, setResults] = useState([]); // Store calculated results
+
+  useEffect(() => {
+    async function calculateAndSave() {
+      try {
+        const data = await simulateApiCall(totalInvestment, targetAmount, rate, timePeriod);
+
+        setResults(data.results); // Update state with the calculated results
+        setTotalInvestment(data.totalInvestment);
+        setTargetAmount(data.targetAmount);
+
+      } catch (error) {
+        console.error("Error in calculateAndSave:", error);
+        setResults(['Error: ' + error.message]); // Display error in UI
+      }
+    }
+
+    calculateAndSave();
+  }, [totalInvestment, targetAmount, rate, timePeriod]); // Dependency array
+
+  // Simulated API Call (Replace with your real API call)
+  async function simulateApiCall(investment, target, rate, period) {
+    // Simulate a delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+    let results = [];
+    let amount = investment;
+    for (let day = 1; day <= period; day++) {
+      amount *= (1 + rate / 365); // Daily compounding
+      if (day % 1 === 0 || day === period) {
+        results.push({ day, amount });
+      }
+    }
+    return {
+      results,
+      totalInvestment: investment,
+      targetAmount: target
+    };
+  }
+
+  // --- FIX: Interest Rate input and calculation logic ---
+  // Update both states when input changes
+  const handleRateChange = (e) => {
+    const percent = parseFloat(e.target.value);
+    setRatePercent(percent);
+    setRate(percent / 100);
+  };
+
+  // FIX: Defensive input handling for NaN
+  const handleInvestmentChange = (e) => {
+    const val = parseFloat(e.target.value);
+    setTotalInvestment(isNaN(val) ? 0 : val);
+  };
+  const handleTargetChange = (e) => {
+    const val = parseFloat(e.target.value);
+    setTargetAmount(isNaN(val) ? 0 : val);
+  };
+  const handleTimePeriodChange = (e) => {
+    const val = parseFloat(e.target.value);
+    setTimePeriod(isNaN(val) ? 0 : val);
+  };
+
+  return (
+    <div style={{ fontFamily: 'Arial, sans-serif', padding: '20px'}}>
+      <h1 style={{ textAlign: 'center', color: '#333'}}>Drip Strategy Calculator</h1>
+
+      <label style={{ display: 'block', marginBottom: '8px' }}>
+        Total Investment:
+        <input
+          type="number"
+          value={totalInvestment}
+          onChange={handleInvestmentChange}
+          style={{ width: '100%', padding: '8px', marginBottom: '4px', borderRadius: '4px',boxSizing: 'border-box' }}
+        />
+      </label>
+
+      <br />
+
+      <label style={{ display: 'block', marginBottom: '8px' }}>
+        Target Amount:
+        <input
+          type="number"
+          value={targetAmount}
+          onChange={handleTargetChange}
+          style={{ width: '100%', padding: '8px', marginBottom: '4px', borderRadius: '4px', boxSizing: 'border-box' }}
+        />
+      </label>
+
+      <br />
+
+      <label style={{ display: 'block', marginBottom: '8px' }}>
+        Interest Rate (%):
+        <input
+          type="number"
+          value={ratePercent}
+          onChange={handleRateChange}
+          style={{ width: '100%', padding: '8px', marginBottom: '4px', borderRadius: '4px', boxSizing: 'border-box' }}
+        />
+      </label>
+
+      <br />
+
+      <label style={{ display: 'block', marginBottom: '8px' }}>
+        Time Period (Days):
+        <input
+          type="number"
+          value={timePeriod}
+          onChange={handleTimePeriodChange}
+          style={{ width: '100%', padding: '8px', marginBottom: '4px', borderRadius: '4px', boxSizing: 'border-box' }}
+        />
+      </label>
+
+      <br />
+
+      <h2 style={{ textAlign: 'center', color: '#555'}}>Results:</h2>
+      {results.length > 0 ? (
+        <ul style={{ listStyle: 'none', padding: 0, marginTop: '0'}}>
+          {results.map((result, index) => (
+            <li key={index} style={{ padding: '8px', borderBottom: '1px solid #eee', boxSizing: 'border-box' }}>
+              Day {result.day}: {result.amount.toFixed(2)}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p style={{ textAlign: 'center', color: '#777'}}>No results yet.</p>
+      )}
+    </div>
+  );
+}
+
+export default DripStrategy;

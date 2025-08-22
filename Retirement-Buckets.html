@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retirement Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6">
+    <div class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow-lg">
+        <h1 class="text-2xl font-bold mb-6 text-center">Retirement Calculator</h1>
+        <!-- Total Wealth and Income Inputs -->
+        <div class="mb-8 flex flex-col sm:flex-row sm:space-x-4">
+            <div>
+                <label for="total-wealth" class="block text-lg font-medium mb-2">Total Wealth ($)</label>
+                <input id="total-wealth" type="text" value="" 
+                       class="w-full max-w-xs p-2 border rounded-md" oninput="formatNumberInput(this, false); updateBuckets()">
+            </div>
+            <div>
+                <label for="income-needed" class="block text-lg font-medium mb-2">Income Needed ($/yr)</label>
+                <input id="income-needed" type="text" value="" 
+                       class="w-full max-w-xs p-2 border rounded-md" oninput="formatNumberInput(this, false); updateBuckets()">
+            </div>
+            <div>
+                <label for="inflation" class="block text-lg font-medium mb-2">Inflation (%)</label>
+                <input id="inflation" type="text" value="" 
+                       class="w-full max-w-xs p-2 border rounded-md" oninput="formatNumberInput(this, true); updateBuckets()">
+            </div>
+        </div>
+        <!-- Buckets -->
+        <div id="buckets" class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
+            <div class="col-span-1 md:col-span-5">
+                <h2 class="text-xl font-semibold mb-4">Retirement Buckets</h2>
+            </div>
+            <!-- Bucket 1 -->
+            <div class="bg-blue-50 p-4 rounded-lg shadow-md">
+                <h3 class="font-semibold text-lg mb-2">Bucket 1: Cash & Equivalents</h3>
+                <div class="text-sm text-gray-700 mb-4">
+                    <p>This bucket is for your expenses in the first years of retirement. It should be easily accessible and not subject to market fluctuations.</p>
+                </div>
+                <div class="flex flex-col space-y-2">
+                    <div>
+                        <span class="text-gray-500">Amount ($):</span>
+                        <span id="bucket1-amount" class="font-bold text-lg">0</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">Years Covered:</span>
+                        <span id="bucket1-years" class="font-bold text-lg">0</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Bucket 2 -->
+            <div class="bg-green-50 p-4 rounded-lg shadow-md">
+                <h3 class="font-semibold text-lg mb-2">Bucket 2: Fixed Income</h3>
+                <div class="text-sm text-gray-700 mb-4">
+                    <p>This bucket is for your expenses in the early to mid-retirement years. It should provide regular income with low risk.</p>
+                </div>
+                <div class="flex flex-col space-y-2">
+                    <div>
+                        <span class="text-gray-500">Amount ($):</span>
+                        <span id="bucket2-amount" class="font-bold text-lg">0</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">Years Covered:</span>
+                        <span id="bucket2-years" class="font-bold text-lg">0</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Bucket 3 -->
+            <div class="bg-yellow-50 p-4 rounded-lg shadow-md">
+                <h3 class="font-semibold text-lg mb-2">Bucket 3: Equities</h3>
+                <div class="text-sm text-gray-700 mb-4">
+                    <p>This bucket is for your long-term growth and inflation protection. It should be invested in a diversified portfolio of stocks.</p>
+                </div>
+                <div class="flex flex-col space-y-2">
+                    <div>
+                        <span class="text-gray-500">Amount ($):</span>
+                        <span id="bucket3-amount" class="font-bold text-lg">0</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">Years Covered:</span>
+                        <span id="bucket3-years" class="font-bold text-lg">0</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Bucket 4 -->
+            <div class="bg-red-50 p-4 rounded-lg shadow-md">
+                <h3 class="font-semibold text-lg mb-2">Bucket 4: Alternatives</h3>
+                <div class="text-sm text-gray-700 mb-4">
+                    <p>This bucket is for diversification and potential higher returns. It can include real estate, commodities, and other alternative investments.</p>
+                </div>
+                <div class="flex flex-col space-y-2">
+                    <div>
+                        <span class="text-gray-500">Amount ($):</span>
+                        <span id="bucket4-amount" class="font-bold text-lg">0</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">Years Covered:</span>
+                        <span id="bucket4-years" class="font-bold text-lg">0</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Bucket 5 -->
+            <div class="bg-purple-50 p-4 rounded-lg shadow-md">
+                <h3 class="font-semibold text-lg mb-2">Bucket 5: Speculative Investments</h3>
+                <div class="text-sm text-gray-700 mb-4">
+                    <p>This bucket is for high-risk, high-reward investments. It can include individual stocks, options, and other speculative assets.</p>
+                </div>
+                <div class="flex flex-col space-y-2">
+                    <div>
+                        <span class="text-gray-500">Amount ($):</span>
+                        <span id="bucket5-amount" class="font-bold text-lg">0</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">Years Covered:</span>
+                        <span id="bucket5-years" class="font-bold text-lg">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Combined Year Table -->
+        <div>
+            <h2 class="text-xl font-semibold mb-4">Yearly Balances</h2>
+            <table class="w-full text-sm border-collapse">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="p-2 border">Year</th>
+                        <th class="p-2 border">Income ($)</th>
+                        <th class="p-2 border">Bucket 1 ($)</th>
+                        <th class="p-2 border">Bucket 2 ($)</th>
+                        <th class="p-2 border">Bucket 3 ($)</th>
+                        <th class="p-2 border">Bucket 4 ($)</th>
+                        <th class="p-2 border">Bucket 5 ($)</th>
+                        <th class="p-2 border">Total Wealth ($)</th>
+                    </tr>
+                </thead>
+                <tbody id="combined-table-body"></tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        // JavaScript code for retirement calculator functionality
+
+// Format number input with comma as thousand separator
+function formatNumberInput(input, isPercentage) {
+    // Remove any existing formatting
+    let value = input.value.replace(/,/g, '');
+    
+    // If it's a percentage field, parse it as a float and limit to two decimal places
+    if (isPercentage) {
+        let percentageValue = parseFloat(value);
+        input.value = isNaN(percentageValue) ? '' : percentageValue.toFixed(2) + '%';
+    } else {
+        // Otherwise, parse as an integer for dollar amounts
+        let intValue = parseInt(value);
+        input.value = isNaN(intValue) ? '' : intValue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+}
+
+// Update buckets and table based on input values
+function updateBuckets() {
+    // Get input values
+    let totalWealth = parseFloat(document.getElementById('total-wealth').value.replace(/,/g, '')) || 0;
+    let incomeNeeded = parseFloat(document.getElementById('income-needed').value.replace(/,/g, '')) || 0;
+    let inflationRate = (parseFloat(document.getElementById('inflation').value) || 0) / 100;
+    
+    // Calculate bucket amounts and years covered
+    let bucket1Amount = Math.min(totalWealth, incomeNeeded / (1 + inflationRate));
+    let bucket1Years = bucket1Amount > 0 ? 1 : 0;
+    
+    let bucket2Amount = Math.min(totalWealth - bucket1Amount, incomeNeeded / (1 + inflationRate) * 2);
+    let bucket2Years = bucket2Amount > 0 ? 2 : 0;
+    
+    let bucket3Amount = Math.min(totalWealth - bucket1Amount - bucket2Amount, incomeNeeded / (1 + inflationRate) * 3);
+    let bucket3Years = bucket3Amount > 0 ? 3 : 0;
+    
+    let bucket4Amount = Math.min(totalWealth - bucket1Amount - bucket2Amount - bucket3Amount, incomeNeeded / (1 + inflationRate) * 4);
+    let bucket4Years = bucket4Amount > 0 ? 4 : 0;
+    
+    let bucket5Amount = Math.min(totalWealth - bucket1Amount - bucket2Amount - bucket3Amount - bucket4Amount, incomeNeeded / (1 + inflationRate) * 5);
+    let bucket5Years = bucket5Amount > 0 ? 5 : 0;
+    
+    // Update bucket displays
+    document.getElementById('bucket1-amount').innerText = bucket1Amount.toFixed(2);
+    document.getElementById('bucket1-years').innerText = bucket1Years;
+    
+    document.getElementById('bucket2-amount').innerText = bucket2Amount.toFixed(2);
+    document.getElementById('bucket2-years').innerText = bucket2Years;
+    
+    document.getElementById('bucket3-amount').innerText = bucket3Amount.toFixed(2);
+    document.getElementById('bucket3-years').innerText = bucket3Years;
+    
+    document.getElementById('bucket4-amount').innerText = bucket4Amount.toFixed(2);
+    document.getElementById('bucket4-years').innerText = bucket4Years;
+    
+    document.getElementById('bucket5-amount').innerText = bucket5Amount.toFixed(2);
+    document.getElementById('bucket5-years').innerText = bucket5Years;
+    
+    // Update table
+    updateTable(bucket1Amount, bucket2Amount, bucket3Amount, bucket4Amount, bucket5Amount, incomeNeeded);
+}
+
+// Update the combined table with yearly data
+function updateTable(bucket1Amount, bucket2Amount, bucket3Amount, bucket4Amount, bucket5Amount, incomeNeeded) {
+    let tableBody = document.getElementById('combined-table-body');
+    tableBody.innerHTML = ''; // Clear existing table rows
+    
+    // Calculate yearly data for the table
+    for (let year = 1; year <= 30; year++) {
+        let row = document.createElement('tr');
+        row.className = 'bg-white border-b';
+        
+        // Year cell
+        let yearCell = document.createElement('td');
+        yearCell.className = 'p-2 border';
+        yearCell.innerText = year;
+        row.appendChild(yearCell);
+        
+        // Income cell
+        let incomeCell = document.createElement('td');
+        incomeCell.className = 'p-2 border';
+        incomeCell.innerText = (incomeNeeded * year).toFixed(2);
+        row.appendChild(incomeCell);
+        
+        // Bucket cells
+        let bucketAmounts = [bucket1Amount, bucket2Amount, bucket3Amount, bucket4Amount, bucket5Amount];
+        bucketAmounts.forEach((amount, index) => {
+            let bucketCell = document.createElement('td');
+            bucketCell.className = 'p-2 border';
+            bucketCell.innerText = (amount * year).toFixed(2);
+            row.appendChild(bucketCell);
+        });
+        
+        // Total wealth cell
+        let totalWealthCell = document.createElement('td');
+        totalWealthCell.className = 'p-2 border';
+        totalWealthCell.innerText = ((bucket1Amount + bucket2Amount + bucket3Amount + bucket4Amount + bucket5Amount) * year).toFixed(2);
+        row.appendChild(totalWealthCell);
+        
+        tableBody.appendChild(row);
+    }
+}
+
+// Initial bucket and table update
+updateBuckets();
+    </script>
+</body>
+</html>
