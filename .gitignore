@@ -1,0 +1,23 @@
+# Electron build output
+/dist/
+/build/
+*.log
+*.dmg
+*.exe
+*.app
+*.asar
+
+# Electron dependencies
+/electron/
+
+# App icons and binaries
+# (desktop-icon.icns and desktop-icon.png are now tracked)
+
+# Node modules
+/node_modules/
+
+# OS files
+.DS_Store
+*-darwin-*/
+*-win32-*/
+*-linux-*/
