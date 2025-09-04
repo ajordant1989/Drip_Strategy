@@ -31,8 +31,8 @@
             </div>
         </nav>
         <div style="text-align:center; margin:32px;">
-            <h3>DRIP Calculator</h3>
-            <h1>Strategy Tracker</h1>
+            <h3>Calculator</h3>
+            <h1>DRIP Cycle Strategy</h1>
         </div>
 
         <div class="results full-width" id="results" style="display: flex;">
@@ -41,11 +41,11 @@
                 <div class="value" id="blendedYield">0%</div>
             </div>
             <div class="result-card">
-                <h3 id="incomeLabel">Weekly Income</h3>
+                <h3 id="incomeLabel">Monthly Income</h3>
                 <div class="value" id="incomeValue">$0</div>
             </div>
             <div class="result-card">
-                <h3>Annual Income</h3>
+                <h3>Monthly Dividends</h3>
                 <div class="value" id="annualIncome">$0</div>
             </div>
             <div class="result-card">
@@ -127,8 +127,8 @@
                             <th>Allocation %</th>
                             <th>Amount</th>
                             <th>Yield %</th>
-                            <th>Annual Income</th>
-                            <th>Weekly Income</th>
+                            <th>Monthly Dividends</th>
+                            <th>Monthly Income</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -309,6 +309,19 @@
                     </select>
                 </div>
             </div>
+            <div class="input-group" style="margin-top: 8px; align-items:start;">
+                <label id="reinvest-label">Reinvest (DRIP)?</label>
+                <div role="group" aria-labelledby="reinvest-label" style="display:flex; gap:16px; align-items:center;">
+                    <label style="display:flex; align-items:center; gap:6px; color:#fff;">
+                        <input type="radio" name="modalReinvestOption" id="modalReinvestYes" value="yes">
+                        Yes
+                    </label>
+                    <label style="display:flex; align-items:center; gap:6px; color:#fff;">
+                        <input type="radio" name="modalReinvestOption" id="modalReinvestNo" value="no">
+                        No
+                    </label>
+                </div>
+            </div>
             <div id="modalError" class="error-message" style="display: none;"></div>
             <button class="btn" id="modalSubmitBtn" onclick="submitNewPosition()">Add Position</button>
             <button class="close-btn" onclick="closeAddPositionModal()">Cancel</button>
@@ -350,6 +363,11 @@
         let positionCounter = 0;
         let wealthChart = null;
         let editingPositionId = null; // Track which position is being edited
+
+        // Treat missing reinvest as true (backward compatibility)
+        function isReinvesting(pos) {
+            return pos && (pos.reinvest === undefined ? true : !!pos.reinvest);
+        }
 
         // Save all inputs and positions to localStorage
         function saveState() {
@@ -447,6 +465,8 @@
             editingPositionId = editId;
 
             const submitBtn = document.getElementById('modalSubmitBtn');
+            const yes = document.getElementById('modalReinvestYes');
+            const no = document.getElementById('modalReinvestNo');
             if (editId !== null) {
                 // Editing existing position
                 const pos = positions.find(p => p.id === editId);
@@ -454,8 +474,10 @@
                     document.getElementById('modalTicker').value = pos.ticker;
                     document.getElementById('modalAllocation').value = pos.allocation;
                     document.getElementById('modalYield').value = pos.yield;
-                    // Set frequency dropdown to saved value, default to 13 if missing
                     document.getElementById('modalFrequency').value = (pos.frequency === 52 || pos.frequency === 13) ? pos.frequency : 13;
+                    const isReinvest = pos.reinvest === undefined ? true : !!pos.reinvest;
+                    yes.checked = isReinvest;
+                    no.checked = !isReinvest;
                 }
                 submitBtn.textContent = 'Update Position';
             } else {
@@ -464,6 +486,8 @@
                 document.getElementById('modalAllocation').value = '';
                 document.getElementById('modalYield').value = '';
                 document.getElementById('modalFrequency').value = 13;
+                yes.checked = true;
+                no.checked = false;
                 submitBtn.textContent = 'Add Position';
             }
         }
@@ -476,6 +500,7 @@
             const ticker = document.getElementById('modalTicker').value.trim().toUpperCase();
             const allocation = parseFloat(document.getElementById('modalAllocation').value);
             const yieldRate = parseFloat(document.getElementById('modalYield').value);
+            const reinvest = document.getElementById('modalReinvestYes').checked;
 
             if (!ticker || isNaN(allocation) || isNaN(yieldRate) || allocation <= 0 || yieldRate < 0) {
                 document.getElementById('modalError').textContent = 'Please enter valid values for all fields.';
@@ -489,7 +514,6 @@
                 // Editing existing position
                 const pos = positions.find(p => p.id === editingPositionId);
                 if (pos) {
-                    // Calculate allocation excluding the current position
                     totalAllocation = positions.reduce((sum, p) => sum + (p.id === editingPositionId ? 0 : p.allocation), 0) + allocation;
                     if (totalAllocation > 100) {
                         document.getElementById('modalError').textContent = 'Total allocation exceeds 100%.';
@@ -500,6 +524,7 @@
                     pos.allocation = allocation;
                     pos.yield = yieldRate;
                     pos.frequency = frequency;
+                    pos.reinvest = reinvest;
                 }
                 editingPositionId = null;
             } else {
@@ -515,11 +540,16 @@
                     ticker: ticker,
                     allocation: allocation,
                     yield: yieldRate,
-                    frequency: frequency
+                    frequency: frequency,
+                    reinvest: reinvest
                 });
             }
             saveState();
             updatePortfolioDisplay();
+            // Recalculate projections so the chart table reflects changes immediately
+            if (canCalculate()) {
+                calculateResults();
+            }
             closeAddPositionModal();
         }
 
@@ -527,18 +557,16 @@
             positions = positions.filter(pos => pos.id !== id);
             saveState();
             updatePortfolioDisplay();
+            // Keep projections in sync after removal
+            if (canCalculate()) {
+                calculateResults();
+            }
         }
 
         function updatePortfolioDisplay() {
             const tbody = document.getElementById('portfolioBody');
             const totalInvestment = parseFloat(document.getElementById('totalInvestment').value.replace(/,/g, '')) || 0;
             const totalAllocation = positions.reduce((sum, pos) => sum + pos.allocation, 0);
-
-            // Update table header to always show 'Monthly Income'
-            const ths = document.querySelectorAll('#portfolioTable thead th');
-            if (ths.length >= 6) {
-                ths[5].textContent = 'Monthly Income';
-            }
 
             const allocationError = document.getElementById('allocationError');
             if (totalAllocation > 100) {
@@ -552,75 +580,82 @@
 
             positions.forEach(position => {
                 const amount = (totalInvestment * position.allocation / 100);
-                const annualIncome = (amount * position.yield / 100);
-                // Calculate monthly income based on position frequency
-                let monthlyIncome;
+                const annualIncome = amount * position.yield / 100;
+
+                // Derive gross monthly dividends based on distribution frequency
+                let monthlyDividendsGross;
                 if (position.frequency === 52) {
-                    // Weekly: annualIncome / 52 weeks, then times 4 (approximate weeks per month)
-                    monthlyIncome = annualIncome / 52 * 4;
+                    monthlyDividendsGross = annualIncome / 52 * 4; // approx 4 weeks
                 } else if (position.frequency === 13) {
-                    // Monthly: annualIncome / 13 (monthly distributions per year)
-                    monthlyIncome = annualIncome / 13;
+                    monthlyDividendsGross = annualIncome / 13;
                 } else {
-                    // Default to monthly if frequency is missing or invalid
-                    monthlyIncome = annualIncome / 13;
+                    monthlyDividendsGross = annualIncome / 13;
                 }
+
+                // Monthly income (cash) is zero if reinvesting
+                const monthlyIncomeCash = isReinvesting(position) ? 0 : monthlyDividendsGross;
 
                 const row = document.createElement('tr');
                 row.innerHTML = `
-            <td>${position.ticker}</td>
-            <td>${position.allocation}%</td>
-            <td>$${amount.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
-            <td>${position.yield}%</td>
-            <td>$${annualIncome.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
-            <td>$${monthlyIncome.toLocaleString('en-US', { maximumFractionDigits: 2 })}</td>
-            <td>
-                <button class="edit-btn" onclick="openAddPositionModal(${position.id})">Edit</button>
-                <button class="remove-btn" onclick="removePosition(${position.id})">Remove</button>
-            </td>
-        `;
+                    <td>${position.ticker}</td>
+                    <td>${position.allocation}%</td>
+                    <td>$${amount.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
+                    <td>${position.yield}%</td>
+                    <td>$${monthlyDividendsGross.toLocaleString('en-US', { maximumFractionDigits: 2 })}</td>
+                    <td>$${monthlyIncomeCash.toLocaleString('en-US', { maximumFractionDigits: 2 })}</td>
+                    <td>
+                        <button class="edit-btn" onclick="openAddPositionModal(${position.id})">Edit</button>
+                        <button class="remove-btn" onclick="removePosition(${position.id})">Remove</button>
+                    </td>
+                `;
                 tbody.appendChild(row);
             });
 
-            // Add summary row if there are positions
             if (positions.length > 0) {
-                const totalAllocation = positions.reduce((sum, pos) => sum + pos.allocation, 0);
+                const totalAllocationPct = positions.reduce((sum, pos) => sum + pos.allocation, 0);
                 const totalAmount = positions.reduce((sum, pos) => sum + (totalInvestment * pos.allocation / 100), 0);
-                const totalAnnualIncome = positions.reduce((sum, pos) => sum + ((totalInvestment * pos.allocation / 100) * pos.yield / 100), 0);
-                const totalMonthlyIncome = positions.reduce((sum, pos) => {
+
+                // Weighted blended yield
+                let totalWeightedYield = 0;
+                positions.forEach(position => { totalWeightedYield += position.allocation * position.yield; });
+                const blendedYield = totalAllocationPct > 0 ? totalWeightedYield / totalAllocationPct : 0;
+
+                // Totals for new columns
+                const totalMonthlyDividendsAll = positions.reduce((sum, pos) => {
                     const amount = totalInvestment * pos.allocation / 100;
                     const annualIncome = amount * pos.yield / 100;
-                    let monthlyIncome;
-                    if (pos.frequency === 52) {
-                        monthlyIncome = annualIncome / 52 * 4;
-                    } else if (pos.frequency === 13) {
-                        monthlyIncome = annualIncome / 13;
-                    } else {
-                        monthlyIncome = annualIncome / 13;
-                    }
-                    return sum + monthlyIncome;
+                    let monthlyDiv;
+                    if (pos.frequency === 52) monthlyDiv = annualIncome / 52 * 4;
+                    else monthlyDiv = annualIncome / 13;
+                    return sum + monthlyDiv;
                 }, 0);
-                // Calculate blended yield
-                let totalWeightedYield = 0;
-                positions.forEach(position => {
-                    totalWeightedYield += position.allocation * position.yield;
-                });
-                const blendedYield = totalAllocation > 0 ? totalWeightedYield / totalAllocation : 0;
+
+                const totalMonthlyIncomeCash = positions.reduce((sum, pos) => {
+                    if (isReinvesting(pos)) return sum;
+                    const amount = totalInvestment * pos.allocation / 100;
+                    const annualIncome = amount * pos.yield / 100;
+                    let monthlyDiv;
+                    if (pos.frequency === 52) monthlyDiv = annualIncome / 52 * 4;
+                    else monthlyDiv = annualIncome / 13;
+                    return sum + monthlyDiv;
+                }, 0);
+
                 const summaryRow = document.createElement('tr');
                 summaryRow.className = 'summary-row';
                 summaryRow.innerHTML = `
-            <td style="font-weight:bold;">Total</td>
-            <td style="font-weight:bold;">${totalAllocation.toFixed(0)}%</td>
-            <td style="font-weight:bold;">$${totalAmount.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
-            <td style="font-weight:bold;">${blendedYield.toFixed(0)}%</td>
-            <td style="font-weight:bold;">$${totalAnnualIncome.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
-            <td style="font-weight:bold;">$${totalMonthlyIncome.toLocaleString('en-US', { maximumFractionDigits: 2 })}</td>
-            <td></td>
-        `;
+                    <td style="font-weight:bold;">Total</td>
+                    <td style="font-weight:bold;">${totalAllocationPct.toFixed(0)}%</td>
+                    <td style="font-weight:bold;">$${totalAmount.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
+                    <td style="font-weight:bold;">${blendedYield.toFixed(0)}%</td>
+                    <td style="font-weight:bold;">$${totalMonthlyDividendsAll.toLocaleString('en-US', { maximumFractionDigits: 2 })}</td>
+                    <td style="font-weight:bold;">$${totalMonthlyIncomeCash.toLocaleString('en-US', { maximumFractionDigits: 2 })}</td>
+                    <td></td>
+                `;
                 tbody.appendChild(summaryRow);
             }
         }
 
+        // Calculate results and update projections
         function calculateResults() {
             const totalInvestment = parseFloat(document.getElementById('totalInvestment').value.replace(/,/g, '')) || 0;
             const targetAmount = parseFloat(document.getElementById('targetAmount').value.replace(/,/g, '')) || 0;
@@ -645,48 +680,47 @@
                 return;
             }
 
-            let totalWeightedYield = 0;
-            positions.forEach(position => {
-                totalWeightedYield += position.allocation * position.yield;
-            });
-
+            // Blended yield
+            const totalWeightedYield = positions.reduce((sum, p) => sum + (p.allocation * p.yield), 0);
             const blendedYield = totalAllocation > 0 ? totalWeightedYield / totalAllocation : 0;
-            const annualIncome = totalInvestment * blendedYield / 100;
-            const weeklyIncome = annualIncome / 52;
 
             const projectionResults = generateAndRenderProjections();
 
-            // Calculate blended monthly income from all positions
-            let blendedMonthlyIncome = 0;
-            positions.forEach(position => {
-                const amount = totalInvestment * position.allocation / 100;
-                const annualIncome = amount * position.yield / 100;
+            // Monthly Income (cash only, from NON-DRIP)
+            // Monthly Dividends (all positions, including DRIP)
+            let monthlyIncomeCash = 0;
+            let monthlyDividendsAll = 0;
+
+            positions.forEach(p => {
+                const amount = totalInvestment * (p.allocation / 100);
+                const annualIncome = amount * (p.yield / 100);
                 let monthlyIncome;
-                if (position.frequency === 52) {
-                    monthlyIncome = annualIncome / 52 * 4;
-                } else if (position.frequency === 13) {
-                    monthlyIncome = annualIncome / 13;
+                if (p.frequency === 52) {
+                    monthlyIncome = annualIncome / 52 * 4; // approximate 4 weeks
                 } else {
+                    // Default & 13 distributions/year case
                     monthlyIncome = annualIncome / 13;
                 }
-                blendedMonthlyIncome += monthlyIncome;
+                monthlyDividendsAll += monthlyIncome;
+                if (!isReinvesting(p)) {
+                    monthlyIncomeCash += monthlyIncome;
+                }
             });
 
             document.getElementById('incomeLabel').textContent = 'Monthly Income';
             document.getElementById('blendedYield').textContent = blendedYield.toFixed(0) + '%';
-            document.getElementById('incomeValue').textContent = '$' + blendedMonthlyIncome.toLocaleString('en-US', { maximumFractionDigits: 2 });
-            document.getElementById('annualIncome').textContent = '$' + annualIncome.toLocaleString('en-US', { maximumFractionDigits: 0 });
-            document.getElementById('timeToTarget').textContent = projectionResults.timeToTarget !== 'N/A' ? `${projectionResults.timeToTarget} months` : 'N/A';
-
-            // FIX: Do not change display style here!
-            // Remove or comment out this line:
-            // document.getElementById('results').style.display = 'grid';
+            document.getElementById('incomeValue').textContent = '$' + formatMoney(monthlyIncomeCash, 2);
+            document.getElementById('annualIncome').textContent = '$' + formatMoney(monthlyDividendsAll, 2);
+            document.getElementById('timeToTarget').textContent =
+                projectionResults.timeToTarget !== 'N/A'
+                    ? `${projectionResults.timeToTarget} months`
+                    : 'N/A';
 
             document.getElementById('projectionChartContainer').style.display = 'block';
-
             renderChart(projectionResults.chartData);
         }
 
+        // Generate projections for chart and table
         function generateAndRenderProjections() {
             const totalInvestment = parseFloat(document.getElementById('totalInvestment').value.replace(/,/g, '')) || 0;
             const targetAmount = parseFloat(document.getElementById('targetAmount').value.replace(/,/g, '')) || 0;
@@ -711,25 +745,16 @@
             });
             const blendedYield = totalAllocation > 0 ? totalWeightedYield / totalAllocation : 0;
 
-            // Calculate blended monthly income based on all positions
-            let blendedMonthlyIncome = 0;
-            positions.forEach(position => {
-                const amount = totalInvestment * position.allocation / 100;
-                const annualIncome = amount * position.yield / 100;
-                let monthlyIncome;
-                if (position.frequency === 52) {
-                    monthlyIncome = annualIncome / 52 * 4;
-                } else if (position.frequency === 13) {
-                    monthlyIncome = annualIncome / 13;
-                } else {
-                    monthlyIncome = annualIncome / 13;
-                }
-                blendedMonthlyIncome += monthlyIncome;
+            // Compute monthly income fractions of portfolio for DRIP vs cash-paying positions
+            let monthlyFracDRIP = 0; // fraction of portfolio paid as income that is reinvested
+            let monthlyFracCash = 0; // fraction paid out as cash
+            positions.forEach(pos => {
+                const annualFrac = (pos.allocation / 100) * (pos.yield / 100);
+                const monthlyFrac = annualFrac / 13;
+                if (isReinvesting(pos)) monthlyFracDRIP += monthlyFrac; else monthlyFracCash += monthlyFrac;
             });
-            const monthlyYield = blendedMonthlyIncome / totalInvestment;
-            const monthlyIULGrowth = iulGrowthRate / 100 / 12;
-            const monthlyBitcoinGrowth = Math.pow(1 + bitcoinCAGR / 100, 1 / 12) - 1;
 
+            // State variables
             let portfolioValue = totalInvestment;
             let currentIULValue = iulCashValue;
             let currentBitcoinAmountBTC = bitcoinAmountBTC;
@@ -742,46 +767,42 @@
             const monthlyTable = document.getElementById('projectionTable');
             const monthlyHeaders = monthlyTable.querySelectorAll('thead th');
             if (monthlyHeaders.length >= 6) {
-                monthlyHeaders[3].style.display = showIUL ? '' : 'none'; // IUL Value column
-                monthlyHeaders[4].style.display = showBitcoin ? '' : 'none'; // Bitcoin Value column
+                monthlyHeaders[3].style.display = showIUL ? '' : 'none';
+                monthlyHeaders[4].style.display = showBitcoin ? '' : 'none';
             }
 
             const chartData = { labels: [], portfolio: [], iul: [], bitcoin: [], total: [] };
             let timeToTarget = 'N/A';
 
-
             // --- Collect annual chart data ---
             const annualChartData = { labels: [], portfolio: [], iul: [], bitcoin: [], total: [] };
-            // Use only one declaration for timeToTarget and targetReached
             let annualPortfolioValue = totalInvestment;
             let annualIULValue = iulCashValue;
             let annualBitcoinAmountBTC = bitcoinAmountBTC;
             let annualBitcoinPriceUSD = initialBitcoinPriceUSD;
 
             for (let year = 0; year <= 10; year++) {
-                // Simulate compounding for 12 months each year
                 for (let m = 1; m <= 12; m++) {
-                    const monthlyIncome = annualPortfolioValue * monthlyYield;
-                    const toIUL = monthlyIncome * (reinvestToIUL / 100);
-                    const toBitcoin = monthlyIncome * (reinvestToBitcoin / 100);
-                    const toDRIP = monthlyIncome - toIUL - toBitcoin;
+                    const reinvestIncome = annualPortfolioValue * monthlyFracDRIP;
+                    const cashIncome = annualPortfolioValue * monthlyFracCash;
+                    const toIUL = cashIncome * (reinvestToIUL / 100);
+                    const toBitcoin = cashIncome * (reinvestToBitcoin / 100);
 
-                    annualPortfolioValue += toDRIP;
+                    annualPortfolioValue += reinvestIncome;
                     annualIULValue += toIUL + iulPremium;
-                    annualIULValue *= (1 + monthlyIULGrowth);
+                    annualIULValue *= (1 + (iulGrowthRate / 100) / 12);
 
                     const btcFromSavings = bitcoinMonthlySavingsUSD / annualBitcoinPriceUSD;
                     const btcFromReinvest = toBitcoin / annualBitcoinPriceUSD;
                     annualBitcoinAmountBTC += btcFromSavings + btcFromReinvest;
 
-                    annualBitcoinPriceUSD *= (1 + monthlyBitcoinGrowth);
+                    annualBitcoinPriceUSD *= (1 + (Math.pow(1 + bitcoinCAGR / 100, 1 / 12) - 1));
                 }
                 const annualBitcoinValueUSD = annualBitcoinAmountBTC * annualBitcoinPriceUSD;
                 const annualTotalWealth = annualPortfolioValue + annualIULValue + annualBitcoinValueUSD;
 
                 if (annualTotalWealth >= targetAmount && timeToTarget === 'N/A') {
                     timeToTarget = year;
-                    targetReached = true;
                 }
 
                 annualChartData.labels.push(`Year ${year}`);
@@ -791,36 +812,33 @@
                 annualChartData.total.push(annualTotalWealth);
             }
 
-            // --- Keep monthly table logic for display, but chart will use annualChartData ---
+            // --- Keep monthly table for first 48 months ---
             portfolioValue = totalInvestment;
             currentIULValue = iulCashValue;
             currentBitcoinAmountBTC = bitcoinAmountBTC;
             currentBitcoinPriceUSD = initialBitcoinPriceUSD;
             let targetMonth = null;
-            portfolioValue = totalInvestment;
-            currentIULValue = iulCashValue;
-            currentBitcoinAmountBTC = bitcoinAmountBTC;
-            currentBitcoinPriceUSD = initialBitcoinPriceUSD;
+
             for (let month = 0; month <= 48; month++) {
-                const monthlyIncome = portfolioValue * monthlyYield;
-                const toIUL = monthlyIncome * (reinvestToIUL / 100);
-                const toBitcoin = monthlyIncome * (reinvestToBitcoin / 100);
-                const toDRIP = monthlyIncome - toIUL - toBitcoin;
+                const reinvestIncome = portfolioValue * monthlyFracDRIP;
+                const cashIncome = portfolioValue * monthlyFracCash;
+                const toIUL = cashIncome * (reinvestToIUL / 100);
+                const toBitcoin = cashIncome * (reinvestToBitcoin / 100);
+                const netCashIncome = cashIncome - toIUL - toBitcoin; // what remains after reinvesting to IUL/Bitcoin
 
                 if (month > 0) {
-                    portfolioValue += toDRIP;
+                    portfolioValue += reinvestIncome;
                     currentIULValue += toIUL + iulPremium;
-                    currentIULValue *= (1 + monthlyIULGrowth);
+                    currentIULValue *= (1 + (iulGrowthRate / 100) / 12);
                     const btcFromSavings = bitcoinMonthlySavingsUSD / currentBitcoinPriceUSD;
                     const btcFromReinvest = toBitcoin / currentBitcoinPriceUSD;
                     currentBitcoinAmountBTC += btcFromSavings + btcFromReinvest;
-                    currentBitcoinPriceUSD *= (1 + monthlyBitcoinGrowth);
+                    currentBitcoinPriceUSD *= (1 + (Math.pow(1 + bitcoinCAGR / 100, 1 / 12) - 1));
                 }
 
                 const currentBitcoinValueUSD = currentBitcoinAmountBTC * currentBitcoinPriceUSD;
                 const totalWealth = portfolioValue + currentIULValue + currentBitcoinValueUSD;
 
-                // Find the first month where target is reached
                 if (targetMonth === null && totalWealth >= targetAmount) {
                     targetMonth = month;
                 }
@@ -829,7 +847,7 @@
                 row.innerHTML = `
                     <td>${month}</td>
                     <td>$${portfolioValue.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
-                    <td>$${monthlyIncome.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
+                    <td>$${netCashIncome.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
                     <td style="display:${showIUL ? '' : 'none'}">$${currentIULValue.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
                     <td style="display:${showBitcoin ? '' : 'none'}">$${currentBitcoinValueUSD.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
                     <td>$${totalWealth.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
@@ -840,14 +858,13 @@
                 }
                 tbody.appendChild(row);
             }
-            // Set timeToTarget to targetMonth for consistency
             timeToTarget = targetMonth !== null ? targetMonth : 'N/A';
 
             Array.from(projectionChartContainer.querySelectorAll('.table-scroll')).forEach((el, idx) => {
                 if (idx > 0) el.remove();
             });
 
-            // --- Annual table: create and insert after chart but before monthly table ---
+            // --- Annual table after chart ---
             const annualTableWrapper = document.createElement('div');
             annualTableWrapper.className = 'table-scroll';
             const annualTable = document.createElement('table');
@@ -867,69 +884,52 @@
             `;
             annualTableWrapper.appendChild(annualTable);
             const chartCanvas = document.getElementById('wealthChart');
-            // Insert annual table after chartCanvas
             if (chartCanvas && chartCanvas.parentNode) {
                 chartCanvas.parentNode.insertBefore(annualTableWrapper, chartCanvas.nextSibling);
             }
             const annualTbody = annualTable.querySelector('tbody');
 
-            // Calculate annual values for years 1-10 using compounding logic
             for (let year = 1; year <= 10; year++) {
                 let months = year * 12;
-                let portfolioValue = parseFloat(document.getElementById('totalInvestment').value.replace(/,/g, '')) || 0;
-                let iulValue = parseFloat(document.getElementById('iulCashValue').value.replace(/,/g, '')) || 0;
-                let bitcoinAmountBTC = parseFloat(document.getElementById('bitcoinAmountBTC').value) || 0;
-                let bitcoinPriceUSD = parseFloat(document.getElementById('bitcoinPriceUSD').value.replace(/,/g, '')) || 60000;
+                let extPortfolioValue = parseFloat(document.getElementById('totalInvestment').value.replace(/,/g, '')) || 0;
+                let extIULValue = parseFloat(document.getElementById('iulCashValue').value.replace(/,/g, '')) || 0;
+                let extBitcoinAmountBTC = parseFloat(document.getElementById('bitcoinAmountBTC').value) || 0;
+                let extBitcoinPriceUSD = parseFloat(document.getElementById('bitcoinPriceUSD').value.replace(/,/g, '')) || 60000;
 
-                // Use input values for rates
-                let blendedYield = (() => {
-                    let totalWeightedYield = 0;
-                    let totalAllocation = positions.reduce((sum, pos) => sum + pos.allocation, 0);
-                    positions.forEach(position => {
-                        totalWeightedYield += position.allocation * position.yield;
-                    });
-                    return totalAllocation > 0 ? totalWeightedYield / totalAllocation : 0;
-                })();
-                let monthlyYield = blendedYield / 100 / 12;
-                let iulPremium = parseFloat(document.getElementById('iulPremium').value.replace(/,/g, '')) || 0;
-                let iulGrowthRate = parseFloat(document.getElementById('iulGrowthRate').value) || 0;
-                let monthlyIULGrowth = iulGrowthRate / 100 / 12;
-                let reinvestToIUL = parseFloat(document.getElementById('reinvestToIUL').value) || 0;
-                let bitcoinCAGR = parseFloat(document.getElementById('bitcoinCAGR').value) || 0;
-                let monthlyBitcoinGrowth = Math.pow(1 + bitcoinCAGR / 100, 1 / 12) - 1;
-                let bitcoinMonthlySavingsUSD = parseFloat(document.getElementById('bitcoinMonthlySavingsUSD').value.replace(/,/g, '')) || 0;
-                let reinvestToBitcoin = parseFloat(document.getElementById('reinvestToBitcoin').value) || 0;
+                const iulRateMonthly = (parseFloat(document.getElementById('iulGrowthRate').value) || 0) / 100 / 12;
+                const btcGrowthMonthly = Math.pow(1 + (parseFloat(document.getElementById('bitcoinCAGR').value) || 0) / 100, 1 / 12) - 1;
+                const extIULPremium = parseFloat(document.getElementById('iulPremium').value.replace(/,/g, '')) || 0;
+                const extBtcMonthlyUSD = parseFloat(document.getElementById('bitcoinMonthlySavingsUSD').value.replace(/,/g, '')) || 0;
+                const extReinvestToIUL = parseFloat(document.getElementById('reinvestToIUL').value) || 0;
+                const extReinvestToBitcoin = parseFloat(document.getElementById('reinvestToBitcoin').value) || 0;
 
-                // Simulate compounding for 'months'
-                let extPortfolioValue = portfolioValue;
-                let extIULValue = iulValue;
-                let extBitcoinAmountBTC = bitcoinAmountBTC;
-                let extBitcoinPriceUSD = bitcoinPriceUSD;
-
+                let extAnnualNetIncome = 0; // accumulate net (after splits) cash income over the period
                 for (let m = 1; m <= months; m++) {
-                    const monthlyIncome = extPortfolioValue * monthlyYield;
-                    const toIUL = monthlyIncome * (reinvestToIUL / 100);
-                    const toBitcoin = monthlyIncome * (reinvestToBitcoin / 100);
-                    const toDRIP = monthlyIncome - toIUL - toBitcoin;
+                    const reinvestIncome = extPortfolioValue * monthlyFracDRIP;
+                    const cashIncome = extPortfolioValue * monthlyFracCash;
+                    const toIUL = cashIncome * (extReinvestToIUL / 100);
+                    const toBitcoin = cashIncome * (extReinvestToBitcoin / 100);
+                    const netCashIncome = cashIncome - toIUL - toBitcoin;
 
-                    extPortfolioValue += toDRIP;
-                    extIULValue += toIUL + iulPremium;
-                    extIULValue *= (1 + monthlyIULGrowth);
+                    extAnnualNetIncome += netCashIncome;
 
-                    const btcFromSavings = bitcoinMonthlySavingsUSD / extBitcoinPriceUSD;
+                    extPortfolioValue += reinvestIncome;
+                    extIULValue += toIUL + extIULPremium;
+                    extIULValue *= (1 + iulRateMonthly);
+
+                    const btcFromSavings = extBtcMonthlyUSD / extBitcoinPriceUSD;
                     const btcFromReinvest = toBitcoin / extBitcoinPriceUSD;
                     extBitcoinAmountBTC += btcFromSavings + btcFromReinvest;
 
-                    extBitcoinPriceUSD *= (1 + monthlyBitcoinGrowth);
+                    extBitcoinPriceUSD *= (1 + btcGrowthMonthly);
                 }
                 const extBitcoinValueUSD = extBitcoinAmountBTC * extBitcoinPriceUSD;
                 const extTotalWealth = extPortfolioValue + extIULValue + extBitcoinValueUSD;
-                const extAnnualIncome = extPortfolioValue * blendedYield / 100;
 
                 let rowHTML = `
                     <td>${year}</td>
                     <td>$${extPortfolioValue.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
-                    <td>$${extAnnualIncome.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
+                    <td>$${extAnnualNetIncome.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
                 `;
                 if (showIUL) {
                     rowHTML += `<td>$${extIULValue.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>`;
@@ -944,7 +944,7 @@
                 annualTbody.appendChild(row);
             }
 
-            // Also update the chart datasets
+            // Hide datasets if needed
             if (!showIUL) {
                 annualChartData.iul = [];
             }
@@ -1143,6 +1143,14 @@
             }
         }
 
+        // Helper for consistent currency formatting (commas & decimals)
+        function formatMoney(val, decimals = 2) {
+            return Number(val).toLocaleString('en-US', {
+                minimumFractionDigits: decimals,
+                maximumFractionDigits: decimals
+            });
+        }
+
         // Attach listeners after DOM is ready
         document.addEventListener('DOMContentLoaded', () => {
             restoreState();
@@ -1173,6 +1181,11 @@
                 el.addEventListener('input', saveState);
                 el.addEventListener('change', saveState);
             });
+
+            // After restoring state and wiring events, auto-run calculation if inputs are valid
+            if (canCalculate()) {
+                calculateResults();
+            }
         });
 
         // Collapse/Expand Integration Grid using toggle switch
@@ -1189,26 +1202,25 @@
             }
         });
 
-        // Automatically run calculation if there is saved state and positions
-        const state = JSON.parse(localStorage.getItem('dripStrategyState') || '{}');
-        if (
-            Array.isArray(state.positions) &&
-            state.positions.length > 0 &&
-            state.totalInvestment &&
-            state.targetAmount &&
-            !isNaN(parseFloat(state.totalInvestment)) &&
-            !isNaN(parseFloat(state.targetAmount)) &&
-            parseFloat(state.totalInvestment) > 0 &&
-            parseFloat(state.targetAmount) > 0
-        ) {
-            calculateResults();
-        }
-
         function scrollToProjection() {
             const chart = document.getElementById('projectionChartContainer');
             if (chart) {
                 chart.scrollIntoView({ behavior: 'smooth' });
             }
+        }
+
+        // Check if inputs are sufficient to run calculations without showing alerts
+        function canCalculate() {
+            const totalInvestment = parseFloat((document.getElementById('totalInvestment').value || '').replace(/,/g, '')) || 0;
+            const targetAmount = parseFloat((document.getElementById('targetAmount').value || '').replace(/,/g, '')) || 0;
+            if (totalInvestment <= 0 || targetAmount <= 0) return false;
+            if (!Array.isArray(positions) || positions.length === 0) return false;
+            const totalAllocation = positions.reduce((sum, pos) => sum + (parseFloat(pos.allocation) || 0), 0);
+            if (totalAllocation > 100) return false;
+            const reinvestToIUL = parseFloat(document.getElementById('reinvestToIUL').value) || 0;
+            const reinvestToBitcoin = parseFloat(document.getElementById('reinvestToBitcoin').value) || 0;
+            if (reinvestToIUL + reinvestToBitcoin > 100) return false;
+            return true;
         }
     </script>
 </body>
