@@ -5,21 +5,51 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "build": "electron-builder",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "electron .",
+    "build": "electron-builder && node scripts/open-dist.cjs",
+    "build:mac": "electron-builder --mac && node scripts/open-dist.cjs",
+    "build:win": "electron-builder --win && node scripts/open-dist.cjs",
+    "build:linux": "electron-builder --linux && node scripts/open-dist.cjs",
+    "diagnostics": "npx electron --version && npx electron-builder --version",
+    "postinstall": "electron-builder install-app-deps"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "electron": "^37.3.1",
-    "electron-builder": "^26.0.12",
-    "electron-packager": "^17.1.2"
+    "electron-builder": "^26.0.12"
   },
   "build": {
     "appId": "com.dripstrategy.app",
+    "productName": "Drip Strategy",
+    "directories": {
+      "output": "dist",
+      "buildResources": "images"
+    },
+    "files": [
+      "**/*",
+      "!dist/**/*",
+      "!node_modules/.cache",
+      "!*.log"
+    ],
     "mac": {
-      "icon": "images/desktop-icon.icns"
-    }
-  }
+      "icon": "images/desktop-icon.icns",
+      "category": "public.app-category.finance"
+    },
+    "win": {
+      "icon": "images/desktop-icon.ico",
+      "target": ["nsis"]
+    },
+    "linux": {
+      "icon": "images",
+      "target": ["AppImage"]
+    },
+    "asar": true
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "packageManager": "npm@10.0.0"
 }
