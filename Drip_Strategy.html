@@ -127,8 +127,8 @@
                             <th>Allocation %</th>
                             <th>Amount</th>
                             <th>Yield %</th>
-                            <th>Annual Dividends</th>
-                            <th>Weekly Dividends</th>
+                            <th>Monthly Dividends</th>
+                            <th>Monthly Income</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -568,12 +568,6 @@
             const totalInvestment = parseFloat(document.getElementById('totalInvestment').value.replace(/,/g, '')) || 0;
             const totalAllocation = positions.reduce((sum, pos) => sum + pos.allocation, 0);
 
-            // Update table header to always show 'Monthly Income'
-            const ths = document.querySelectorAll('#portfolioTable thead th');
-            if (ths.length >= 6) {
-                ths[5].textContent = 'Monthly Dividends';
-            }
-
             const allocationError = document.getElementById('allocationError');
             if (totalAllocation > 100) {
                 allocationError.textContent = `Total allocation (${totalAllocation.toFixed(1)}%) exceeds 100%. Please adjust.`;
@@ -586,78 +580,77 @@
 
             positions.forEach(position => {
                 const amount = (totalInvestment * position.allocation / 100);
-                let annualIncome = (amount * position.yield / 100);
-                // Calculate monthly income based on position frequency
-                let monthlyIncome;
+                const annualIncome = amount * position.yield / 100;
+
+                // Derive gross monthly dividends based on distribution frequency
+                let monthlyDividendsGross;
                 if (position.frequency === 52) {
-                    monthlyIncome = annualIncome / 52 * 4;
+                    monthlyDividendsGross = annualIncome / 52 * 4; // approx 4 weeks
                 } else if (position.frequency === 13) {
-                    monthlyIncome = annualIncome / 13;
+                    monthlyDividendsGross = annualIncome / 13;
                 } else {
-                    monthlyIncome = annualIncome / 13;
+                    monthlyDividendsGross = annualIncome / 13;
                 }
-                // If reinvesting (DRIP), income is not paid out
-                if (isReinvesting(position)) {
-                    monthlyIncome = 0;
-                    annualIncome = 0;
-                }
+
+                // Monthly income (cash) is zero if reinvesting
+                const monthlyIncomeCash = isReinvesting(position) ? 0 : monthlyDividendsGross;
 
                 const row = document.createElement('tr');
                 row.innerHTML = `
-            <td>${position.ticker}</td>
-            <td>${position.allocation}%</td>
-            <td>$${amount.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
-            <td>${position.yield}%</td>
-            <td>$${annualIncome.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
-            <td>$${monthlyIncome.toLocaleString('en-US', { maximumFractionDigits: 2 })}</td>
-            <td>
-                <button class="edit-btn" onclick="openAddPositionModal(${position.id})">Edit</button>
-                <button class="remove-btn" onclick="removePosition(${position.id})">Remove</button>
-            </td>
-        `;
+                    <td>${position.ticker}</td>
+                    <td>${position.allocation}%</td>
+                    <td>$${amount.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
+                    <td>${position.yield}%</td>
+                    <td>$${monthlyDividendsGross.toLocaleString('en-US', { maximumFractionDigits: 2 })}</td>
+                    <td>$${monthlyIncomeCash.toLocaleString('en-US', { maximumFractionDigits: 2 })}</td>
+                    <td>
+                        <button class="edit-btn" onclick="openAddPositionModal(${position.id})">Edit</button>
+                        <button class="remove-btn" onclick="removePosition(${position.id})">Remove</button>
+                    </td>
+                `;
                 tbody.appendChild(row);
             });
 
-            // Add summary row if there are positions
             if (positions.length > 0) {
-                const totalAllocation = positions.reduce((sum, pos) => sum + pos.allocation, 0);
+                const totalAllocationPct = positions.reduce((sum, pos) => sum + pos.allocation, 0);
                 const totalAmount = positions.reduce((sum, pos) => sum + (totalInvestment * pos.allocation / 100), 0);
-                const totalAnnualIncome = positions.reduce((sum, pos) => {
-                    if (isReinvesting(pos)) return sum;
+
+                // Weighted blended yield
+                let totalWeightedYield = 0;
+                positions.forEach(position => { totalWeightedYield += position.allocation * position.yield; });
+                const blendedYield = totalAllocationPct > 0 ? totalWeightedYield / totalAllocationPct : 0;
+
+                // Totals for new columns
+                const totalMonthlyDividendsAll = positions.reduce((sum, pos) => {
                     const amount = totalInvestment * pos.allocation / 100;
-                    return sum + (amount * pos.yield / 100);
+                    const annualIncome = amount * pos.yield / 100;
+                    let monthlyDiv;
+                    if (pos.frequency === 52) monthlyDiv = annualIncome / 52 * 4;
+                    else monthlyDiv = annualIncome / 13;
+                    return sum + monthlyDiv;
                 }, 0);
-                const totalMonthlyIncome = positions.reduce((sum, pos) => {
+
+                const totalMonthlyIncomeCash = positions.reduce((sum, pos) => {
                     if (isReinvesting(pos)) return sum;
                     const amount = totalInvestment * pos.allocation / 100;
                     const annualIncome = amount * pos.yield / 100;
-                    let monthlyIncome;
-                    if (pos.frequency === 52) {
-                        monthlyIncome = annualIncome / 52 * 4;
-                    } else if (pos.frequency === 13) {
-                        monthlyIncome = annualIncome / 13;
-                    } else {
-                        monthlyIncome = annualIncome / 13;
-                    }
-                    return sum + monthlyIncome;
+                    let monthlyDiv;
+                    if (pos.frequency === 52) monthlyDiv = annualIncome / 52 * 4;
+                    else monthlyDiv = annualIncome / 13;
+                    return sum + monthlyDiv;
                 }, 0);
-                // Calculate blended yield (based on allocations/yields)
-                let totalWeightedYield = 0;
-                positions.forEach(position => {
-                    totalWeightedYield += position.allocation * position.yield;
-                });
-                const blendedYield = totalAllocation > 0 ? totalWeightedYield / totalAllocation : 0;
+
                 const summaryRow = document.createElement('tr');
                 summaryRow.className = 'summary-row';
                 summaryRow.innerHTML = `
-            <td style="font-weight:bold;">Total</td>
-            <td style="font-weight:bold;">${totalAllocation.toFixed(0)}%</td>
-            <td style="font-weight:bold;">$${totalAmount.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
-            <td style="font-weight:bold;">${blendedYield.toFixed(0)}%</td>
-            <td style="font-weight:bold;">$${totalAnnualIncome.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
-            <td style="font-weight:bold;">$${totalMonthlyIncome.toLocaleString('en-US', { maximumFractionDigits: 2 })}</td>
-            <td></td>
-        `;
+                    <td style="font-weight:bold;">Total</td>
+                    <td style="font-weight:bold;">${totalAllocationPct.toFixed(0)}%</td>
+                    <td style="font-weight:bold;">$${totalAmount.toLocaleString('en-US', { maximumFractionDigits: 0 })}</td>
+                    <td style="font-weight:bold;">${blendedYield.toFixed(0)}%</td>
+                    <td style="font-weight:bold;">$${totalMonthlyDividendsAll.toLocaleString('en-US', { maximumFractionDigits: 2 })}</td>
+                    <td style="font-weight:bold;">$${totalMonthlyIncomeCash.toLocaleString('en-US', { maximumFractionDigits: 2 })}</td>
+                    <td></td>
+                `;
                 tbody.appendChild(summaryRow);
             }
         }
