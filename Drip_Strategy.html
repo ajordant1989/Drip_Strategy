@@ -41,11 +41,11 @@
                 <div class="value" id="blendedYield">0%</div>
             </div>
             <div class="result-card">
-                <h3 id="incomeLabel">Weekly Dividends</h3>
+                <h3 id="incomeLabel">Monthly Income</h3>
                 <div class="value" id="incomeValue">$0</div>
             </div>
             <div class="result-card">
-                <h3>Annual Dividends</h3>
+                <h3>Monthly Dividends</h3>
                 <div class="value" id="annualIncome">$0</div>
             </div>
             <div class="result-card">
@@ -662,6 +662,7 @@
             }
         }
 
+        // Calculate results and update projections
         function calculateResults() {
             const totalInvestment = parseFloat(document.getElementById('totalInvestment').value.replace(/,/g, '')) || 0;
             const targetAmount = parseFloat(document.getElementById('targetAmount').value.replace(/,/g, '')) || 0;
@@ -686,47 +687,47 @@
                 return;
             }
 
-            let totalWeightedYield = 0;
-            positions.forEach(position => {
-                totalWeightedYield += position.allocation * position.yield;
-            });
-
+            // Blended yield
+            const totalWeightedYield = positions.reduce((sum, p) => sum + (p.allocation * p.yield), 0);
             const blendedYield = totalAllocation > 0 ? totalWeightedYield / totalAllocation : 0;
 
             const projectionResults = generateAndRenderProjections();
 
-            // Calculate paid-out monthly income from NON-DRIP positions only
-            let paidMonthlyIncome = 0;
-            positions.forEach(position => {
-                if (isReinvesting(position)) return; // DRIP positions do not pay out
-                const amount = totalInvestment * position.allocation / 100;
-                const annualIncome = amount * position.yield / 100;
+            // Monthly Income (cash only, from NON-DRIP)
+            // Monthly Dividends (all positions, including DRIP)
+            let monthlyIncomeCash = 0;
+            let monthlyDividendsAll = 0;
+
+            positions.forEach(p => {
+                const amount = totalInvestment * (p.allocation / 100);
+                const annualIncome = amount * (p.yield / 100);
                 let monthlyIncome;
-                if (position.frequency === 52) {
-                    monthlyIncome = annualIncome / 52 * 4;
-                } else if (position.frequency === 13) {
-                    monthlyIncome = annualIncome / 13;
+                if (p.frequency === 52) {
+                    monthlyIncome = annualIncome / 52 * 4; // approximate 4 weeks
                 } else {
+                    // Default & 13 distributions/year case
                     monthlyIncome = annualIncome / 13;
                 }
-                paidMonthlyIncome += monthlyIncome;
+                monthlyDividendsAll += monthlyIncome;
+                if (!isReinvesting(p)) {
+                    monthlyIncomeCash += monthlyIncome;
+                }
             });
-            // Deduct reinvest splits (IUL + Bitcoin) from paid income to show net available cash
-            const reinvestSplit = (reinvestToIUL + reinvestToBitcoin) / 100;
-            const netMonthlyIncome = paidMonthlyIncome * (1 - reinvestSplit);
-            const netAnnualIncome = netMonthlyIncome * 12;
 
             document.getElementById('incomeLabel').textContent = 'Monthly Income';
             document.getElementById('blendedYield').textContent = blendedYield.toFixed(0) + '%';
-            document.getElementById('incomeValue').textContent = '$' + netMonthlyIncome.toLocaleString('en-US', { maximumFractionDigits: 2 });
-            document.getElementById('annualIncome').textContent = '$' + netAnnualIncome.toLocaleString('en-US', { maximumFractionDigits: 0 });
-            document.getElementById('timeToTarget').textContent = projectionResults.timeToTarget !== 'N/A' ? `${projectionResults.timeToTarget} months` : 'N/A';
+            document.getElementById('incomeValue').textContent = '$' + formatMoney(monthlyIncomeCash, 2);
+            document.getElementById('annualIncome').textContent = '$' + formatMoney(monthlyDividendsAll, 2);
+            document.getElementById('timeToTarget').textContent =
+                projectionResults.timeToTarget !== 'N/A'
+                    ? `${projectionResults.timeToTarget} months`
+                    : 'N/A';
 
             document.getElementById('projectionChartContainer').style.display = 'block';
-
             renderChart(projectionResults.chartData);
         }
 
+        // Generate projections for chart and table
         function generateAndRenderProjections() {
             const totalInvestment = parseFloat(document.getElementById('totalInvestment').value.replace(/,/g, '')) || 0;
             const targetAmount = parseFloat(document.getElementById('targetAmount').value.replace(/,/g, '')) || 0;
@@ -1147,6 +1148,14 @@
                     input.value = parts.length > 1 ? parts[0] + '.' + parts[1] : parts[0];
                 }
             }
+        }
+
+        // Helper for consistent currency formatting (commas & decimals)
+        function formatMoney(val, decimals = 2) {
+            return Number(val).toLocaleString('en-US', {
+                minimumFractionDigits: decimals,
+                maximumFractionDigits: decimals
+            });
         }
 
         // Attach listeners after DOM is ready
